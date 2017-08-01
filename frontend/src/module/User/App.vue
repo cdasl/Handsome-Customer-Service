@@ -11,7 +11,7 @@
 </div>
 </template>
 <script>
-import { actions } from './store'
+import { actions } from './Store/Store'
 
 import Card from '../../components/card'
 import List from '../../components/list'

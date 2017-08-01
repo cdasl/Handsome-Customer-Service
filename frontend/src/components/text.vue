@@ -4,7 +4,7 @@
 </div>
 </template>
 <script>
-import { actions } from '../module/User/store'
+import { actions } from '../module/User/Store/Store'
 export default {
   vuex: {
     actions: actions
