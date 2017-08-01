@@ -1,0 +1,9 @@
+body {
+  background-image: url('http://www.oakesdesign.ca/tutorial-files/background-main.jpg')
+}
+.show {
+  display: show;
+}
+.none {
+  display: none;
+}
