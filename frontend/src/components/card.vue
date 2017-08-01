@@ -1,30 +1,15 @@
 <template>
-<div class="card">
+<div id="card">
   <header>
-    <img class="avatar" width="40" height="40" :alt="user.name" :src="user.img">
-    <p class="name">{{user.name}}</p>
+    <img class="avatar" width="40" height="40">
+    <p class="name">名字</p>
   </header>
   <footer>
-    <input class="search" type="text" placeholder="search user..." @keyup="onKeyup | debounce 150">
+    <input type="text" placeholder="请输入问题" class="search">
   </footer>
 </div>
 </template>
 <script>
-import { actions } from '../module/User/store'
-export default {
-  vuex: {
-    actions: actions,
-    getters: {
-      user: ({ user }) => user,
-      filterKey: ({ filterKey }) => filterKey
-    }
-  },
-  methods: {
-    onKeyup (e) {
-      this.search(e.target.value)
-    }
-  }
-}
 </script>
 <style scoped lang="less">
 .card {

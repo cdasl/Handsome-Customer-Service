@@ -1,30 +1,22 @@
 <template>
-<div id="app">
-  <div class="sidebar">
-    <card></card>
-    <list></list>
+  <div id="app">
+    <div class="sidebar">
+      <card></card>
+      <list></list>
+    </div>
+    <div class="main">
+      <message></message>
+      <text-input></text-input>
+    </div>
   </div>
-  <div class="main">
-    <message></message>
-    <text></text>
-  </div>
-</div>
 </template>
 <script>
-import { actions } from './store'
-
-import Card from '../../components/card'
-import List from '../../components/list'
-import Text from '../../components/text'
-import Message from '../../components/message'
+import Card from '../../components/Card'
+import List from '../../components/List'
+import TextInput from '../../components/TextInput'
+import Message from '../../components/Message'
 export default {
-  components: { Card, List, Text, Message },
-  vuex: {
-    actions: actions
-  },
-  created () {
-    this.initData()
-  }
+  components: {Card, List, TextInput, Message}
 }
 </script>
 <style lang="less" scoped>

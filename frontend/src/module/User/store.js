@@ -45,14 +45,14 @@ const store = new Vuex.Store({
     filterKey: ''
   },
   mutations: {
-    INIT_DATA(state) {
+    INIT_DATA (state) {
       let data = localStorage.getItem('vue-chat-session')
       if (data) {
         state.sessions = JSON.parse(data)
       }
     },
     // 发送消息
-    SEND_MESSAGE({
+    SEND_MESSAGE ({
       sessions,
       currentSessionId
     },
@@ -65,11 +65,11 @@ const store = new Vuex.Store({
       })
     },
     // 选择会话
-    SELECT_SESSION(state, id) {
+    SELECT_SESSION (state, id) {
       state.currentSessionId = id
     },
     // 搜索
-    SET_FILTER_KEY(state, value) {
+    SET_FILTER_KEY (state, value) {
       state.filterKey = value
     }
   }
@@ -79,9 +79,9 @@ store.watch((state) => state.sessions, (val) => {
   console.log('CHANGE: ', val)
   localStorage.setItem('vue-chat-session', JSON.stringify(val))
 },
-{
-  deep: true
-})
+  {
+    deep: true
+  })
 
 export default store
 export const actions = {
