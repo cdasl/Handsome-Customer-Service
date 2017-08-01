@@ -1,42 +1,19 @@
 <template>
-<div class="message" v-scroll-bottom="session.messages">
-  <ul v-if="session">
-    <li v-for="item in session.messages">
+<div class="message">
+  <ul>
+    <li>
       <p class="time">
-        <span>{{ item.date | time }}</span>
+        <span>2017/8/1</span>
       </p>
-      <div class="main" :class="{ self: item.self }">
-        <img class="avatar" width="30" height="30" :src="item.self ? user.img : session.user.img" />
-        <div class="text">{{ item.content }}</div>
+      <div class="main self">
+        <img class="avatar" width="30" height="30">
+        <div class="text">内容</div>
       </div>
     </li>
-  </ul>
+  </ul>  
 </div>
 </template>
 <script>
-export default {
-  vuex: {
-    getters: {
-      user: ({ user }) => user,
-      session: ({ sessions, currentSessionId }) => sessions.find(session => session.id === currentSessionId)
-    }
-  },
-  filters: {
-  // 将日期过滤为 hour:minutes
-    time (date) {
-      if (typeof date === 'string') {
-        date = new Date(date)
-      }
-      return date.getHours() + ':' + date.getMinutes()
-    }
-  },
-  directives: {
-  // 发送消息后滚动到底部
-    'scroll-bottom' () {
-      this.vm.$nextTick(() => { this.el.scrollTop = this.el.scrollHeight - this.el.clientHeight })
-    }
-  }
-}
 </script>
 <style lang="less" scoped>
 .message {

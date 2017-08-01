@@ -1,14 +1,12 @@
-// polyfill
-import 'babel-polyfill'
 import Vue from 'vue'
-import App from './App'
-import Store from './Store/Store'
+import UserTalk from './UserTalk'
+import iView from 'iview'
+import 'iview/dist/styles/iview.css'
 
-Vue.config.devtools = true
+Vue.use(iView)
 
 /* eslint-disable no-new */
 new Vue({
-  el: 'body',
-  components: { App },
-  store: Store
+  el: '#enterprise',
+  components: { UserTalk }
 })

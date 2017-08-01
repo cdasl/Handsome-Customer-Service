@@ -78,10 +78,10 @@ const store = new Vuex.Store({
 store.watch((state) => state.sessions, (val) => {
   console.log('CHANGE: ', val)
   localStorage.setItem('vue-chat-session', JSON.stringify(val))
-}, {
-  deep: true
-}
-)
+},
+  {
+    deep: true
+  })
 
 export default store
 export const actions = {
