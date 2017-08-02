@@ -19,7 +19,7 @@ class Enterprise(models.Model):
 #customer
 class Customer(models.Model):
     CID = models.CharField(max_length = 50, primary_key = True)
-    EID = models.ForeignKey(Enterprise)
+    EID = models.CharField(max_length = 50)
     email = models.CharField(max_length = 30)
     password = models.CharField(max_length = 50)
     icon = models.CharField(max_length = 50)
@@ -34,31 +34,30 @@ class Customer(models.Model):
 
 #user
 class User(models.Model):
-    UID = models.CharField(max_length = 50)
-    info = models.TextField(max_length = 500)
+    UID = models.CharField(max_length = 50, primary_key = True)
 
 #dialog
 class Dialog(models.Model):
     DID = models.CharField(max_length = 50, primary_key = True)
-    EID = models.ForeignKey(Enterprise)
-    start_time = models.DateTimeField('start time', auto_now = True)
-    end_time = models.DateTimeField('end time', auto_now = True)
+    EID = models.CharField(max_length = 50)
+    start_time = models.DateTimeField('start time')
+    end_time = models.DateTimeField('end time')
 
 #messages
 class Message(models.Model):
-    MID = models.CharField(max_length = 50)
+    MID = models.CharField(max_length = 50, primary_key = True)
     SID = models.CharField(max_length = 50)
     RID = models.CharField(max_length = 50)
-    DID = models.ForeignKey(Dialog)
+    DID = models.CharField(max_length = 50)
     content = models.TextField()
-    date = models.DateTimeField('message time', auto_now = True)
+    date = models.DateTimeField('message time')
     def __str__(self):
         return self.SID + ',' + self.RID + ',' + self.content
 
 #question
 class Question(models.Model):
     QID = models.CharField(max_length = 50, primary_key = True)
-    EID = models.ForeignKey(Enterprise)
+    EID = models.CharField(max_length = 50)
     question = models.TextField()
     answer = models.TextField()
     def __str__(self):
