@@ -27,7 +27,7 @@ def enterprise_signup_helper(info):
     m.update(info['password'].encode('utf8'))
     password = m.hexdigest()
     try:
-        models.Enterprise.objects.create(EID=eid, email=email, password=password, name=name, robot_icon=ri, robot_name=rn, salt=salt)
+        models.Enterprise.objects.create(EID = eid, email = email, password = password, name = name, robot_icon = ri, robot_name = rn, salt = salt)
         return JsonResponse({
             'message': '注册成功'
             })
@@ -44,17 +44,12 @@ def enterprise_signup(request):
     info = json.loads(request.body.decode('utf8'))
     return enterprise_signup_helper(info)
     
-
 @ensure_csrf_cookie
-def enterprise_login(request):
-    """
-        企业登陆
-    """
-    info = json.loads(request.body.decode('utf8'))
-    email = info['email']
-    password = info['password']
+def enterprise_login_helper(info):
     try:
-        right = models.Enterprise.objects.get(email=email)
+        email = info['email']
+        password = info['password']
+        right = models.Enterprise.objects.get(email = email)
         m = hashlib.md5()
         password += right.salt
         m.update(password.encode('utf8'))
@@ -70,3 +65,11 @@ def enterprise_login(request):
         return JsonResponse({
             'message': '账号错误'
             })
+
+@ensure_csrf_cookie
+def enterprise_login(request):
+    """
+        企业登陆
+    """
+    info = json.loads(request.body.decode('utf8'))
+    return enterprise_login_helper(request.body.decode('utf8'))
