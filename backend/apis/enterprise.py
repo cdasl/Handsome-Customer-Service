@@ -107,7 +107,7 @@ def enterprise_login(request):
         return JsonResponse({'message': code[1]})
     else:
         request.session['eid'] = code[1]
-        return JsonResponse({'message': 'wrong account'})
+        return JsonResponse({'message': 'Login Success!'})
 
 @ensure_csrf_cookie
 def enterprise_active(request):
