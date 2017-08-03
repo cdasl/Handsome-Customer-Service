@@ -7,6 +7,6 @@ Vue.use(iView)
 
 /* eslint-disable no-new */
 new Vue({
-  el: '#enterprise',
+  el: '#user',
   components: { UserTalk }
 })
