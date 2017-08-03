@@ -25,11 +25,13 @@ urlpatterns = [
 	url(r'^index.html$', TemplateView.as_view(template_name="index.html")),
     url(r'^login.html$', TemplateView.as_view(template_name="login.html")),
     url(r'^enterprise/$', TemplateView.as_view(template_name="Enterprise.html")),
+    url(r'^enterprise_active/([a-zA-Z]+)$', TemplateView.as_view(template_name='enterprise_active.html'), name="enterprise_active"),
 
     #apis
     url(r'^api/test/$', api.test, name="test"),
     url(r'^api/enter/signup/$', enterprise.enterprise_signup, name="enter_signup"),
     url(r'^api/enter/login/$', enterprise.enterprise_login, name="enter_login"),
     url(r'^api/talk/$', api.talk, name="talk"),
+    url(r'^api/active/$', enterprise.enterprise_active, name="active"),
 ]
 
