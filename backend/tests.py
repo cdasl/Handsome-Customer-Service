@@ -1,4 +1,5 @@
 from django.test import TestCase
+from django.test.client import RequestFactory
 from .apis import enterprise
 from . import models
 import json
@@ -13,19 +14,25 @@ def jrToJson(jr):
 
 class EnterSignupTestCase(TestCase):
     """
-        测试企业注册Api
+        测试企业注册Api：enterprise_signup
     """
     def setUp(self):
-        models.Enterprise.objects.create(EID = 'eid1', email = 'email1', password = 'password1',
+        models.Enterprise.objects.create(EID = 'eid1', email = '654321@qq.com', password = 'password1',
              name = 'name1', robot_icon = 'ri1', robot_name = 'rn1', salt = 'salt1')
         
     def test_signup(self):
         info  =  {    
-            'email': 'test_email',
+            'email': '654321@qq.com',
             'name': 'test_name',
-            'password': '123456'
+            'password': '12345678'
             }
-        self.assertEqual(jrToJson(enterprise.enterprise_signup_helper(info))['message'], 'sign up successfully, please go to check your email')
-        info['email']  =  'email1'
-        self.assertEqual(jrToJson(enterprise.enterprise_signup_helper(info))['message'], 'this email has been registered')
+        rf = RequestFactory()
+        request = rf.post('api/enter/signup/')
+        request._body = json.dumps(info).encode('utf8')
+        self.assertEqual(jrToJson(enterprise.enterprise_signup(request))['message'],
+            'this email has been registered')
+        info['email'] = '123456@qq.com'
+        request._body = json.dumps(info).encode('utf8')
+        self.assertEqual(jrToJson(enterprise.enterprise_signup(request))['message'],
+            'fail to sign up')
         
