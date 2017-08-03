@@ -28,6 +28,38 @@ def signup_init(info):
             'password': password
             }
 
+def enterprise_changepassword(info):
+    """
+        修改密码
+    """
+    email = info['email']
+    old_password = info['old']
+    new_password = info['new']
+    obj = models.Enterprise.objects.get(email = email)
+    salt = obj.salt
+    m = hashlib.md5()
+    m.update((old_password+salt).encode('utf8'))
+    password = m.hexdigest()
+    if password != obj.password:
+        return JsonResponse({
+            'message': '密码不正确'
+            })
+    salt = ''.join(random.sample(string.ascii_letters + string.digits, 8))
+    m = hashlib.md5()
+    m.update((new_password + salt).encode('utf8'))
+    password = m.hexdigest()
+    try:
+        obj.salt = salt
+        obj.password = password
+        obj.save()
+        return JsonResponse({
+            'message': '修改成功'
+            })
+    except Exception:
+        return JsonResponse({
+            'message': '修改失败'
+            })
+
 @ensure_csrf_cookie
 def enterprise_signup(request):
     """
@@ -36,7 +68,7 @@ def enterprise_signup(request):
     info = json.loads(request.body.decode('utf8'))
     email = info['email']
     #检查email是否已经存在
-    if len(models.Enterprise.objects.filter(email=email)) > 0:
+    if len(models.Enterprise.objects.filter(email = email)) > 0:
         return JsonResponse({
             'message': '该邮箱已注册'
             })
@@ -58,27 +90,45 @@ def enterprise_signup(request):
             })
 
 @ensure_csrf_cookie
+def enterprise_signup(request):
+    """
+        企业注册
+    """
+    info = json.loads(request.body.decode('utf8'))
+    return enterprise_signup_helper(info)
+    
+@ensure_csrf_cookie
+def enterprise_login_helper(info):
+    try:
+        email = info['email']
+        password = info['password']
+        right = models.Enterprise.objects.get(email = email)
+        m = hashlib.md5()
+        password += right.salt
+        m.update(password.encode('utf8'))
+        if m.hexdigest() == right.password:
+            #成功
+            return (1, right.EID)
+        else:
+            #密码错误
+            return (0, '密码错误')
+    except Exception:
+        #账号错误
+        return (-1, '账号错误')
+
+@ensure_csrf_cookie
 def enterprise_login(request):
     """
         企业登陆
     """
     info = json.loads(request.body.decode('utf8'))
-    email = info['email']
-    password = info['password']
-    try:
-        right = models.Enterprise.objects.get(email=email)
-        m = hashlib.md5()
-        password += right.salt
-        m.update(password.encode('utf8'))
-        if m.hexdigest() == right.password:
-            return JsonResponse({
-                'message': '登陆成功'
-                })
-        else:
-            return JsonResponse({
-                'message': '密码错误'
-                })
-    except Exception:
+    code = enterprise_login_helper(info)
+    if code[0] == 0 or code[0] == -1:
+        return JsonResponse({
+            'message': code[1]
+            })
+    else:
+        request.session['EID'] = code[1]
         return JsonResponse({
             'message': '账号错误'
             })
