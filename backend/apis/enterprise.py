@@ -142,8 +142,8 @@ def enterpise_invite(request):
     """
     info = json.loads(request.body.decode('utf8'))
     email = info['email']
-    if models.Customer.objects.filter(email = email) > 0:
-        return JsonResponse({'message': 'the mailbox has been registered '})
+    if len(models.Customer.objects.filter(email = email)) > 0:
+        return JsonResponse({'message': 'the mailbox has been registered'})
     EID = request.session['eid']
     md5 = hashlib.md5()
     md5.update(str(int(time.time())).encode('utf8'))
