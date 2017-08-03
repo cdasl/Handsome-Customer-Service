@@ -54,17 +54,14 @@ def enterprise_login_helper(info):
         password += right.salt
         m.update(password.encode('utf8'))
         if m.hexdigest() == right.password:
-            return JsonResponse({
-                'message': '登陆成功'
-                })
+            #成功
+            return (1, right.EID)
         else:
-            return JsonResponse({
-                'message': '密码错误'
-                })
+            #密码错误
+            return (0, '密码错误')
     except Exception:
-        return JsonResponse({
-            'message': '账号错误'
-            })
+        #账号错误
+        return (-1, '账号错误')
 
 @ensure_csrf_cookie
 def enterprise_login(request):
@@ -72,4 +69,13 @@ def enterprise_login(request):
         企业登陆
     """
     info = json.loads(request.body.decode('utf8'))
-    return enterprise_login_helper(request.body.decode('utf8'))
+    code = enterprise_login_helper(info)
+    if code[0] == 0 or code[0] == -1:
+        return JsonResponse({
+            'message': code[1]
+            })
+    else:
+        request.session['EID'] = code[1]
+        return JsonResponse({
+            'message': '登陆成功'
+            })
