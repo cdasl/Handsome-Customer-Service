@@ -75,6 +75,15 @@ def enterprise_signup(request):
             })
 
 @ensure_csrf_cookie
+def enterprise_signup(request):
+    """
+        企业注册
+    """
+    info = json.loads(request.body.decode('utf8'))
+    return enterprise_signup_helper(info)
+    
+
+@ensure_csrf_cookie
 def enterprise_login(request):
     """
         企业登陆
