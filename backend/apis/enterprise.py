@@ -163,3 +163,24 @@ def enterpise_invite(request):
         return JsonResponse({'message': 'invite successfully'})
     except Exception:
         return JsonResponse({'message': 'invite failure'})
+
+@ensure_csrf_cookie
+def enterprise_logoff_customer(request):
+    """
+        注销客服
+    """
+    info = json.loads(request.body.decode('utf8'))
+    CID = info['cid']
+    #检查是否存在该客服
+    customer = models.Customer.objects.filter(CID = CID)
+    if len(customer) == 0:
+        return JsonResponse({'message': 'not exist this customer'})
+    customer_name = customer[0].name
+    try:
+        customer.state = -1
+        customer.save()
+        return JsonResponse({'message': 'log off ' + customer_name + 'successfully'})
+    except Exception:
+        return JsonResponse({
+            'message': 'fail to log off ' + customer_name
+            })
