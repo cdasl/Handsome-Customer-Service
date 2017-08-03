@@ -177,9 +177,8 @@ def enterprise_logoff_customer(request):
         return JsonResponse({'message': 'not exist this customer'})
     customer_name = customer[0].name
     try:
-        customer.state = -1
-        customer.save()
-        return JsonResponse({'message': 'log off ' + customer_name + 'successfully'})
+        models.Customer.objects.filter(CID = CID).update(state = -1)
+        return JsonResponse({'message': 'log off ' + customer_name + ' successfully'})
     except Exception:
         return JsonResponse({
             'message': 'fail to log off ' + customer_name
