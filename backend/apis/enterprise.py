@@ -11,6 +11,23 @@ from chatterbot import ChatBot
 from . import helper
 from . import messages
 
+def signup_init(info):
+    m = hashlib.md5()
+    m.update(str(int(time.time())).encode('utf8'))
+    salt = ''.join(random.sample(string.ascii_letters + string.digits, 8))
+    info['password'] += salt
+    n = hashlib.md5()
+    n.update(info['password'].encode('utf8'))
+    password = n.hexdigest()
+    return {'ri': 'http://www.jb51.net/images/logo.gif',
+            'rn': u'小机',
+            'eid': m.hexdigest(),
+            'salt': salt,
+            'email': info['email'],
+            'name': info['name'],
+            'password': password
+            }
+
 @ensure_csrf_cookie
 def enterprise_signup(request):
     """
@@ -23,23 +40,15 @@ def enterprise_signup(request):
         return JsonResponse({
             'message': '该邮箱已注册'
             })
-    name = info['name']
-    ri = 'http://www.jb51.net/images/logo.gif'
-    rn = '小机'
-    m = hashlib.md5()
-    m.update(str(int(time.time())).encode('utf8'))
-    eid = m.hexdigest()
-    salt = ''.join(random.sample(string.ascii_letters + string.digits, 8))
-    info['password'] += salt
-    m = hashlib.md5()
-    m.update(info['password'].encode('utf8'))
-    password = m.hexdigest()
+    info_dict = signup_init(info)
     try:
         active_code = helper.get_active_code(email)
         mySubject = messages.enterprise_active_subject
         myMessage = messages.enterprise_active_message('http:/127.0.0.1:8000%s' % ('/enterprise_active/' + active_code))
         helper.send_active_email(email, active_code, mySubject, myMessage)
-        models.Enterprise.objects.create(EID=eid, email=email, password=password, name=name, robot_icon=ri, robot_name=rn, salt=salt)
+        models.Enterprise.objects.create(EID=info_dict['eid'], email=email, password=info_dict['password'], 
+                                         name=info_dict['name'], robot_icon=info_dict['ri'], 
+                                         robot_name=info_dict['rn'], salt=info_dict['salt'])
         return JsonResponse({
             'message': '注册成功，请前往邮箱点击链接'
             })
