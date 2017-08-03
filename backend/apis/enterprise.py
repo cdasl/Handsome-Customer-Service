@@ -13,13 +13,13 @@ def signup_init(info):
     """
         初始化注册信息
     """
-    m = hashlib.md5()
+    md5 = hashlib.md5()
     md5.update(str(int(time.time())).encode('utf8'))
     salt = ''.join(random.sample(string.ascii_letters + string.digits, 8))
     info['password'] += salt
-    n = hashlib.md5()
-    n.update(info['password'].encode('utf8'))
-    password = n.hexdigest()
+    md5 = hashlib.md5()
+    md5.update(info['password'].encode('utf8'))
+    password = md5.hexdigest()
     return {'ri': 'http://www.jb51.net/images/logo.gif',
             'rn': u'小机',
             'eid': md5.hexdigest(),
