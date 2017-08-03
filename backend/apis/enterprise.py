@@ -16,7 +16,7 @@ def enterprise_changepassword(info):
     email = info['email']
     old_password = info['old']
     new_password = info['new']
-    obj = models.Enterprise.objects.get(email=email)
+    obj = models.Enterprise.objects.get(email = email)
     salt = obj.salt
     m = hashlib.md5()
     m.update((old_password+salt).encode('utf8'))
@@ -29,12 +29,17 @@ def enterprise_changepassword(info):
     m = hashlib.md5()
     m.update((new_password + salt).encode('utf8'))
     password = m.hexdigest()
-    obj.salt = salt
-    obj.password = password
-    obj.save()
-    return JsonResponse({
-        'message': '修改成功'
-        })
+    try:
+        obj.salt = salt
+        obj.password = password
+        obj.save()
+        return JsonResponse({
+            'message': '修改成功'
+            })
+    except Exception:
+        return JsonResponse({
+            'message': '修改失败'
+            })
 
 @ensure_csrf_cookie
 def enterprise_signup(request):
@@ -44,7 +49,7 @@ def enterprise_signup(request):
     info = json.loads(request.body.decode('utf8'))
     email = info['email']
     #检查email是否已经存在
-    if len(models.Enterprise.objects.filter(email=email)) > 0:
+    if len(models.Enterprise.objects.filter(email = email)) > 0:
         return JsonResponse({
             'message': '该邮箱已注册'
             })
@@ -60,7 +65,7 @@ def enterprise_signup(request):
     m.update(info['password'].encode('utf8'))
     password = m.hexdigest()
     try:
-        models.Enterprise.objects.create(EID=eid, email=email, password=password, name=name, robot_icon=ri, robot_name=rn, salt=salt)
+        models.Enterprise.objects.create(EID = eid, email = email, password = password, name = name, robot_icon = ri, robot_name = rn, salt = salt)
         return JsonResponse({
             'message': '注册成功'
             })
@@ -78,7 +83,7 @@ def enterprise_login(request):
     email = info['email']
     password = info['password']
     try:
-        right = models.Enterprise.objects.get(email=email)
+        right = models.Enterprise.objects.get(email = email)
         m = hashlib.md5()
         password += right.salt
         m.update(password.encode('utf8'))
