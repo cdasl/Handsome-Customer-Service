@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-      <Button type="info" @click="trans" class='btn'>{{ type }}</Button>
+      <Button type="info" @click="trans" class="btn">{{ type }}</Button>
       <div v-show="signup">
         <enterprise-signup></enterprise-signup>
       </div>

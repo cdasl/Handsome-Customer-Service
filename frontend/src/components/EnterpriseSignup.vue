@@ -3,29 +3,29 @@
     <Alert v-show="warn">
         <template slot="desc">{{ warnMes }}</template>
     </Alert>
-    <h1 class="title">企业注册</h2>
-    <Form :model="formItem" class='form'>
+    <h2 class="title">企业注册</h2>
+    <Form :model="formItem" class="form">
       <Form-item>
-          <Input v-model="formItem.email" placeholder='邮箱' type='text'></Input>
+          <Input v-model="formItem.email" placeholder="邮箱" type="text"></Input>
       </Form-item>
       <Form-item>
-          <Input v-model="formItem.password" placeholder='输入密码，长度不小于8' type='password'></Input>
+          <Input v-model="formItem.password" placeholder="输入密码，长度不小于8" type="password"></Input>
       </Form-item>
       <Form-item>
-          <Input v-model="formItem.password2" placeholder='请输入密码再确认一遍' type='password'></Input>
+          <Input v-model="formItem.password2" placeholder="请输入密码再确认一遍" type="password"></Input>
       </Form-item>
-          <Input v-model="formItem.name" placeholder='企业名称'></Input>
-      <Form-item style='margin-top:30px;'>
-          <Button type='primary' @click="submit">注册</Button>
+          <Input v-model="formItem.name" placeholder="企业名称"></Input>
+      <Form-item style="margin-top:30px;">
+          <Button type="primary" @click="submit">注册</Button>
       </Form-item>
     </Form>
-    <Button type='primary' shape="circle" @click="fetchData">咨询客服</Button>
-    <div id='convo' data-from='Sonu Joshi' class='dialog' v-if="show">  
-      <ul class='chat-thread'>
+    <Button type="primary" shape="circle" @click="fetchData">咨询客服</Button>
+    <div id="convo" data-from="Sonu Joshi" class="dialog" v-if="show">  
+      <ul class="chat-thread">
         <li v-for="item in messages">{{ item['content'] }}</li>
       </ul>
-      <Input v-model="value" placeholder='请输入...' style='width: 300px'></Input>
-      <Button type='primary' size='small' @click="send">发送</Button>
+      <Input v-model="value" placeholder="请输入..." style="width: 300px"></Input>
+      <Button type="primary" size="small" @click="send">发送</Button>
     </div>
   </div>
     
@@ -162,7 +162,6 @@
     }
   }
 </script>
-
 <style scoped>
 .form {
    width: 200px;
