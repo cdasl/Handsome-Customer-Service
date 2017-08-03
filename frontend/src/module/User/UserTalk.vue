@@ -11,26 +11,26 @@
   </div>
 </template>
 <script>
-import Card from '../../components/Card'
-import List from '../../components/List'
-import TextInput from '../../components/TextInput'
-import Message from '../../components/Message'
-export default {
-  components: {Card, List, TextInput, Message},
-  mounted: function () {
-    let namespace = '/test'
-    /* global location io: true */
-    let socket = io.connect('http://' + document.domain + ':' + location.port + namespace)
-    console.log('yes')
-    socket.on('connect', function () {
-      console.log('connected')
-    })
-    socket.on('my response', function (msg) {
-      console.log(msg.data)
-    })
-    console.log('end')
+  import Card from '../../components/Card'
+  import List from '../../components/List'
+  import TextInput from '../../components/TextInput'
+  import Message from '../../components/Message'
+  export default {
+    components: {Card, List, TextInput, Message},
+    mounted: function () {
+      let namespace = '/test'
+      /* global location io: true */
+      let socket = io.connect('http://' + document.domain + ':' + location.port + namespace)
+      console.log('yes')
+      socket.on('connect', function () {
+        console.log('connected')
+      })
+      socket.on('my response', function (msg) {
+        console.log(msg.data)
+      })
+      console.log('end')
+    }
   }
-}
 </script>
 <style lang="less" scoped>
 #app {

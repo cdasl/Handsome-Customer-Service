@@ -31,7 +31,7 @@ urlpatterns = [
     url(r'^api/enter/signup/$', enterprise.enterprise_signup, name = 'enter_signup'),
     url(r'^api/enter/login/$', enterprise.enterprise_login, name = 'enter_login'),
     url(r'^api/active/$', enterprise.enterprise_active, name = 'active'),
-    url(r'^user$', socket.user, name = 'socket'),
-    url(r'^socketio*$', socket.user, name = 'socketio'),
+    url(r'^user/$', socket.user, name = 'socket'),
+    url(r'^socketio*', socket.user, name = 'socketio'),
 ]
 
