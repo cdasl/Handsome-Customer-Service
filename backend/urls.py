@@ -1,4 +1,4 @@
-"""handsome URL Configuration
+'''handsome URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/1.11/topics/http/urls/
@@ -12,7 +12,7 @@ Class-based views
 Including another URLconf
     1. Import the include() function: from django.conf.urls import url, include
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
-"""
+'''
 from django.conf.urls import url
 from django.contrib import admin
 from django.views.generic.base import TemplateView
@@ -21,15 +21,14 @@ from . import views, api
 from .apis import enterprise
 
 urlpatterns = [
-    url(r'^$', api.index, name="index"),
-	url(r'^index.html$', TemplateView.as_view(template_name="index.html")),
-    url(r'^login.html$', TemplateView.as_view(template_name="login.html")),
-    url(r'^enterprise/$', TemplateView.as_view(template_name="Enterprise.html")),
+    url(r'^$', api.index, name = 'index'),
+	url(r'^index.html$', TemplateView.as_view(template_name = 'index.html')),
+    url(r'^login.html$', TemplateView.as_view(template_name = 'login.html')),
+    url(r'^enterprise/$', TemplateView.as_view(template_name = 'Enterprise.html')),
 
     #apis
-    url(r'^api/test/$', api.test, name="test"),
-    url(r'^api/enter/signup/$', enterprise.enterprise_signup, name="enter_signup"),
-    url(r'^api/enter/login/$', enterprise.enterprise_login, name="enter_login"),
-    url(r'^api/talk/$', api.talk, name="talk"),
+    url(r'^api/$', api.api, name = 'api'),
+    url(r'^api/enter/signup/$', enterprise.enterprise_signup, name = 'enter_signup'),
+    url(r'^api/enter/login/$', enterprise.enterprise_login, name = 'enter_login'),
 ]
 
