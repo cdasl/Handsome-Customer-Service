@@ -9,6 +9,33 @@ from .. import models
 from chatterbot import ChatBot
 
 
+def enterprise_changepassword(info):
+    """
+        修改密码
+    """
+    email = info['email']
+    old_password = info['old']
+    new_password = info['new']
+    obj = models.Enterprise.objects.get(email=email)
+    salt = obj.salt
+    m = hashlib.md5()
+    m.update((old_password+salt).encode('utf8'))
+    password = m.hexdigest()
+    if password != obj.password:
+        return JsonResponse({
+            'message': '密码不正确'
+            })
+    salt = ''.join(random.sample(string.ascii_letters + string.digits, 8))
+    m = hashlib.md5()
+    m.update((new_password + salt).encode('utf8'))
+    password = m.hexdigest()
+    obj.salt = salt
+    obj.password = password
+    obj.save()
+    return JsonResponse({
+        'message': '修改成功'
+        })
+
 @ensure_csrf_cookie
 def enterprise_signup(request):
     """
