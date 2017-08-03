@@ -134,4 +134,32 @@ def enterprise_active(request):
     enterprise.update(state = 1)
     #成功
     return JsonResponse({'message': 'success'})
-    
+
+@ensure_csrf_cookie
+def enterpise_invite(request):
+    """
+        邀请客服
+    """
+    info = json.loads(request.body.decode('utf8'))
+    email = info['email']
+    if models.Customer.objects.filter(email = email) > 0:
+        return JsonResponse({'message': 'the mailbox has been registered '})
+    EID = request.session['eid']
+    md5 = hashlib.md5()
+    md5.update(str(int(time.time())).encode('utf8'))
+    CID = md5.hexdigest()
+    salt = ''.join(random.sample(string.ascii_letters + string.digits, 8))
+    password = '12345678'
+    icon = 'demo.png'
+    name = '张三'
+    last_login = date.today()
+    try:
+        models.Customer.objects.create(CID = CID, EID = EID, email = email, password = password, 
+                            icon = icon, name = name, last_login = last_login, salt = salt)
+        active_code = helper.get_active_code(email)
+        mySubject = messages.customer_active_subject
+        myMessage = messages.customer_active_message('http:/127.0.0.1:8000%s' % ('/customer_active/' + active_code))
+        helper.send_active_email(email, active_code, mySubject, myMessage)
+        return JsonResponse({'message': 'invite successfully'})
+    except Exception:
+        return JsonResponse({'message': 'invite failure'})
