@@ -14,7 +14,7 @@ def signup_init(info):
         初始化注册信息
     """
     m = hashlib.md5()
-    m.update(str(int(time.time())).encode('utf8'))
+    md5.update(str(int(time.time())).encode('utf8'))
     salt = ''.join(random.sample(string.ascii_letters + string.digits, 8))
     info['password'] += salt
     n = hashlib.md5()
@@ -22,7 +22,7 @@ def signup_init(info):
     password = n.hexdigest()
     return {'ri': 'http://www.jb51.net/images/logo.gif',
             'rn': u'小机',
-            'eid': m.hexdigest(),
+            'eid': md5.hexdigest(),
             'salt': salt,
             'email': info['email'],
             'name': info['name'],
@@ -38,15 +38,15 @@ def enterprise_changepassword(info):
     new_password = info['new']
     obj = models.Enterprise.objects.get(email = email)
     salt = obj.salt
-    m = hashlib.md5()
-    m.update((old_password+salt).encode('utf8'))
-    password = m.hexdigest()
+    md5 = hashlib.md5()
+    md5.update((old_password+salt).encode('utf8'))
+    password = md5.hexdigest()
     if password != obj.password:
         return JsonResponse({'message': 'wrong password'})
     salt = ''.join(random.sample(string.ascii_letters + string.digits, 8))
-    m = hashlib.md5()
-    m.update((new_password + salt).encode('utf8'))
-    password = m.hexdigest()
+    md5 = hashlib.md5()
+    md5.update((new_password + salt).encode('utf8'))
+    password = md5.hexdigest()
     try:
         obj.salt = salt
         obj.password = password
@@ -78,24 +78,15 @@ def enterprise_signup(request):
     except Exception:
         return JsonResponse({'message': 'fail to sign up'})
 
-@ensure_csrf_cookie
-def enterprise_signup(request):
-    """
-        企业注册
-    """
-    info = json.loads(request.body.decode('utf8'))
-    return enterprise_signup_helper(info)
-
-@ensure_csrf_cookie
 def enterprise_login_helper(info):
     try:
         email = info['email']
         password = info['password']
         right = models.Enterprise.objects.get(email = email)
-        m = hashlib.md5()
+        md5 = hashlib.md5()
         password += right.salt
-        m.update(password.encode('utf8'))
-        if m.hexdigest() == right.password:
+        md5.update(password.encode('utf8'))
+        if md5.hexdigest() == right.password:
             #成功
             return (1, right.EID)
         else:
@@ -118,6 +109,7 @@ def enterprise_login(request):
         request.session['eid'] = code[1]
         return JsonResponse({'message': 'wrong account'})
 
+@ensure_csrf_cookie
 def enterprise_active(request):
     """
         企业激活
