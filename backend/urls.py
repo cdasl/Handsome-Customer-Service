@@ -34,4 +34,3 @@ urlpatterns = [
     url(r'^user/$', socket.user, name = 'socket'),
     url(r'^socketio*', socket.user, name = 'socketio'),
 ]
-

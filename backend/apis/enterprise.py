@@ -71,8 +71,8 @@ def enterprise_signup(request):
         mySubject = messages.enterprise_active_subject()
         myMessage = messages.enterprise_active_message('http:/127.0.0.1:8000%s' % ('/enterprise_active/' + active_code))
         helper.send_active_email(email, mySubject, myMessage)
-        models.Enterprise.objects.create(EID = info_dict['eid'], email = email, password = info_dict['password'], 
-                                         name = info_dict['name'], robot_icon = info_dict['ri'], 
+        models.Enterprise.objects.create(EID = info_dict['eid'], email = email, password = info_dict['password'],
+                                         name = info_dict['name'], robot_icon = info_dict['ri'],
                                          robot_name = info_dict['rn'], salt = info_dict['salt'])
         return JsonResponse({'message': 'sign up successfully, please go to check your email'})
     except Exception:
@@ -154,7 +154,7 @@ def enterpise_invite(request):
     name = '张三'
     last_login = date.today()
     try:
-        models.Customer.objects.create(CID = CID, EID = EID, email = email, password = password, 
+        models.Customer.objects.create(CID = CID, EID = EID, email = email, password = password,
                             icon = icon, name = name, last_login = last_login, salt = salt)
         active_code = helper.get_active_code(email)
         mySubject = messages.customer_active_subject

@@ -12,7 +12,3 @@ def test(request):
 	data = {"name": "Jing"}
     #ensure_ascii=False用于处理中文
 	return JsonResponse(data)
-
-	
-
-
