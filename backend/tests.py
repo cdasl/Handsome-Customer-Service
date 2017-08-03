@@ -34,7 +34,7 @@ class EnterSignupTestCase(TestCase):
         info['email'] = '123456@qq.com'
         request._body = json.dumps(info).encode('utf8')
         self.assertEqual(jrToJson(enterprise.enterprise_signup(request))['message'],
-            'fail to sign up')
+            'sign up successfully, please go to check your email')
 
 class SendEmailTestCase(TestCase):
     """
