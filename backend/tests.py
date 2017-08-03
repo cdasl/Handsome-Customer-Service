@@ -35,4 +35,10 @@ class EnterSignupTestCase(TestCase):
         request._body = json.dumps(info).encode('utf8')
         self.assertEqual(jrToJson(enterprise.enterprise_signup(request))['message'],
             'fail to sign up')
-        
+class SendEmailTestCase(TestCase):
+    """
+        发送邮件Api
+    """
+    def test_sendEmail(self):
+        #该功能的测试与企业邀请客服的重合
+        pass
