@@ -68,9 +68,9 @@ def enterprise_signup(request):
     info_dict = signup_init(info)
     try:
         active_code = helper.get_active_code(email)
-        mySubject = messages.enterprise_active_subject
+        mySubject = messages.enterprise_active_subject()
         myMessage = messages.enterprise_active_message('http:/127.0.0.1:8000%s' % ('/enterprise_active/' + active_code))
-        helper.send_active_email(email, active_code, mySubject, myMessage)
+        helper.send_active_email(email, mySubject, myMessage)
         models.Enterprise.objects.create(EID = info_dict['eid'], email = email, password = info_dict['password'], 
                                          name = info_dict['name'], robot_icon = info_dict['ri'], 
                                          robot_name = info_dict['rn'], salt = info_dict['salt'])
