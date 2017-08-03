@@ -42,7 +42,7 @@ def enterprise_changepassword(info):
     md5.update((old_password+salt).encode('utf8'))
     password = md5.hexdigest()
     if password != obj.password:
-        return JsonResponse({'message': 'wrong password'})
+        return JsonResponse({'message': 'Wrong password'})
     salt = ''.join(random.sample(string.ascii_letters + string.digits, 8))
     md5 = hashlib.md5()
     md5.update((new_password + salt).encode('utf8'))
@@ -51,9 +51,9 @@ def enterprise_changepassword(info):
         obj.salt = salt
         obj.password = password
         obj.save()
-        return JsonResponse({'message': 'modified successfully'})
+        return JsonResponse({'message': 'Modified successfully'})
     except Exception:
-        return JsonResponse({'message': 'fail to modify'})
+        return JsonResponse({'message': 'Fail to modify'})
 
 @ensure_csrf_cookie
 def enterprise_signup(request):
@@ -64,7 +64,7 @@ def enterprise_signup(request):
     email = info['email']
     #检查email是否已经存在
     if len(models.Enterprise.objects.filter(email = email)) > 0:
-        return JsonResponse({'message': 'this email has been registered'})
+        return JsonResponse({'message': 'This email has been registered'})
     info_dict = signup_init(info)
     try:
         active_code = helper.get_active_code(email)
@@ -74,9 +74,9 @@ def enterprise_signup(request):
         models.Enterprise.objects.create(EID = info_dict['eid'], email = email, password = info_dict['password'], 
                                          name = info_dict['name'], robot_icon = info_dict['ri'], 
                                          robot_name = info_dict['rn'], salt = info_dict['salt'])
-        return JsonResponse({'message': 'sign up successfully, please go to check your email'})
+        return JsonResponse({'message': 'Sign up successfully, please go to check your email'})
     except Exception:
-        return JsonResponse({'message': 'fail to sign up'})
+        return JsonResponse({'message': 'Fail to sign up'})
 
 def enterprise_login_helper(info):
     try:
