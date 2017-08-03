@@ -24,7 +24,7 @@ urlpatterns = [
     url(r'^$', api.index, name='index'),
 	url(r'^index.html$', TemplateView.as_view(template_name = 'index.html')),
     url(r'^login.html$', TemplateView.as_view(template_name = 'login.html')),
-    url(r'^enterprise/$', TemplateView.as_view(template_name = 'Enterprise.html')),
+    url(r'^enterprise/$', TemplateView.as_view(template_name = 'enterprise.html')),
     url(r'^enterprise_active/([a-zA-Z]+)$', TemplateView.as_view(template_name = 'enterprise_active.html'), name = 'enterprise_active'),
 
     #apis
