@@ -8,15 +8,9 @@ import json, hashlib, time, random, string
 from .. import models
 from chatterbot import ChatBot
 
-
-@ensure_csrf_cookie
-def enterprise_signup(request):
-    """
-        企业注册
-    """
-    info = json.loads(request.body.decode('utf8'))
-    email = info['email']
+def enterprise_signup_helper(info):
     #检查email是否已经存在
+    email = info['email']
     if len(models.Enterprise.objects.filter(email=email)) > 0:
         return JsonResponse({
             'message': '该邮箱已注册'
@@ -41,6 +35,15 @@ def enterprise_signup(request):
         return JsonResponse({
             'message': '注册失败'
             })
+
+@ensure_csrf_cookie
+def enterprise_signup(request):
+    """
+        企业注册
+    """
+    info = json.loads(request.body.decode('utf8'))
+    return enterprise_signup_helper(info)
+    
 
 @ensure_csrf_cookie
 def enterprise_login(request):
