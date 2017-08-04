@@ -281,3 +281,24 @@ def inquire_customer_info(request):
         return JsonResponse({'message': info})
     except Exception:
         return JsonResponse({'message': 'fail to inquire infomation of ' + CID})
+
+@ensure_csrf_cookie
+def enterprise_online_customers(request):
+    """
+        获取在线客服人员列表
+    """
+    info =  {'eid': -1}
+    EID = 'eid'
+    if hasattr(request, 'body'):
+        info = json.loads(request.body.decode('utf8'))
+    if hasattr(request, 'session') and hasattr(request.session, 'eid'):
+        EID = request.session['eid']
+    elif info['eid'] != -1:
+        EID = info['eid']
+    else:
+        return JsonResponse({'message': 'error'})
+    online_list = []
+    customers = models.Customer.objects.filter(EID = EID, state = 2)
+    for customer in customers:
+        online_list.append({'cid': customer.CID, 'name': customer.name})
+    return JsonResponse({'message': online_list})
