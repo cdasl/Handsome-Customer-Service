@@ -235,24 +235,26 @@ def enterprise_logoff_customer(request):
             })
 
 @ensure_csrf_cookie
-def get_customer(request):
+def enterprise_get_customers(request):
     """
         获取客服人员列表
     """
-    EID = request.session['eid']
+    info =  {'eid': -1}
+    EID = 'eid'
+    if hasattr(request, 'body'):
+        info = json.loads(request.body.decode('utf8'))
+    if hasattr(request, 'session') and hasattr(request.session, 'eid'):
+        EID = request.session['eid']
+    elif info['eid'] != -1:
+        EID = info['eid']
+    else:
+        return JsonResponse({'message': 'error'})
     customer_list = []
     customers = models.Customer.objects.filter(EID = EID)
-    if len(customers) == 0:
-        return JsonResponse({'message': 'not exist customers'})
     for customer in customers:
-        customer_list.append({
-            'id': customer.CID,
-            'name': customer.name,
-            'email': customer.email,
-            'state': customer.state,
-            "service_number": customer.service_number
-            })
-    return JsonResponse(customer_list, safe = False)
+    customer_list.append({'cid': customer.CID, 'name': customer.name, 'email': customer.email,
+            'state': customer.state, 'service_number': customer.service_number, 'serviced_number': customer.serviced_number})
+    return JsonResponse({'message': customer_list})
     
 @ensure_csrf_cookie
 def inquire_customer_info(request):
@@ -278,6 +280,4 @@ def inquire_customer_info(request):
     try:
         return JsonResponse(info)
     except Exception:
-        return JsonResponse({
-            'message': 'fail to inquire infomation of ' + CID
-            })
+        return JsonResponse({'message': 'fail to inquire infomation of ' + CID})
