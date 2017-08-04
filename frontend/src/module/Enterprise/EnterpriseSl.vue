@@ -1,12 +1,12 @@
 <template>
   <div id="app">
-      <Button type="info" @click="trans" class="btn">{{ type }}</Button>
-      <div v-show="signup">
-        <enterprise-signup></enterprise-signup>
-      </div>
-      <div v-show="login">
-        <enterprise-login></enterprise-login>
-      </div>
+    <div class="menu">
+      <Menu mode="horizontal" theme="light" active-name="enterprise-signup" @on-select="select">
+        <Menu-item name="enterprise-signup">注册</Menu-item>
+        <Menu-item name="enterprise-login">登录</Menu-item>
+      </Menu>
+      <div :is="type" class="content"></div>
+    </div>
   </div>
 </template>
 <script>
@@ -19,37 +19,26 @@
     },
     data () {
       return {
-        signup: false,
-        login: true,
-        type: '注册'
+        type: 'enterprise-signup'
       }
     },
     methods: {
-      trans () {
-        if (this.signup === true) {
-          this.signup = false
-          this.login = true
-          this.type = '注册'
-        } else {
-          this.signup = true
-          this.login = false
-          this.type = '登录'
-        }
+      select (name) {
+        this.type = name
       }
     }
   }
 </script>
 <style scoped>
-.btn {
+.menu {
   display: block;
-  width: 200px;
-  height: 50px;
+  width: 20%;
   margin-left: auto;
   margin-right: auto;
-  margin-top: 50px;
-  background-color: #D8D8D8;
 }
-.btn:hover {
-  background-color: #2d8cf0;
+.content {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
 }
 </style>
