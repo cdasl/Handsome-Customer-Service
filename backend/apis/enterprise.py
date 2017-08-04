@@ -274,10 +274,91 @@ def inquire_customer_info(request):
         'icon': customer[0].icon,
         'state': customer[0].state,
         'service_number': customer[0].service_number,
-        'servised_number': customer[0].serviced_number,
+        'serviced_number': customer[0].serviced_number,
         'last_login': customer[0].last_login
         }
     try:
-        return JsonResponse(info)
+        return JsonResponse({'message': info})
     except Exception:
         return JsonResponse({'message': 'fail to inquire infomation of ' + CID})
+
+@ensure_csrf_cookie
+def enterprise_online_customers(request):
+    """
+        获取在线客服人员列表
+    """
+    info =  {'eid': -1}
+    EID = 'eid'
+    if hasattr(request, 'body'):
+        info = json.loads(request.body.decode('utf8'))
+    if hasattr(request, 'session') and hasattr(request.session, 'eid'):
+        EID = request.session['eid']
+    elif info['eid'] != -1:
+        EID = info['eid']
+    else:
+        return JsonResponse({'message': 'error'})
+    online_list = []
+    customers = models.Customer.objects.filter(EID = EID, state = 2)
+    for customer in customers:
+        online_list.append({'cid': customer.CID, 'name': customer.name})
+    return JsonResponse({'message': online_list})
+
+@ensure_csrf_cookie
+def enterprise_total_servicetime(request):
+    """
+        获取企业总的服务时间，返回的是分钟
+    """
+    info = {'eid': -1}
+    EID = 'eid'
+    if hasattr(request, 'body'):
+        info = json.loads(request.body.decode('utf8'))
+    if hasattr(request, 'session') and hasattr(request.session, 'eid'):
+           EID = request.session['eid']
+    elif info['eid'] != -1:
+        EID = info['eid']
+    else:
+        return JsonResponse({'message': 'error'})
+    total = 0
+    times = models.Dialog.objects.filter(EID = EID)
+    for t in times:
+        total += (t.end_time - t.start_time).seconds
+    total /= 60
+    return JsonResponse({'message': total})
+
+@ensure_csrf_cookie
+def enterprise_total_messages(request):
+    """
+        获取企业发送的总消息数
+    """
+    info = {'eid': -1}
+    EID = 'eid'
+    if hasattr(request, 'body'):
+        info = json.loads(request.body.decode('utf8'))
+    if hasattr(request, 'session') and hasattr(request.session, 'eid'):
+           EID = request.session['eid']
+    elif info['eid'] != -1:
+        EID = info['eid']
+    else:
+        return JsonResponse({'message': 'error'})
+    total = 0
+    dialogs = models.Dialog.objects.filter(EID = EID)
+    for dialog in dialogs:
+        total += len(models.Message.objects.filter(DID = dialog.DID))
+    return JsonResponse({'message': total})
+
+@ensure_csrf_cookie
+def enterprise_total_dialogs(request):
+    """
+        获取企业发送的总会话数
+    """
+    info = {'eid': -1}
+    EID = 'eid'
+    if hasattr(request, 'body'):
+        info = json.loads(request.body.decode('utf8'))
+    if hasattr(request, 'session') and hasattr(request.session, 'eid'):
+           EID = request.session['eid']
+    elif info['eid'] != -1:
+        EID = info['eid']
+    else:
+        return JsonResponse({'message': 'error'})
+    return JsonResponse({'message': len(models.Dialog.objects.filter(EID = EID))})

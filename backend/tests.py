@@ -3,6 +3,7 @@ from django.test.client import RequestFactory
 from .apis import enterprise, helper, messages
 from . import models
 import json, hashlib, time, random, string, datetime
+import django.utils.timezone as timezone
 # Create your tests here.
 
 def jrToJson(jr):
@@ -138,3 +139,127 @@ class GetCustomersTestCase(TestCase):
         result = jrToJson(enterprise.enterprise_get_customers(request))['message']
         self.assertEqual(result[0]['cid'], 'test_cid1')
         self.assertEqual(result[1]['cid'], 'test_cid2')
+
+class InquireCustomerInfoTestCase(TestCase):
+    """
+        测试根据客服ID查询某个客服信息
+    """
+    def setUp(self):
+        models.Customer.objects.create(CID = 'test_cid', EID = 'test_eid', email = '1234@qq.com', salt = 'testsalt',
+            password = 'test_password', icon = 'test_icon', name = 'test_name', state = 1,
+            service_number = 0, serviced_number = 100, last_login = datetime.datetime.now()
+            )
+
+    def test_inquire_info(self):
+        #测试客服不存在
+        info = {'cid': 'cid'}
+        rf = RequestFactory()
+        request = rf.post('api/enter/inquireinfo/')
+        request._body = json.dumps(info).encode('utf8')
+        self.assertEqual(jrToJson(enterprise.inquire_customer_info(request))['message'], 'not exist this customer')
+        #测试查询成功
+        info['cid'] = 'test_cid'
+        request._body = json.dumps(info).encode('utf8')
+        result = jrToJson(enterprise.inquire_customer_info(request))['message']
+        self.assertEqual(result['email'], '1234@qq.com')
+        self.assertEqual(result['EID'], 'test_eid')
+        self.assertEqual(result['icon'], 'test_icon')
+        self.assertEqual(result['name'], 'test_name')
+        self.assertEqual(result['state'], 1)
+        self.assertEqual(result['service_number'], 0)
+        self.assertEqual(result['serviced_number'], 100)
+
+class OnlineCustomersTestCase(TestCase):
+    """
+        测试获取在线客服列表Api
+    """
+    def setUp(self):
+        models.Customer.objects.create(CID = 'test_cid1', EID = 'test_eid', email = '1111@qq.com', salt = 'testsalt',
+            password = 'test_password1', icon = 'test_icon', name = 'test_name1', state = 3,
+            service_number = 0, serviced_number = 100, last_login = datetime.datetime.now())
+        models.Customer.objects.create(CID = 'test_cid2', EID = 'test_eid', email = '2222@qq.com', salt = 'testsalt',
+            password = 'test_password2', icon = 'test_icon', name = 'test_name2', state = 2,
+            service_number = 0, serviced_number = 10, last_login = datetime.datetime.now())
+        models.Customer.objects.create(CID = 'test_cid3', EID = 'test_eid', email = '3333@qq.com', salt = 'testsalt',
+            password = 'test_password3', icon = 'test_icon', name = 'test_name3', state = 2,
+            service_number = 0, serviced_number = 109, last_login = datetime.datetime.now())
+
+    def test_online_customers(self):
+        rf = RequestFactory()
+        info = {'eid': 'test_eid'}
+        request = rf.post('api/enter/test_online_customers/')
+        request._body = json.dumps(info).encode('utf8')
+        result = jrToJson(enterprise.enterprise_online_customers(request))['message']
+        self.assertEqual(len(result), 2)
+        self.assertEqual(result[0]['cid'], 'test_cid2')
+        self.assertEqual(result[0]['name'], 'test_name2')
+        self.assertEqual(result[1]['cid'], 'test_cid3')
+        self.assertEqual(result[1]['name'], 'test_name3')
+
+class GetTotalTimeTestCase(TestCase):
+    """
+        测试获取企业服务总时间Api
+    """
+    def setUp(self):
+        time1 = timezone.now()
+        time2 = time1 + datetime.timedelta(minutes = 5)
+        time3 = time1 + datetime.timedelta(minutes = 8)
+        time4 = time3 + datetime.timedelta(minutes = 3)
+        models.Dialog.objects.create(DID = 'test_did1', EID = 'test_eid1', start_time = time1, end_time = time2)
+        models.Dialog.objects.create(DID = 'test_did2', EID = 'test_eid2', start_time = time2, end_time = time3)
+        models.Dialog.objects.create(DID = 'test_did3', EID = 'test_eid1', start_time = time3, end_time = time4)
+
+    def test_total_time(self):
+        rf = RequestFactory()
+        info = {'eid': 'test_eid1'}
+        request = rf.post('api/enter/total_time/')
+        request._body = json.dumps(info).encode('utf8')
+        result = jrToJson(enterprise.enterprise_total_servicetime(request))['message']
+        self.assertEqual(result, 8.0)
+
+class GetTotalMessagesTestCase(TestCase):
+    """
+        测试获取企业总消息数Api
+    """
+    def setUp(self):
+        time1 = timezone.now()
+        models.Dialog.objects.create(DID = 'test_did1', EID = 'test_eid1', start_time = time1, end_time = time1)
+        models.Dialog.objects.create(DID = 'test_did2', EID = 'test_eid2', start_time = time1, end_time = time1)
+        models.Dialog.objects.create(DID = 'test_did3', EID = 'test_eid1', start_time = time1, end_time = time1)
+        models.Message.objects.create(MID = 'test_mid1', SID = 'test_sid1', RID = 'test_rid1', DID = 'test_did1',
+            content = 'test_content', date = time1)
+        models.Message.objects.create(MID = 'test_mid2', SID = 'test_sid2', RID = 'test_rid2', DID = 'test_did1',
+            content = 'test_content', date = time1)
+        models.Message.objects.create(MID = 'test_mid3', SID = 'test_sid3', RID = 'test_rid3', DID = 'test_did3',
+            content = 'test_content', date = time1)
+        models.Message.objects.create(MID = 'test_mid4', SID = 'test_sid4', RID = 'test_rid4', DID = 'test_did2',
+            content = 'test_content', date = time1)
+
+    def test_total_messages(self):
+        rf = RequestFactory()
+        info = {'eid': 'test_eid1'}
+        request = rf.post('api/enter/total_time/')
+        request._body = json.dumps(info).encode('utf8')
+        result = jrToJson(enterprise.enterprise_total_messages(request))['message']
+        self.assertEqual(result, 3)
+
+class GetCountOfDialogsTestCase(TestCase):
+    """
+        测试获取企业总会话数Api
+    """
+    def setUp(self):
+        time1 = timezone.now()
+        models.Dialog.objects.create(DID = 'test_did1', EID = 'test_eid1', start_time = time1, end_time = time1)
+        models.Dialog.objects.create(DID = 'test_did2', EID = 'test_eid2', start_time = time1, end_time = time1)
+        models.Dialog.objects.create(DID = 'test_did3', EID = 'test_eid1', start_time = time1, end_time = time1)
+        models.Dialog.objects.create(DID = 'test_did4', EID = 'test_eid3', start_time = time1, end_time = time1)
+        models.Dialog.objects.create(DID = 'test_did5', EID = 'test_eid2', start_time = time1, end_time = time1)
+        models.Dialog.objects.create(DID = 'test_did6', EID = 'test_eid1', start_time = time1, end_time = time1)
+
+    def test_count_of_dialogs(self):
+        rf = RequestFactory()
+        info = {'eid': 'test_eid1'}
+        request = rf.post('api/enter/total_dialogs/')
+        request._body = json.dumps(info).encode('utf8')
+        result = jrToJson(enterprise.enterprise_total_dialogs(request))['message']
+        self.assertEqual(result, 3)
