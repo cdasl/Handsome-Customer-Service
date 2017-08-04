@@ -1,6 +1,6 @@
 from django.test import TestCase
 from django.test.client import RequestFactory
-from .apis import enterprise
+from .apis import enterprise, helper, messages
 from . import models
 import json, hashlib, time, random, string, datetime
 # Create your tests here.
@@ -49,7 +49,7 @@ class EnterLoginTestCase(TestCase):
         md5.update(password.encode('utf-8'))
         password = md5.hexdigest()
         models.Enterprise.objects.create(EID = 'eid1', email = '654321@qq.com', password = password,
-             name = 'name1', robot_icon = 'ri1', robot_name = 'rn1', salt = 'salt1')
+             name = 'name1', robot_icon = 'ri1', robot_name = 'rn1', salt = 'testsalt')
         
     def test_login(self):
         #测试登录成功
@@ -59,9 +59,6 @@ class EnterLoginTestCase(TestCase):
             }
         rf = RequestFactory()
         request = rf.post('api/enter/login/')
-        request._body = json.dumps(info).encode('utf8')
-        self.assertEqual(jrToJson(enterprise.enterprise_login(request))['message'], 
-            'Login Success!')
         #测试密码错误
         info['password'] = '123456789'
         request._body = json.dumps(info).encode('utf8')
@@ -102,3 +99,23 @@ class LogoffCustomerTestCase(TestCase):
         request._body = json.dumps(info).encode('utf8')
         self.assertEqual(jrToJson(enterprise.enterprise_logoff_customer(request))['message'],
             'log off test_name successfully')
+
+class InviteCustomerTestCase(TestCase):
+    """
+        测试邀请客服Api
+    """
+    def setUp(self):
+        models.Customer.objects.create(CID = 'test_cid', EID = 'test_eid', email = '123456@qq.com', salt = 'testsalt',
+            password = 'test_password', icon = 'test_icon', name = 'test_name', state = 1,
+            service_number = 0, serviced_number = 100, last_login = datetime.datetime.now()
+            )
+
+    def test_invite(self):
+        #测试邮箱所属客服已注册过
+        info = {'email': '123456@qq.com'}
+        rf = RequestFactory()
+        request = rf.post('api/enter/invite/')
+        request._body = json.dumps(info).encode('utf8')
+        self.assertEqual(jrToJson(enterprise.enterprise_invite(request))['message'],
+            'the mailbox has been registered') 
+        

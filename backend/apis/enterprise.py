@@ -136,7 +136,7 @@ def enterprise_active(request):
     return JsonResponse({'message': 'success'})
 
 @ensure_csrf_cookie
-def enterpise_invite(request):
+def enterprise_invite(request):
     """
         邀请客服
     """
@@ -159,7 +159,7 @@ def enterpise_invite(request):
         active_code = helper.get_active_code(email)
         mySubject = messages.customer_active_subject
         myMessage = messages.customer_active_message('http:/127.0.0.1:8000%s' % ('/customer_active/' + active_code))
-        helper.send_active_email(email, active_code, mySubject, myMessage)
+        helper.send_active_email(email, mySubject, myMessage)
         return JsonResponse({'message': 'invite successfully'})
     except Exception:
         return JsonResponse({'message': 'invite failure'})
