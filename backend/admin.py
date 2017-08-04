@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Enterprise, Customer, User, Dialog, Message, Question 
+from .models import Enterprise, Customer, User, Dialog, Message, Question
 # Register your models here.
 
 admin.site.register(Enterprise)

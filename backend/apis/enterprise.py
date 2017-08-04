@@ -68,11 +68,11 @@ def enterprise_signup(request):
     info_dict = signup_init(info)
     try:
         active_code = helper.get_active_code(email)
-        mySubject = messages.enterprise_active_subject
+        mySubject = messages.enterprise_active_subject()
         myMessage = messages.enterprise_active_message('http:/127.0.0.1:8000%s' % ('/enterprise_active/' + active_code))
-        helper.send_active_email(email, active_code, mySubject, myMessage)
-        models.Enterprise.objects.create(EID = info_dict['eid'], email = email, password = info_dict['password'], 
-                                         name = info_dict['name'], robot_icon = info_dict['ri'], 
+        helper.send_active_email(email, mySubject, myMessage)
+        models.Enterprise.objects.create(EID = info_dict['eid'], email = email, password = info_dict['password'],
+                                         name = info_dict['name'], robot_icon = info_dict['ri'],
                                          robot_name = info_dict['rn'], salt = info_dict['salt'])
         return JsonResponse({'message': 'sign up successfully, please go to check your email'})
     except Exception:
@@ -107,7 +107,7 @@ def enterprise_login(request):
         return JsonResponse({'message': code[1]})
     else:
         request.session['eid'] = code[1]
-        return JsonResponse({'message': 'successful'})
+        return JsonResponse({'message': 'Login Success!'})
 
 @ensure_csrf_cookie
 def enterprise_active(request):
@@ -134,4 +134,52 @@ def enterprise_active(request):
     enterprise.update(state = 1)
     #成功
     return JsonResponse({'message': 'success'})
-    
+
+@ensure_csrf_cookie
+def enterpise_invite(request):
+    """
+        邀请客服
+    """
+    info = json.loads(request.body.decode('utf8'))
+    email = info['email']
+    if len(models.Customer.objects.filter(email = email)) > 0:
+        return JsonResponse({'message': 'the mailbox has been registered'})
+    EID = request.session['eid']
+    md5 = hashlib.md5()
+    md5.update(str(int(time.time())).encode('utf8'))
+    CID = md5.hexdigest()
+    salt = ''.join(random.sample(string.ascii_letters + string.digits, 8))
+    password = '12345678'
+    icon = 'demo.png'
+    name = '张三'
+    last_login = date.today()
+    try:
+        models.Customer.objects.create(CID = CID, EID = EID, email = email, password = password,
+                            icon = icon, name = name, last_login = last_login, salt = salt)
+        active_code = helper.get_active_code(email)
+        mySubject = messages.customer_active_subject
+        myMessage = messages.customer_active_message('http:/127.0.0.1:8000%s' % ('/customer_active/' + active_code))
+        helper.send_active_email(email, active_code, mySubject, myMessage)
+        return JsonResponse({'message': 'invite successfully'})
+    except Exception:
+        return JsonResponse({'message': 'invite failure'})
+
+@ensure_csrf_cookie
+def enterprise_logoff_customer(request):
+    """
+        注销客服
+    """
+    info = json.loads(request.body.decode('utf8'))
+    CID = info['cid']
+    #检查是否存在该客服
+    customer = models.Customer.objects.filter(CID = CID)
+    if len(customer) == 0:
+        return JsonResponse({'message': 'not exist this customer'})
+    customer_name = customer[0].name
+    try:
+        models.Customer.objects.filter(CID = CID).update(state = -1)
+        return JsonResponse({'message': 'log off ' + customer_name + ' successfully'})
+    except Exception:
+        return JsonResponse({
+            'message': 'fail to log off ' + customer_name
+            })

@@ -2,7 +2,7 @@ from django.test import TestCase
 from django.test.client import RequestFactory
 from .apis import enterprise
 from . import models
-import json, hashlib, time, random, string 
+import json, hashlib, time, random, string, datetime
 # Create your tests here.
 
 def jrToJson(jr):
@@ -30,13 +30,12 @@ class EnterSignupTestCase(TestCase):
         rf = RequestFactory()
         request = rf.post('api/enter/signup/')
         request._body = json.dumps(info).encode('utf8')
-        self.assertEqual(jrToJson(enterprise.enterprise_signup(request))['message'], 
+        self.assertEqual(jrToJson(enterprise.enterprise_signup(request))['message'],
             'this email has been registered')
-        #测试注册失败
         info['email'] = '123456@qq.com'
         request._body = json.dumps(info).encode('utf8')
-        self.assertEqual(jrToJson(enterprise.enterprise_signup(request))['message'], 
-            'fail to sign up')
+        self.assertEqual(jrToJson(enterprise.enterprise_signup(request))['message'],
+            'sign up successfully, please go to check your email')
 
 class EnterLoginTestCase(TestCase):
     """
@@ -62,7 +61,7 @@ class EnterLoginTestCase(TestCase):
         request = rf.post('api/enter/login/')
         request._body = json.dumps(info).encode('utf8')
         self.assertEqual(jrToJson(enterprise.enterprise_login(request))['message'], 
-            'successful')
+            'Login Success!')
         #测试密码错误
         info['password'] = '123456789'
         request._body = json.dumps(info).encode('utf8')
@@ -73,3 +72,33 @@ class EnterLoginTestCase(TestCase):
         request._body = json.dumps(info).encode('utf8')
         self.assertEqual(jrToJson(enterprise.enterprise_login(request))['message'], 
             'wrong account')
+
+class SendEmailTestCase(TestCase):
+    """
+        发送邮件Api
+    """
+    def test_sendEmail(self):
+        #该功能的测试与企业邀请客服的重合
+        pass
+
+class LogoffCustomerTestCase(TestCase):
+    """
+        测试注销客服Api
+    """
+    def setUp(self):
+        models.Customer.objects.create(CID = 'test_cid', EID = 'test_eid', email = 'test_email', salt = 'testsalt',
+            password = 'test_password', icon = 'test_icon', name = 'test_name', state = 1,
+            service_number = 0, serviced_number = 100, last_login = datetime.datetime.now()
+            )
+
+    def test_logoff(self):
+        info = {'cid': 'cid'}
+        rf = RequestFactory()
+        request = rf.post('api/enter/logoff/')
+        request._body = json.dumps(info).encode('utf8')
+        self.assertEqual(jrToJson(enterprise.enterprise_logoff_customer(request))['message'],
+            'not exist this customer')
+        info['cid'] = 'test_cid'
+        request._body = json.dumps(info).encode('utf8')
+        self.assertEqual(jrToJson(enterprise.enterprise_logoff_customer(request))['message'],
+            'log off test_name successfully')
