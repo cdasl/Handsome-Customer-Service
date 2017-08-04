@@ -252,6 +252,32 @@ def enterprise_get_customers(request):
     customer_list = []
     customers = models.Customer.objects.filter(EID = EID)
     for customer in customers:
-        customer_list.append({'cid': customer.CID, 'name': customer.name, 'email': customer.email,
+    customer_list.append({'cid': customer.CID, 'name': customer.name, 'email': customer.email,
             'state': customer.state, 'service_number': customer.service_number, 'serviced_number': customer.serviced_number})
     return JsonResponse({'message': customer_list})
+    
+@ensure_csrf_cookie
+def inquire_customer_info(request):
+    """
+        根据客服ID查询客服信息
+    """
+    info = json.loads(request.body.decode('utf8'))
+    CID = info['cid']
+    #检查是否存在该客服
+    customer = models.Customer.objects.filter(CID = CID)
+    if len(customer) == 0:
+        return JsonResponse({'message': 'not exist this customer'})
+    info = {
+        'name': customer[0].name,
+        'EID': customer[0].EID,
+        'email': customer[0].email,
+        'icon': customer[0].icon,
+        'state': customer[0].state,
+        'service_number': customer[0].service_number,
+        'servised_number': customer[0].serviced_number,
+        'last_login': customer[0].last_login
+        }
+    try:
+        return JsonResponse(info)
+    except Exception:
+        return JsonResponse({'message': 'fail to inquire infomation of ' + CID})
