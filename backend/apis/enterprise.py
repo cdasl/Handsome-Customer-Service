@@ -183,3 +183,23 @@ def enterprise_logoff_customer(request):
         return JsonResponse({
             'message': 'fail to log off ' + customer_name
             })
+
+@ensure_csrf_cookie
+def get_customer(request):
+    """
+        获取客服人员列表
+    """
+    EID = request.session['eid']
+    customer_list = []
+    customers = models.Customer.objects.filter(EID = EID)
+    if len(customers) == 0:
+        return JsonResponse({'message': 'not exist customers'})
+    for customer in customers:
+        customer_list.append({
+            'id': customer.CID,
+            'name': customer.name,
+            'email': customer.email,
+            'state': customer.state,
+            "service_number": customer.service_number
+            })
+    return JsonResponse(customer_list, safe = False)
