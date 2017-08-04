@@ -178,6 +178,7 @@ def reset_password_request(request):
         重置密码请求
     """
     info = json.loads(request.body.decode('utf8'))
+    email = info['email']
     valid_enterprise = models.Enterprise.objects.filter(email = email)
     vaild_customer = models.Customer.objects.filter(email = email)
     if len(valid_enterprise) == 0 and len(vaild_customer) == 0:
@@ -202,7 +203,7 @@ def reset_password(request):
     '''
     info = json.loads(request.body.decode('utf8'))
     helper.active_code_check(info['active_code'])
-    decrypt_str = helper.decrypt(9, active_code)
+    decrypt_str = helper.decrypt(9, info['active_code'])
     decrypt_data = decrypt_str.split('|')
     email = decrypt_data[0]
     password_salt = helper.password_add_salt(info['password'])
