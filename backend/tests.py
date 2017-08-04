@@ -138,3 +138,32 @@ class GetCustomersTestCase(TestCase):
         result = jrToJson(enterprise.enterprise_get_customers(request))['message']
         self.assertEqual(result[0]['cid'], 'test_cid1')
         self.assertEqual(result[1]['cid'], 'test_cid2')
+
+class InquireCustomerInfoTestCase(TestCase):
+    """
+        测试根据客服ID查询某个客服信息
+    """
+    def setUp(self):
+        models.Customer.objects.create(CID = 'test_cid', EID = 'test_eid', email = '1234@qq.com', salt = 'testsalt',
+            password = 'test_password', icon = 'test_icon', name = 'test_name', state = 1,
+            service_number = 0, serviced_number = 100, last_login = datetime.datetime.now()
+            )
+
+    def test_inquire_info(self):
+        #测试客服不存在
+        info = {'cid': 'cid'}
+        rf = RequestFactory()
+        request = rf.post('api/enter/inquireinfo/')
+        request._body = json.dumps(info).encode('utf8')
+        self.assertEqual(jrToJson(enterprise.inquire_customer_info(request))['message'], 'not exist this customer')
+        #测试查询成功
+        info['cid'] = 'test_cid'
+        request._body = json.dumps(info).encode('utf8')
+        result = jrToJson(enterprise.inquire_customer_info(request))['message']
+        self.assertEqual(result['email'], '1234@qq.com')
+        self.assertEqual(result['EID'], 'test_eid')
+        self.assertEqual(result['icon'], 'test_icon')
+        self.assertEqual(result['name'], 'test_name')
+        self.assertEqual(result['state'], 1)
+        self.assertEqual(result['service_number'], 0)
+        self.assertEqual(result['serviced_number'], 100)
