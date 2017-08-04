@@ -274,10 +274,10 @@ def inquire_customer_info(request):
         'icon': customer[0].icon,
         'state': customer[0].state,
         'service_number': customer[0].service_number,
-        'servised_number': customer[0].serviced_number,
+        'serviced_number': customer[0].serviced_number,
         'last_login': customer[0].last_login
         }
     try:
-        return JsonResponse(info)
+        return JsonResponse({'message': info})
     except Exception:
         return JsonResponse({'message': 'fail to inquire infomation of ' + CID})
