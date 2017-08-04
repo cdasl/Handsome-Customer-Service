@@ -2,7 +2,7 @@ from django.test import TestCase
 from django.test.client import RequestFactory
 from .apis import enterprise
 from . import models
-import json, datetime
+import json, hashlib, time, random, string, datetime
 # Create your tests here.
 
 def jrToJson(jr):
@@ -21,6 +21,7 @@ class EnterSignupTestCase(TestCase):
              name = 'name1', robot_icon = 'ri1', robot_name = 'rn1', salt = 'salt1')
         
     def test_signup(self):
+        #测试邮箱已注册
         info  =  {    
             'email': '654321@qq.com',
             'name': 'test_name',
@@ -35,6 +36,42 @@ class EnterSignupTestCase(TestCase):
         request._body = json.dumps(info).encode('utf8')
         self.assertEqual(jrToJson(enterprise.enterprise_signup(request))['message'],
             'sign up successfully, please go to check your email')
+
+class EnterLoginTestCase(TestCase):
+    """
+        测试企业登录Api：enterprise_login
+    """
+    def setUp(self):
+        md5 = hashlib.md5()
+        salt = 'testsalt'
+        password = 'password1'
+        password += salt
+        md5.update(password.encode('utf-8'))
+        password = md5.hexdigest()
+        models.Enterprise.objects.create(EID = 'eid1', email = '654321@qq.com', password = password,
+             name = 'name1', robot_icon = 'ri1', robot_name = 'rn1', salt = 'salt1')
+        
+    def test_login(self):
+        #测试登录成功
+        info  =  {    
+            'email': '654321@qq.com',
+            'password': 'password1'
+            }
+        rf = RequestFactory()
+        request = rf.post('api/enter/login/')
+        request._body = json.dumps(info).encode('utf8')
+        self.assertEqual(jrToJson(enterprise.enterprise_login(request))['message'], 
+            'Login Success!')
+        #测试密码错误
+        info['password'] = '123456789'
+        request._body = json.dumps(info).encode('utf8')
+        self.assertEqual(jrToJson(enterprise.enterprise_login(request))['message'], 
+            'wrong password')
+        #测试登录失败
+        info['email'] = '123456@qq.com'
+        request._body = json.dumps(info).encode('utf8')
+        self.assertEqual(jrToJson(enterprise.enterprise_login(request))['message'], 
+            'wrong account')
 
 class SendEmailTestCase(TestCase):
     """
