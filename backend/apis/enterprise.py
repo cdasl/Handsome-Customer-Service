@@ -302,3 +302,25 @@ def enterprise_online_customers(request):
     for customer in customers:
         online_list.append({'cid': customer.CID, 'name': customer.name})
     return JsonResponse({'message': online_list})
+
+@ensure_csrf_cookie
+def enterprise_total_servicetime(request):
+    """
+        获取企业总的服务时间，返回的是分钟
+    """
+    info = {'eid': -1}
+    EID = 'eid'
+    if hasattr(request, 'body'):
+        info = json.loads(request.body.decode('utf8'))
+    if hasattr(request, 'session') and hasattr(request.session, 'eid'):
+           EID = request.session['eid']
+    elif info['eid'] != -1:
+        EID = info['eid']
+    else:
+        return JsonResponse({'message': 'error'})
+    total = 0
+    times = models.Dialog.objects.filter(EID = EID)
+    for t in times:
+        total += (t.end_time - t.start_time).seconds
+    total /= 60
+    return JsonResponse({'message': total})
