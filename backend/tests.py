@@ -107,8 +107,7 @@ class InviteCustomerTestCase(TestCase):
     def setUp(self):
         models.Customer.objects.create(CID = 'test_cid', EID = 'test_eid', email = '123456@qq.com', salt = 'testsalt',
             password = 'test_password', icon = 'test_icon', name = 'test_name', state = 1,
-            service_number = 0, serviced_number = 100, last_login = datetime.datetime.now()
-            )
+            service_number = 0, serviced_number = 100, last_login = datetime.datetime.now())
 
     def test_invite(self):
         #测试邮箱所属客服已注册过
@@ -119,3 +118,23 @@ class InviteCustomerTestCase(TestCase):
         self.assertEqual(jrToJson(enterprise.enterprise_invite(request))['message'],
             'the mailbox has been registered') 
         
+class GetCustomersTestCase(TestCase):
+    """
+        测试获取客服列表Api
+    """
+    def setUp(self):
+        models.Customer.objects.create(CID = 'test_cid1', EID = 'test_eid', email = '1111@qq.com', salt = 'testsalt',
+            password = 'test_password1', icon = 'test_icon', name = 'test_name1', state = 1,
+            service_number = 0, serviced_number = 100, last_login = datetime.datetime.now())
+        models.Customer.objects.create(CID = 'test_cid2', EID = 'test_eid', email = '2222@qq.com', salt = 'testsalt',
+            password = 'test_password2', icon = 'test_icon', name = 'test_name2', state = 1,
+            service_number = 0, serviced_number = 10, last_login = datetime.datetime.now())
+
+    def test_get_customers(self):
+        rf = RequestFactory()
+        info = {'eid': 'test_eid'}
+        request = rf.post('api/enter/test_get_customers')
+        request._body = json.dumps(info).encode('utf8')
+        result = jrToJson(enterprise.enterprise_get_customers(request))['message']
+        self.assertEqual(result[0]['cid'], 'test_cid1')
+        self.assertEqual(result[1]['cid'], 'test_cid2')
