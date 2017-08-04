@@ -34,4 +34,5 @@ urlpatterns = [
     url(r'^api/active/$', enterprise.enterprise_active, name = 'active'),
     url(r'^user/$', socket.user, name = 'socket'),
     url(r'^socketio*', socket.user, name = 'socketio'),
+    url(r'^api/get_customer/$', enterprise.get_customer, name = 'get_customer'),
 ]
