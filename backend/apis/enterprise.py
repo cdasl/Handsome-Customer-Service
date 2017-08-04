@@ -79,7 +79,6 @@ def enterprise_signup(request):
     except Exception:
         return JsonResponse({'message': 'Fail to sign up'})
 
-
 def enterprise_login_helper(info):
     try:
         email = info['email']
@@ -98,7 +97,6 @@ def enterprise_login_helper(info):
         #账号错误
         return (-1, 'wrong account')
 
-
 @ensure_csrf_cookie
 def enterprise_login(request):
     """
@@ -112,7 +110,6 @@ def enterprise_login(request):
         request.session['eid'] = code[1]
         request.session['email'] = info['email']
         return JsonResponse({'message': 'Login Success!'})
-
 
 @ensure_csrf_cookie
 def enterprise_active(request):
@@ -140,16 +137,15 @@ def enterprise_active(request):
     #成功
     return JsonResponse({'message': 'success'})
 
-
 @ensure_csrf_cookie
-def enterpise_invite(request):
+def enterprise_invite(request):
     """
         邀请客服
     """
     info = json.loads(request.body.decode('utf8'))
     email = info['email']
-    if models.Customer.objects.filter(email = email) > 0:
-        return JsonResponse({'message': 'the mailbox has been registered '})
+    if len(models.Customer.objects.filter(email = email)) > 0:
+        return JsonResponse({'message': 'the mailbox has been registered'})
     EID = request.session['eid']
     md5 = hashlib.md5()
     md5.update(str(int(time.time())).encode('utf8'))
@@ -170,7 +166,6 @@ def enterpise_invite(request):
         return JsonResponse({'message': 'invite successfully'})
     except Exception:
         return JsonResponse({'message': 'invite failure'})
-
 
 @ensure_csrf_cookie
 def reset_password_request(request):
@@ -194,7 +189,6 @@ def reset_password_request(request):
         return JsonResponse({'message': 'customer_reset'})
     except Exception:
         return JsonResponse({'message': 'error'})
-
 
 @ensure_csrf_cookie
 def reset_password(request):
@@ -220,8 +214,22 @@ def reset_password(request):
     except Exception:
         return JsonResponse({'message': 'error'})
 
-    
-
-
-
-
+@ensure_csrf_cookie
+def enterprise_logoff_customer(request):
+    """
+        注销客服
+    """
+    info = json.loads(request.body.decode('utf8'))
+    CID = info['cid']
+    #检查是否存在该客服
+    customer = models.Customer.objects.filter(CID = CID)
+    if len(customer) == 0:
+        return JsonResponse({'message': 'not exist this customer'})
+    customer_name = customer[0].name
+    try:
+        models.Customer.objects.filter(CID = CID).update(state = -1)
+        return JsonResponse({'message': 'log off ' + customer_name + ' successfully'})
+    except Exception:
+        return JsonResponse({
+            'message': 'fail to log off ' + customer_name
+            })

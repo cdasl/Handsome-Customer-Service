@@ -14,27 +14,27 @@ def encrypt(key, string):
         字符串加密
     """
     bytearr = bytearray(str(string).encode('utf-8'))
-    #求出 b 的字节数   
+    #求出 b 的字节数
     length = len(bytearr)
-    c = bytearray(length * 2)   
-    j = 0   
-    for i in range(0, length):   
+    c = bytearray(length * 2)
+    j = 0
+    for i in range(0, length):
         b1 = bytearr[i]
         b2 = b1 ^ key
-        c1 = b2 % 16   
+        c1 = b2 % 16
         c2 = b2 // 16
-        c1 = c1 + 65   
+        c1 = c1 + 65
         c2 = c2 + 65
-        c[j] = c1 
+        c[j] = c1
         c[j + 1] = c2
         j = j + 2
     return c.decode('utf-8').lower()
- 
+
 def decrypt(key, string):
     """
         字符串解密
     """
-    c = bytearray(str(string).upper().encode('utf-8'))   
+    c = bytearray(str(string).upper().encode('utf-8'))
     length = len(c)
     if length % 2 != 0:
         return ""
@@ -63,7 +63,7 @@ def get_active_code(email):
     encry_str='%s|%s' % (email, time.strftime('%Y-%m-%d', time.localtime(time.time())))
     active_code = encrypt(key, encry_str)
     return active_code
- 
+
 def send_active_email(email, mySubject, myMessage):
     """
         发送邮件
