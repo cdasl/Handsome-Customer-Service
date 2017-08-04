@@ -216,3 +216,29 @@ class GetTotalTimeTestCase(TestCase):
         request._body = json.dumps(info).encode('utf8')
         result = jrToJson(enterprise.enterprise_total_servicetime(request))['message']
         self.assertEqual(result, 8.0)
+
+class GetTotalMessagesTestCase(TestCase):
+    """
+        测试获取企业总消息数Api
+    """
+    def setUp(self):
+        time1 = timezone.now()
+        models.Dialog.objects.create(DID = 'test_did1', EID = 'test_eid1', start_time = time1, end_time = time1)
+        models.Dialog.objects.create(DID = 'test_did2', EID = 'test_eid2', start_time = time1, end_time = time1)
+        models.Dialog.objects.create(DID = 'test_did3', EID = 'test_eid1', start_time = time1, end_time = time1)
+        models.Message.objects.create(MID = 'test_mid1', SID = 'test_sid1', RID = 'test_rid1', DID = 'test_did1',
+            content = 'test_content', date = time1)
+        models.Message.objects.create(MID = 'test_mid2', SID = 'test_sid2', RID = 'test_rid2', DID = 'test_did1',
+            content = 'test_content', date = time1)
+        models.Message.objects.create(MID = 'test_mid3', SID = 'test_sid3', RID = 'test_rid3', DID = 'test_did3',
+            content = 'test_content', date = time1)
+        models.Message.objects.create(MID = 'test_mid4', SID = 'test_sid4', RID = 'test_rid4', DID = 'test_did2',
+            content = 'test_content', date = time1)
+
+    def test_total_messages(self):
+        rf = RequestFactory()
+        info = {'eid': 'test_eid1'}
+        request = rf.post('api/enter/total_time/')
+        request._body = json.dumps(info).encode('utf8')
+        result = jrToJson(enterprise.enterprise_total_messages(request))['message']
+        self.assertEqual(result, 3)
