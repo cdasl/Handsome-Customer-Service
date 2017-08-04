@@ -3,6 +3,7 @@ from django.test.client import RequestFactory
 from .apis import enterprise, helper, messages
 from . import models
 import json, hashlib, time, random, string, datetime
+import django.utils.timezone as timezone
 # Create your tests here.
 
 def jrToJson(jr):
@@ -186,7 +187,7 @@ class OnlineCustomersTestCase(TestCase):
     def test_online_customers(self):
         rf = RequestFactory()
         info = {'eid': 'test_eid'}
-        request = rf.post('api/enter/test_online_customers')
+        request = rf.post('api/enter/test_online_customers/')
         request._body = json.dumps(info).encode('utf8')
         result = jrToJson(enterprise.enterprise_online_customers(request))['message']
         self.assertEqual(len(result), 2)
@@ -194,3 +195,24 @@ class OnlineCustomersTestCase(TestCase):
         self.assertEqual(result[0]['name'], 'test_name2')
         self.assertEqual(result[1]['cid'], 'test_cid3')
         self.assertEqual(result[1]['name'], 'test_name3')
+
+class GetTotalTimeTestCase(TestCase):
+    """
+        测试获取企业服务总时间Api
+    """
+    def setUp(self):
+        time1 = timezone.now()
+        time2 = time1 + datetime.timedelta(minutes = 5)
+        time3 = time1 + datetime.timedelta(minutes = 8)
+        time4 = time3 + datetime.timedelta(minutes = 3)
+        models.Dialog.objects.create(DID = 'test_did1', EID = 'test_eid1', start_time = time1, end_time = time2)
+        models.Dialog.objects.create(DID = 'test_did2', EID = 'test_eid2', start_time = time2, end_time = time3)
+        models.Dialog.objects.create(DID = 'test_did3', EID = 'test_eid1', start_time = time3, end_time = time4)
+
+    def test_total_time(self):
+        rf = RequestFactory()
+        info = {'eid': 'test_eid1'}
+        request = rf.post('api/enter/total_time/')
+        request._body = json.dumps(info).encode('utf8')
+        result = jrToJson(enterprise.enterprise_total_servicetime(request))['message']
+        self.assertEqual(result, 8.0)
