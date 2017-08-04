@@ -345,3 +345,20 @@ def enterprise_total_messages(request):
     for dialog in dialogs:
         total += len(models.Message.objects.filter(DID = dialog.DID))
     return JsonResponse({'message': total})
+
+@ensure_csrf_cookie
+def enterprise_total_dialogs(request):
+    """
+        获取企业发送的总会话数
+    """
+    info = {'eid': -1}
+    EID = 'eid'
+    if hasattr(request, 'body'):
+        info = json.loads(request.body.decode('utf8'))
+    if hasattr(request, 'session') and hasattr(request.session, 'eid'):
+           EID = request.session['eid']
+    elif info['eid'] != -1:
+        EID = info['eid']
+    else:
+        return JsonResponse({'message': 'error'})
+    return JsonResponse({'message': len(models.Dialog.objects.filter(EID = EID))})
