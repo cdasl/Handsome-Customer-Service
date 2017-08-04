@@ -193,10 +193,14 @@ def reset_password_request(request):
 @ensure_csrf_cookie
 def reset_password(request):
     '''
-        重置密码，前端发送激活码，新密码，激活者
+        重置密码，前端发送激活码，新密码
     '''
     info = json.loads(request.body.decode('utf8'))
-    helper.active_code_check(info['active_code'])
+    tip = helper.active_code_check(info['active_code'])
+    if tip == 'invalid':
+        return JsonResponse({'message': 'invalid'})
+    if tip == 'expired':
+        return JsonResponse({'message': 'expired'})
     decrypt_str = helper.decrypt(9, info['active_code'])
     decrypt_data = decrypt_str.split('|')
     email = decrypt_data[0]
@@ -204,8 +208,8 @@ def reset_password(request):
     password = password_salt['password']
     salt = password_salt['salt']
     try:
-        if info['who'] == 'enterprise_reset':
-            enterprise = models.Enterprise.objects.filter(email = email)
+        enterprise = models.Enterprise.objects.filter(email = email)
+        if len(enterprise) > 0:
             enterprise.update(password = password, salt = salt)
         else:
             customer = models.Customer.objects.filter(email = email)
