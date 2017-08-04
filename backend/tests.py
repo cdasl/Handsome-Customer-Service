@@ -264,6 +264,31 @@ class GetCountOfDialogsTestCase(TestCase):
         result = jrToJson(enterprise.enterprise_total_dialogs(request))['message']
         self.assertEqual(result, 3)
 
+class GetChattedTestCase(TestCase):
+    """
+        测试获取与某位客服聊过天的所有用户Api
+    """
+    def setUp(self):
+        time1 = timezone.now()
+        models.Message.objects.create(MID = 'test_mid1', SID = 'test_sid1', RID = 'test_rid1', DID = 'test_did1',
+            content = 'test_content', date = time1)
+        models.Message.objects.create(MID = 'test_mid2', SID = 'test_sid2', RID = 'test_sid1', DID = 'test_did1',
+            content = 'test_content', date = time1)
+        models.Message.objects.create(MID = 'test_mid3', SID = 'test_sid1', RID = 'test_rid3', DID = 'test_did3',
+            content = 'test_content', date = time1)
+        models.Message.objects.create(MID = 'test_mid4', SID = 'test_sid4', RID = 'test_rid4', DID = 'test_did2',
+            content = 'test_content', date = time1)
+        models.Message.objects.create(MID = 'test_mid5', SID = 'test_sid1', RID = 'test_rid1', DID = 'test_did1',
+            content = 'test_content', date = time1)
+
+    def test_get_chatted(self):
+        rf = RequestFactory()
+        info = {'cid': 'test_sid1'}
+        request = rf.post('api/cust/get_chatted/')
+        request._body = json.dumps(info).encode('utf8')
+        result = jrToJson(customer.customer_chatted(request))['message']
+        self.assertEqual(set(result), set(['test_rid1', 'test_rid3', 'test_sid2']))
+
 class ResetPasswordTestCase(TestCase):
     '''
         测试重置密码API
@@ -333,28 +358,3 @@ class ResetPasswordTestCase(TestCase):
         request._body = json.dumps(info).encode('utf8')
         result = jrToJson(enterprise.reset_password(request))['message']
         self.assertEqual(result, 'expired')
-
-class GetChattedTestCase(TestCase):
-    """
-        测试获取与某位客服聊过天的所有用户Api
-    """
-    def setUp(self):
-        time1 = timezone.now()
-        models.Message.objects.create(MID = 'test_mid1', SID = 'test_sid1', RID = 'test_rid1', DID = 'test_did1',
-            content = 'test_content', date = time1)
-        models.Message.objects.create(MID = 'test_mid2', SID = 'test_sid2', RID = 'test_sid1', DID = 'test_did1',
-            content = 'test_content', date = time1)
-        models.Message.objects.create(MID = 'test_mid3', SID = 'test_sid1', RID = 'test_rid3', DID = 'test_did3',
-            content = 'test_content', date = time1)
-        models.Message.objects.create(MID = 'test_mid4', SID = 'test_sid4', RID = 'test_rid4', DID = 'test_did2',
-            content = 'test_content', date = time1)
-        models.Message.objects.create(MID = 'test_mid5', SID = 'test_sid1', RID = 'test_rid1', DID = 'test_did1',
-            content = 'test_content', date = time1)
-
-    def test_get_chatted(self):
-        rf = RequestFactory()
-        info = {'cid': 'test_sid1'}
-        request = rf.post('api/cust/get_chatted/')
-        request._body = json.dumps(info).encode('utf8')
-        result = jrToJson(customer.customer_chatted(request))['message']
-        self.assertEqual(set(result), set(['test_rid1', 'test_rid3', 'test_sid2']))
