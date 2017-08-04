@@ -242,3 +242,24 @@ class GetTotalMessagesTestCase(TestCase):
         request._body = json.dumps(info).encode('utf8')
         result = jrToJson(enterprise.enterprise_total_messages(request))['message']
         self.assertEqual(result, 3)
+
+class GetCountOfDialogsTestCase(TestCase):
+    """
+        测试获取企业总会话数Api
+    """
+    def setUp(self):
+        time1 = timezone.now()
+        models.Dialog.objects.create(DID = 'test_did1', EID = 'test_eid1', start_time = time1, end_time = time1)
+        models.Dialog.objects.create(DID = 'test_did2', EID = 'test_eid2', start_time = time1, end_time = time1)
+        models.Dialog.objects.create(DID = 'test_did3', EID = 'test_eid1', start_time = time1, end_time = time1)
+        models.Dialog.objects.create(DID = 'test_did4', EID = 'test_eid3', start_time = time1, end_time = time1)
+        models.Dialog.objects.create(DID = 'test_did5', EID = 'test_eid2', start_time = time1, end_time = time1)
+        models.Dialog.objects.create(DID = 'test_did6', EID = 'test_eid1', start_time = time1, end_time = time1)
+
+    def test_count_of_dialogs(self):
+        rf = RequestFactory()
+        info = {'eid': 'test_eid1'}
+        request = rf.post('api/enter/total_dialogs/')
+        request._body = json.dumps(info).encode('utf8')
+        result = jrToJson(enterprise.enterprise_total_dialogs(request))['message']
+        self.assertEqual(result, 3)
