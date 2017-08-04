@@ -33,7 +33,7 @@
         } else {
           this.signup = true
           this.login = false
-          this.type = '登陆'
+          this.type = '登录'
         }
       }
     }
@@ -48,5 +48,8 @@
   margin-right: auto;
   margin-top: 50px;
   background-color: #D8D8D8;
+}
+.btn:hover {
+  background-color: #2d8cf0;
 }
 </style>
