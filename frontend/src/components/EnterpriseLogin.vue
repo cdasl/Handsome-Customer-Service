@@ -3,7 +3,7 @@
     <Alert v-show="warn">
         <template slot="desc">{{ warnMes }}</template>
     </Alert>
-    <h1 class="title">企业登陆</h2>
+    <h1 class="title">企业登录</h1>
     <Form :model="formItem" class="form">
       <Form-item>
           <Input v-model="formItem.email" placeholder="邮箱" type="text"></Input>
@@ -12,7 +12,7 @@
           <Input v-model="formItem.password" placeholder="密码" type="password"></Input>
       </Form-item>
       <Form-item style="margin-top:30px;">
-          <Button type="primary" @click="submit">登陆</Button>
+          <Button type="primary" @click="submit">登录</Button>
       </Form-item>
     </Form>
   </div>

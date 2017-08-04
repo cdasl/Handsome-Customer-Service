@@ -4,7 +4,7 @@ from rest_framework.decorators import api_view
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
 from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie
-import json, hashlib, time, random, string 
+import json, hashlib, time, random, string
 from .. import models
 from chatterbot import ChatBot
 from . import helper, messages
@@ -39,7 +39,7 @@ def enterprise_changepassword(info):
     obj = models.Enterprise.objects.get(email = email)
     salt = obj.salt
     md5 = hashlib.md5()
-    md5.update((old_password+salt).encode('utf8'))
+    md5.update((old_password + salt).encode('utf8'))
     password = md5.hexdigest()
     if password != obj.password:
         return JsonResponse({'message': 'Wrong password'})
@@ -69,10 +69,11 @@ def enterprise_signup(request):
     try:
         active_code = helper.get_active_code(email)
         mySubject = messages.enterprise_active_subject()
-        myMessage = messages.enterprise_active_message('http:/127.0.0.1:8000%s' % ('/enterprise_active/' + active_code))
+        myMessage = messages.enterprise_active_message(
+            'http:/127.0.0.1:8000%s' % ('/enterprise_active/' + active_code))
         helper.send_active_email(email, mySubject, myMessage)
-        models.Enterprise.objects.create(EID = info_dict['eid'], email = email, password = info_dict['password'], 
-                                         name = info_dict['name'], robot_icon = info_dict['ri'], 
+        models.Enterprise.objects.create(EID = info_dict['eid'], email = email, password = info_dict['password'],
+                                         name = info_dict['name'], robot_icon = info_dict['ri'],
                                          robot_name = info_dict['rn'], salt = info_dict['salt'])
         return JsonResponse({'message': 'Sign up successfully, please go to check your email'})
     except Exception:
@@ -107,6 +108,7 @@ def enterprise_login(request):
         return JsonResponse({'message': code[1]})
     else:
         request.session['eid'] = code[1]
+        request.session['email'] = info['email']
         return JsonResponse({'message': 'Login Success!'})
 
 @ensure_csrf_cookie
@@ -119,13 +121,13 @@ def enterprise_active(request):
     decrypt_str = helper.decrypt(9, active_code)
     decrypt_data = decrypt_str.split('|')
     email = decrypt_data[0]
-    enterprise = models.Enterprise.objects.filter(email = email)
+    enterprise = models.Enterprise.objects.filter(email =   email)
     if len(enterprise) == 0:
         #链接无效
         return JsonResponse({'message': 'invalid'})
     create_date = time.mktime(time.strptime(decrypt_data[1], "%Y-%m-%d"))
     time_lag = time.time() - create_date
-    if time_lag > 7*24*60*60:
+    if time_lag > 7 * 24 * 60 * 60:
         #链接过期
         return JsonResponse({'message': 'expired'})
     if enterprise[0].state == 1:
@@ -136,14 +138,14 @@ def enterprise_active(request):
     return JsonResponse({'message': 'success'})
 
 @ensure_csrf_cookie
-def enterpise_invite(request):
+def enterprise_invite(request):
     """
         邀请客服
     """
     info = json.loads(request.body.decode('utf8'))
     email = info['email']
-    if models.Customer.objects.filter(email = email) > 0:
-        return JsonResponse({'message': 'the mailbox has been registered '})
+    if len(models.Customer.objects.filter(email = email)) > 0:
+        return JsonResponse({'message': 'the mailbox has been registered'})
     EID = request.session['eid']
     md5 = hashlib.md5()
     md5.update(str(int(time.time())).encode('utf8'))
@@ -154,12 +156,100 @@ def enterpise_invite(request):
     name = '张三'
     last_login = date.today()
     try:
-        models.Customer.objects.create(CID = CID, EID = EID, email = email, password = password, 
-                            icon = icon, name = name, last_login = last_login, salt = salt)
+        models.Customer.objects.create(CID = CID, EID = EID, email = email, password = password,
+                                       icon = icon, name = name, last_login = last_login, salt = salt)
         active_code = helper.get_active_code(email)
         mySubject = messages.customer_active_subject
-        myMessage = messages.customer_active_message('http:/127.0.0.1:8000%s' % ('/customer_active/' + active_code))
+        myMessage = messages.customer_active_message(
+            'http:/127.0.0.1:8000%s' % ('/customer_active/' + active_code))
         helper.send_active_email(email, active_code, mySubject, myMessage)
         return JsonResponse({'message': 'invite successfully'})
     except Exception:
         return JsonResponse({'message': 'invite failure'})
+
+@ensure_csrf_cookie
+def reset_password_request(request):
+    """
+        重置密码请求
+    """
+    info = json.loads(request.body.decode('utf8'))
+    email = info['email']
+    valid_enterprise = models.Enterprise.objects.filter(email = email)
+    vaild_customer = models.Customer.objects.filter(email = email)
+    if len(valid_enterprise) == 0 and len(vaild_customer) == 0:
+        return JsonResponse({'message': 'invalid'})
+    active_code = helper.get_active_code(email)
+    url = 'http://127.0.0.1:8000/password_reset/%s' % (active_code)
+    mySubject = u"重置密码"
+    myMessage = messages.reset_password_message(url)
+    try:
+        helper.send_active_email(email, mySubject, myMessage)
+        if len(valid_enterprise) > 0:
+            return JsonResponse({'message': 'enterprise_reset'})
+        return JsonResponse({'message': 'customer_reset'})
+    except Exception:
+        return JsonResponse({'message': 'error'})
+
+@ensure_csrf_cookie
+def reset_password(request):
+    '''
+        重置密码，前端发送激活码，新密码，激活者
+    '''
+    info = json.loads(request.body.decode('utf8'))
+    helper.active_code_check(info['active_code'])
+    decrypt_str = helper.decrypt(9, info['active_code'])
+    decrypt_data = decrypt_str.split('|')
+    email = decrypt_data[0]
+    password_salt = helper.password_add_salt(info['password'])
+    password = password_salt['password']
+    salt = password_salt['salt']
+    try:
+        if info['who'] == 'enterprise_reset':
+            enterprise = models.Enterprise.objects.filter(email = email)
+            enterprise.update(password = password, salt = salt)
+        else:
+            customer = models.Customer.objects.filter(email = email)
+            customer.update(password = password, salt = salt)
+        return JsonResponse({'message': 'reset'})
+    except Exception:
+        return JsonResponse({'message': 'error'})
+
+@ensure_csrf_cookie
+def enterprise_logoff_customer(request):
+    """
+        注销客服
+    """
+    info = json.loads(request.body.decode('utf8'))
+    CID = info['cid']
+    #检查是否存在该客服
+    customer = models.Customer.objects.filter(CID = CID)
+    if len(customer) == 0:
+        return JsonResponse({'message': 'not exist this customer'})
+    customer_name = customer[0].name
+    try:
+        models.Customer.objects.filter(CID = CID).update(state = -1)
+        return JsonResponse({'message': 'log off ' + customer_name + ' successfully'})
+    except Exception:
+        return JsonResponse({
+            'message': 'fail to log off ' + customer_name
+            })
+
+@ensure_csrf_cookie
+def get_customer(request):
+    """
+        获取客服人员列表
+    """
+    EID = request.session['eid']
+    customer_list = []
+    customers = models.Customer.objects.filter(EID = EID)
+    if len(customers) == 0:
+        return JsonResponse({'message': 'not exist customers'})
+    for customer in customers:
+        customer_list.append({
+            'id': customer.CID,
+            'name': customer.name,
+            'email': customer.email,
+            'state': customer.state,
+            "service_number": customer.service_number
+            })
+    return JsonResponse(customer_list, safe = False)
