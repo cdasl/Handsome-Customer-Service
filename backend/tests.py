@@ -167,3 +167,30 @@ class InquireCustomerInfoTestCase(TestCase):
         self.assertEqual(result['state'], 1)
         self.assertEqual(result['service_number'], 0)
         self.assertEqual(result['serviced_number'], 100)
+
+class OnlineCustomersTestCase(TestCase):
+    """
+        测试获取在线客服列表Api
+    """
+    def setUp(self):
+        models.Customer.objects.create(CID = 'test_cid1', EID = 'test_eid', email = '1111@qq.com', salt = 'testsalt',
+            password = 'test_password1', icon = 'test_icon', name = 'test_name1', state = 3,
+            service_number = 0, serviced_number = 100, last_login = datetime.datetime.now())
+        models.Customer.objects.create(CID = 'test_cid2', EID = 'test_eid', email = '2222@qq.com', salt = 'testsalt',
+            password = 'test_password2', icon = 'test_icon', name = 'test_name2', state = 2,
+            service_number = 0, serviced_number = 10, last_login = datetime.datetime.now())
+        models.Customer.objects.create(CID = 'test_cid3', EID = 'test_eid', email = '3333@qq.com', salt = 'testsalt',
+            password = 'test_password3', icon = 'test_icon', name = 'test_name3', state = 2,
+            service_number = 0, serviced_number = 109, last_login = datetime.datetime.now())
+
+    def test_online_customers(self):
+        rf = RequestFactory()
+        info = {'eid': 'test_eid'}
+        request = rf.post('api/enter/test_online_customers')
+        request._body = json.dumps(info).encode('utf8')
+        result = jrToJson(enterprise.enterprise_online_customers(request))['message']
+        self.assertEqual(len(result), 2)
+        self.assertEqual(result[0]['cid'], 'test_cid2')
+        self.assertEqual(result[0]['name'], 'test_name2')
+        self.assertEqual(result[1]['cid'], 'test_cid3')
+        self.assertEqual(result[1]['name'], 'test_name3')
