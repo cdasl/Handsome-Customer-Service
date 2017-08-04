@@ -189,6 +189,7 @@ class OnlineCustomersTestCase(TestCase):
         request = rf.post('api/enter/test_online_customers')
         request._body = json.dumps(info).encode('utf8')
         result = jrToJson(enterprise.enterprise_online_customers(request))['message']
+        self.assertEqual(len(result), 2)
         self.assertEqual(result[0]['cid'], 'test_cid2')
         self.assertEqual(result[0]['name'], 'test_name2')
         self.assertEqual(result[1]['cid'], 'test_cid3')
