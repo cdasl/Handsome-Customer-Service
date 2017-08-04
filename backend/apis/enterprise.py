@@ -252,7 +252,7 @@ def enterprise_get_customers(request):
     customer_list = []
     customers = models.Customer.objects.filter(EID = EID)
     for customer in customers:
-    customer_list.append({'cid': customer.CID, 'name': customer.name, 'email': customer.email,
+        customer_list.append({'cid': customer.CID, 'name': customer.name, 'email': customer.email,
             'state': customer.state, 'service_number': customer.service_number, 'serviced_number': customer.serviced_number})
     return JsonResponse({'message': customer_list})
     
