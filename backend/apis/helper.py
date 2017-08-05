@@ -89,7 +89,7 @@ def active_code_check(active_code):
         return 'invalid'
     create_date = time.mktime(time.strptime(decrypt_data[1], "%Y-%m-%d"))
     time_lag = time.time() - create_date
-    if time_lag > 3*24*60*60:
+    if time_lag > 3 * 24 * 60 * 60:
         #链接过期
         return 'expired'
 

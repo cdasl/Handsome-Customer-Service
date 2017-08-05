@@ -302,7 +302,7 @@ class ResetPasswordTestCase(TestCase):
 
     def test_reset_password_requset(self):
         rf = RequestFactory()
-        request = rf.post('api/reset_password')
+        request = rf.post('api/reset_password/')
         #企业
         info = {'email': '654321@qq.com'}
         request._body = json.dumps(info).encode('utf8')
@@ -321,7 +321,7 @@ class ResetPasswordTestCase(TestCase):
     
     def test_reset_partone(self):
         rf = RequestFactory()
-        request = rf.post('api/new_pwd_submit')
+        request = rf.post('api/new_pwd_submit/')
         #企业
         info = {'active_code': 'pdmdndkdldidjeihihhckgggegfhldjdidodecjdbdecjdmd', 
                 'password': '11111111'}
