@@ -345,7 +345,7 @@ class ResetPasswordTestCase(TestCase):
 
     def test_reset_parttwo(self):
         rf = RequestFactory()
-        request = rf.post('api/new_pwd_submit')
+        request = rf.post('api/new_pwd_submit/')
         #客服
         info = {'active_code': 'ldldldldjeihihhckgggegfhldjdidodecjdbdecjdmd', 
                 'password': '11111111'}
