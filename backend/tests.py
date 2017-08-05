@@ -413,6 +413,25 @@ class DialogMessagesTestCase(TestCase):
         self.assertEqual(result[1]['sid'], 'test_sid1')
         self.assertEqual(result[1]['content'], 'test_content2')
         self.assertEqual(result[1]['rid'], 'test_rid1')
+    
+class SetRobotNameTestCase(TestCase):
+    '''
+        测试改企业机器人名字API
+    '''
+    def setUp(self):
+        models.Enterprise.objects.create(EID = 'eid1', email = '654321@qq.com', password = 'password1',
+             name = 'name1', robot_icon = 'ri1', robot_name = 'rn1', salt = 'salt1', state = 1)
+    
+    def test_set_robot_name(self):
+        rf = RequestFactory()
+        info = {'eid': 'eid1', 
+                'robot_name': 'test1'}
+        request = rf.post('api/enter/set_robot_name/')
+        request._body = json.dumps(info).encode('utf8')
+        result = jrToJson(enterprise.enterprise_set_robot_name(request))['message']
+        self.assertEqual(result, 'success')
+        test_case = models.Enterprise.objects.get(EID = 'eid1').robot_name
+        self.assertEqual('test1', test_case)
 
 class MessagesBetweenChattersTestCase(TestCase):
     """
