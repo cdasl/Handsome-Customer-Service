@@ -10,11 +10,37 @@
         <div class="text">内容</div>
       </div>
     </li>
-  </ul>  
+  </ul>
+  <div class="wrapper"></div>
 </div>
 </template>
 <script>
+  export default {
+    data () {
+      return {
+        /* global wantEmoji: true */
+        we: null
+      }
+    },
+    mounted: function () {
+      // 由于在created和data中dom尚未渲染，所以无法在created和data中进行初始化
+      this.we = new wantEmoji({
+        wrapper: '.wrapper',
+        callback: function (emojiCode) {
+          console.log(emojiCode)
+        },
+        autoInit: true
+      })
+    }
+  }
 </script>
+<style type="text/css" scoped>
+  .wrapper {
+    position: absolute;
+    bottom: 20%;
+    height: 200px;
+  }
+</style>
 <style lang="less" scoped>
 .message {
   padding: 10px 15px;
