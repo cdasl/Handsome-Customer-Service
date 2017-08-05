@@ -454,9 +454,9 @@ def enterprise_avgtime_dialogs(request):
     return JsonResponse({'message': avgtime})
 
 @ensure_csrf_cookie
-def enterprise_set_robot_name(request):
+def enterprise_set_robot_message(request):
     """
-        设置企业机器人名字
+        设置企业机器人名字，头像
     """
     info =  {'eid': -1}
     EID = 'eid'
@@ -471,6 +471,7 @@ def enterprise_set_robot_name(request):
     enterprise = models.Enterprise.objects.filter(EID = EID, state = 1)
     try:
         enterprise.update(robot_name = info['robot_name'])
+        enterprise.update(robot_icon = info['robot_icon'])
         return JsonResponse({'message': 'success'})
     except Exception:
         return JsonResponse({'message': 'error'})
