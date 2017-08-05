@@ -3,7 +3,7 @@
     <Alert v-show="warn">
         <template slot="desc">{{ warnMes }}</template>
     </Alert>
-    <Form :model="formItem" label-width="80" label-position="left">
+    <Form :model="formItem" :label-width="80" label-position="left">
       <Form-item label="邮箱">
           <Input v-model="formItem.email" placeholder="邮箱" type="text"></Input>
       </Form-item>

@@ -433,6 +433,37 @@ class SetRobotNameTestCase(TestCase):
         test_case = models.Enterprise.objects.get(EID = 'eid1').robot_name
         self.assertEqual('test1', test_case)
 
-        
-    
-        
+class MessagesBetweenChattersTestCase(TestCase):
+    """
+        测试根据聊天者ID获取聊天内容Api
+    """
+    def setUp(self):
+        time1 = timezone.now()
+        time2 = timezone.now()
+        models.Message.objects.create(MID = 'test_mid1', SID = 'test_sid1', RID = 'test_rid1', DID = 'test_did1',
+            content = 'test_content1', date = time1)
+        models.Message.objects.create(MID = 'test_mid2', SID = 'test_sid1', RID = 'test_rid2', DID = 'test_did2',
+            content = 'test_content2', date = time1)
+        models.Message.objects.create(MID = 'test_mid3', SID = 'test_sid2', RID = 'test_rid1', DID = 'test_did3',
+            content = 'test_content3', date = time1)
+        models.Message.objects.create(MID = 'test_mid4', SID = 'test_sid1', RID = 'test_rid2', DID = 'test_did2',
+            content = 'test_content4', date = time2)
+
+    def test_messages_between_chatters(self):
+        rf = RequestFactory()
+        info = {
+            'sid': 'test_sid1',
+            'rid': 'test_rid2'
+            }
+        request = rf.post('api/enter/messages_between_chatters/')
+        request._body = json.dumps(info).encode('utf8')
+        result = jrToJson(enterprise.messages_between_chatters(request))['message']
+        self.assertEqual(len(result), 2)
+        self.assertEqual(result[0]['mid'], 'test_mid2')
+        self.assertEqual(result[0]['sid'], 'test_sid1')
+        self.assertEqual(result[0]['content'], 'test_content2')
+        self.assertEqual(result[0]['rid'], 'test_rid2')
+        self.assertEqual(result[1]['mid'], 'test_mid4')
+        self.assertEqual(result[1]['sid'], 'test_sid1')
+        self.assertEqual(result[1]['content'], 'test_content4')
+        self.assertEqual(result[1]['rid'], 'test_rid2')

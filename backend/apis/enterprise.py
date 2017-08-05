@@ -88,14 +88,21 @@ def enterprise_login_helper(info):
         password += right.salt
         md5.update(password.encode('utf8'))
         if md5.hexdigest() == right.password:
-            #成功
-            return (1, right.EID)
+            if right.state == 1:
+                #成功
+                return (1, right.EID)
+            elif right.state == 0:
+                #账号未激活
+                return (0, 'account not activeted')
+            elif right.state == -1:
+                #账号被注销
+                return (-1, 'account has been logged off')
         else:
             #密码错误
-            return (0, 'wrong password')
+            return (-2, 'wrong password')
     except Exception:
         #账号错误
-        return (-1, 'wrong account')
+        return (-3, 'wrong account')
 
 @ensure_csrf_cookie
 def enterprise_login(request):
@@ -104,7 +111,7 @@ def enterprise_login(request):
     """
     info = json.loads(request.body.decode('utf8'))
     code = enterprise_login_helper(info)
-    if code[0] == 0 or code[0] == -1:
+    if code[0] < 1:
         return JsonResponse({'message': code[1]})
     else:
         request.session['eid'] = code[1]
@@ -467,3 +474,25 @@ def enterprise_set_robot_name(request):
         return JsonResponse({'message': 'success'})
     except Exception:
         return JsonResponse({'message': 'error'})
+
+def enterprise_avgmes_dialogs(request):
+    """
+        获取企业会话的平均消息数
+    """
+    info =  {'eid': -1}
+    EID = 'eid'
+    if hasattr(request, 'body'):
+        info = json.loads(request.body.decode('utf8'))
+    if hasattr(request, 'session') and hasattr(request.session, 'eid'):
+        EID = request.session['eid']
+    elif info['eid'] != -1:
+        EID = info['eid']
+    else:
+        return JsonResponse({'message': 'error'})
+    total_messages = 0
+    dialogs = models.Dialog.objects.filter(EID = EID)
+    for dialog in dialogs:
+        total_messages += len(models.Message.objects.filter(DID = dialog.DID))
+    total_dialogs = len(models.Dialog.objects.filter(EID = EID))
+    avgmes = round(total_messages / total_dialogs, 2)
+    return JsonResponse({'message': avgmes})
