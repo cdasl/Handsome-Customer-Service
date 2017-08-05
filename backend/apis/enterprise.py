@@ -118,7 +118,7 @@ def enterprise_login(request):
         request.session['email'] = info['email']
         return JsonResponse({'message': 'Login Success!'})
 
-@ensure_csrf_cookie
+@csrf_exempt
 def enterprise_active(request):
     """
         企业激活
