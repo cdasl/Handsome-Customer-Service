@@ -1,26 +1,22 @@
 <template>
   <div class="text">
-    <div class="wrapper"></div>
-    <div class="wrapper2"></div>
-    <textarea placeholder="按 Ctrl + Enter 发送"></textarea>
+    <textarea placeholder="按 Ctrl + Enter 发送" v-model="content" @keyup="onKeyup"></textarea>
   </div>
 </template>
 <script>
   export default {
     data () {
       return {
-        /* global wantEmoji: true */
-        we: null
+        content: ''
       }
     },
-    mounted: function () {
-      this.we = new wantEmoji({
-        wrapper: '.wrapper',
-        callback: function (emojiCode) {
-          console.log(emojiCode)
-        },
-        autoInit: true
-      })
+    methods: {
+      onKeyup (e) {
+        if (e.ctrlKey && e.keyCode === 13 && this.content.length) {
+          this.$emit('onKeyup', this.content)
+          this.content = ''
+        }
+      }
     }
   }
 </script>
