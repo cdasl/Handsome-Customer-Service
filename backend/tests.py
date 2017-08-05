@@ -393,7 +393,7 @@ class DialogMessagesTestCase(TestCase):
         time2 = timezone.now()
         models.Message.objects.create(MID = 'test_mid1', SID = 'test_sid1', RID = 'test_rid1', DID = 'test_did1',
             content = 'test_content1', date = time1)
-        models.Message.objects.create(MID = 'test_mid2', SID = 'test_sid2', RID = 'test_rid2', DID = 'test_did1',
+        models.Message.objects.create(MID = 'test_mid2', SID = 'test_sid1', RID = 'test_rid1', DID = 'test_did1',
             content = 'test_content2', date = time2)
         models.Message.objects.create(MID = 'test_mid3', SID = 'test_sid3', RID = 'test_rid3', DID = 'test_did2',
             content = 'test_content3', date = time1)
@@ -410,6 +410,6 @@ class DialogMessagesTestCase(TestCase):
         self.assertEqual(result[0]['content'], 'test_content1')
         self.assertEqual(result[0]['rid'], 'test_rid1')
         self.assertEqual(result[1]['mid'], 'test_mid2')
-        self.assertEqual(result[1]['sid'], 'test_sid2')
+        self.assertEqual(result[1]['sid'], 'test_sid1')
         self.assertEqual(result[1]['content'], 'test_content2')
-        self.assertEqual(result[1]['rid'], 'test_rid2')
+        self.assertEqual(result[1]['rid'], 'test_rid1')
