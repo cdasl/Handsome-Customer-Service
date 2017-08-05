@@ -471,3 +471,31 @@ class MessagesBetweenChattersTestCase(TestCase):
         self.assertEqual(result[1]['sid'], 'test_sid1')
         self.assertEqual(result[1]['content'], 'test_content4')
         self.assertEqual(result[1]['rid'], 'test_rid2')
+
+class AvgmesDialogsTestCase(TestCase):
+    """
+        测试获取企业会话平均消息数Api
+    """
+    def setUp(self):
+        time1 = timezone.now()
+        time2 = timezone.now()
+        time3 = timezone.now()
+        models.Dialog.objects.create(DID = 'test_did1', EID = 'test_eid1', start_time = time1, end_time = time2)
+        models.Dialog.objects.create(DID = 'test_did2', EID = 'test_eid1', start_time = time2, end_time = time3)
+        models.Dialog.objects.create(DID = 'test_did3', EID = 'test_eid2', start_time = time1, end_time = time1)
+        models.Message.objects.create(MID = 'test_mid1', SID = 'test_sid1', RID = 'test_rid1', DID = 'test_did1',
+            content = 'test_content1', date = time1)
+        models.Message.objects.create(MID = 'test_mid2', SID = 'test_sid1', RID = 'test_rid1', DID = 'test_did1',
+            content = 'test_content2', date = time2)
+        models.Message.objects.create(MID = 'test_mid3', SID = 'test_sid3', RID = 'test_rid3', DID = 'test_did2',
+            content = 'test_content3', date = time2)
+        models.Message.objects.create(MID = 'test_mid4', SID = 'test_sid4', RID = 'test_rid4', DID = 'test_did3',
+            content = 'test_content4', date = time1)
+
+    def test_avgmes_dialogs(self):
+        rf = RequestFactory()
+        info = {'eid': 'test_eid1'}
+        request = rf.post('api/enter/avgmes/')
+        request._body = json.dumps(info).encode('utf8')
+        result = jrToJson(enterprise.enterprise_avgmes_dialogs(request))['message']
+        self.assertEqual(result, 1.5)
