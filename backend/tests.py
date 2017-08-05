@@ -288,3 +288,73 @@ class GetChattedTestCase(TestCase):
         request._body = json.dumps(info).encode('utf8')
         result = jrToJson(customer.customer_chatted(request))['message']
         self.assertEqual(set(result), set(['test_rid1', 'test_rid3', 'test_sid2']))
+
+class ResetPasswordTestCase(TestCase):
+    '''
+        测试重置密码API
+    '''
+    def setUp(self):
+        models.Enterprise.objects.create(EID = 'eid1', email = '654321@qq.com', password = 'password1',
+             name = 'name1', robot_icon = 'ri1', robot_name = 'rn1', salt = 'salt1')
+        models.Customer.objects.create(CID = 'test_cid2', EID = 'test_eid', email = '2222@qq.com', salt = 'testsalt',
+            password = 'test_password2', icon = 'test_icon', name = 'test_name2', state = 1,
+            service_number = 0, serviced_number = 10, last_login = datetime.datetime.now())
+
+    def test_reset_password_requset(self):
+        rf = RequestFactory()
+        request = rf.post('api/reset_password/')
+        #企业
+        info = {'email': '654321@qq.com'}
+        request._body = json.dumps(info).encode('utf8')
+        result = jrToJson(enterprise.reset_password_request(request))['message']
+        self.assertEqual(result, 'enterprise_reset')
+        #客服
+        info = {'email': '2222@qq.com'}
+        request._body = json.dumps(info).encode('utf8')
+        result = jrToJson(enterprise.reset_password_request(request))['message']
+        self.assertEqual(result, 'customer_reset')
+        #错误
+        info = {'email': 'cmn@rgb.com'}
+        request._body = json.dumps(info).encode('utf8')
+        result = jrToJson(enterprise.reset_password_request(request))['message']
+        self.assertEqual(result, 'invalid')
+    
+    def test_reset_partone(self):
+        rf = RequestFactory()
+        request = rf.post('api/new_pwd_submit/')
+        #企业
+        info = {'active_code': 'pdmdndkdldidjeihihhckgggegfhldjdidodecjdbdecjdmd', 
+                'password': '11111111'}
+        request._body = json.dumps(info).encode('utf8')
+        result = jrToJson(enterprise.reset_password(request))['message']
+        self.assertEqual(result, 'reset')
+        #密码是否修改了
+        password = '11111111'
+        example = models.Enterprise.objects.get(EID = 'eid1')
+        password += example.salt
+        md5 = hashlib.md5()
+        md5.update(password.encode('utf-8'))
+        password = md5.hexdigest()
+        self.assertEqual(password, example.password)
+        #激活码无效
+        info = {'active_code': 'thisisawrongexample', 
+                'password': '7dsa987d9a8s'}
+        request._body = json.dumps(info).encode('utf8')
+        result = jrToJson(enterprise.reset_password(request))['message']
+        self.assertEqual(result, 'invalid')
+
+    def test_reset_parttwo(self):
+        rf = RequestFactory()
+        request = rf.post('api/new_pwd_submit/')
+        #客服
+        info = {'active_code': 'ldldldldjeihihhckgggegfhldjdidodecjdbdecjdmd', 
+                'password': '11111111'}
+        request._body = json.dumps(info).encode('utf8')
+        result = jrToJson(enterprise.reset_password(request))['message']
+        self.assertEqual(result, 'reset')
+        #激活码过期
+        info = {'active_code': 'ldldldldjeihihhckgggegfhldjdidodecjdbdecjdid', 
+                'password': '7dsa987d9a8s'}
+        request._body = json.dumps(info).encode('utf8')
+        result = jrToJson(enterprise.reset_password(request))['message']
+        self.assertEqual(result, 'expired')

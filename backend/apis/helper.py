@@ -1,8 +1,9 @@
 #coding:utf-8
 from django.core.mail import EmailMultiAlternatives
-import time
+import time, random, string, hashlib
 from . import messages
 from .. import models
+from django.http import JsonResponse
 
 def isLogin(request):
     if request.session.get('email', None):
@@ -85,12 +86,12 @@ def active_code_check(active_code):
     customer = models.Customer.objects.filter(email = email)
     if len(enterprise) == 0 and len(customer) == 0:
         #链接无效
-        return JsonResponse({'message': 'invalid'})
+        return 'invalid'
     create_date = time.mktime(time.strptime(decrypt_data[1], "%Y-%m-%d"))
     time_lag = time.time() - create_date
-    if time_lag > 3*24*60*60:
+    if time_lag > 3 * 24 * 60 * 60:
         #链接过期
-        return JsonResponse({'message': 'expired'})
+        return 'expired'
 
 def password_add_salt(password):
     salt = ''.join(random.sample(string.ascii_letters + string.digits, 8))

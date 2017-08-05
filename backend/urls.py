@@ -26,6 +26,7 @@ urlpatterns = [
     url(r'^login.html$', TemplateView.as_view(template_name = 'login.html')),
     url(r'^enterprise/$', TemplateView.as_view(template_name = 'enterprise.html')),
     url(r'^enterprise_active/([a-zA-Z]+)$', TemplateView.as_view(template_name = 'enterprise_active.html'), name = 'enterprise_active'),
+    url(r'^reset_pwd/$', TemplateView.as_view(template_name = 'reset_password.html')),
 
     #apis
     url(r'^api/enter/signup/$', enterprise.enterprise_signup, name = 'enter_signup'),
@@ -35,4 +36,6 @@ urlpatterns = [
     url(r'^user/$', socket.user, name = 'socket'),
     url(r'^socketio*', socket.user, name = 'socketio'),
     url(r'^api/get_customers/$', enterprise.enterprise_get_customers, name = 'get_customers'),
+    url(r'^api/reset_password/$', enterprise.reset_password_request, name = 'reset_pwd_request'),
+    url(r'^api/new_pwd_submit/$', enterprise.reset_password, name = 'reset_password_submit'),
 ]
