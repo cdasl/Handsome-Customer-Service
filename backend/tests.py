@@ -32,11 +32,11 @@ class EnterSignupTestCase(TestCase):
         request = rf.post('api/enter/signup/')
         request._body = json.dumps(info).encode('utf8')
         self.assertEqual(jrToJson(enterprise.enterprise_signup(request))['message'],
-            'this email has been registered')
+            'This email has been registered')
         info['email'] = '123456@qq.com'
         request._body = json.dumps(info).encode('utf8')
         self.assertEqual(jrToJson(enterprise.enterprise_signup(request))['message'],
-            'sign up successfully, please go to check your email')
+            'Sign up successfully, please go to check your email')
 
 class EnterLoginTestCase(TestCase):
     """
