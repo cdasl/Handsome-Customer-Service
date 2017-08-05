@@ -11,7 +11,7 @@ def user(request):
     global thread
     if thread is None:
         thread = sio.start_background_task(background_thread)
-    return render(request,'User.html')
+    return render(request, 'user.html')
 
 def background_thread():
     """Example of how to send server generated events to clients."""
