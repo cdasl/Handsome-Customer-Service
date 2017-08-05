@@ -362,3 +362,25 @@ def enterprise_total_dialogs(request):
     else:
         return JsonResponse({'message': 'error'})
     return JsonResponse({'message': len(models.Dialog.objects.filter(EID = EID))})
+
+@ensure_csrf_cookie
+def enterprise_dialogs(request):
+    """
+        获取企业全部会话列表
+    """
+    info =  {'eid': -1}
+    EID = 'eid'
+    if hasattr(request, 'body'):
+        info = json.loads(request.body.decode('utf8'))
+    if hasattr(request, 'session') and hasattr(request.session, 'eid'):
+        EID = request.session['eid']
+    elif info['eid'] != -1:
+        EID = info['eid']
+    else:
+        return JsonResponse({'message': 'error'})
+    dialogs_list = []
+    dialogs = models.Dialog.objects.filter(EID = EID)
+    for dialog in dialogs:
+        dialogs_list.append({'did': dialog.DID, 'start_time': dialog.start_time, 'end_time': dialog.end_time})
+    return JsonResponse({'message': dialogs_list})
+    

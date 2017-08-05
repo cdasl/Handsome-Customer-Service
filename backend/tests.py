@@ -288,3 +288,26 @@ class GetChattedTestCase(TestCase):
         request._body = json.dumps(info).encode('utf8')
         result = jrToJson(customer.customer_chatted(request))['message']
         self.assertEqual(set(result), set(['test_rid1', 'test_rid3', 'test_sid2']))
+
+class DialogsListTestCase(TestCase):
+    """
+        测试获取企业全部会话列表Api
+    """
+    def setUp(self):
+        models.Dialog.objects.create(DID = 'test_did1', EID = 'test_eid1', start_time = '2007-08-05T01:33:59Z', end_time = '2007-08-05T01:37:59Z')
+        models.Dialog.objects.create(DID = 'test_did2', EID = 'test_eid1', start_time = '2012-08-05T01:33:59Z', end_time = '2012-08-05T01:36:59Z')
+        models.Dialog.objects.create(DID = 'test_did3', EID = 'test_eid2', start_time = '2017-08-05T01:33:59Z', end_time = '2017-08-05T01:34:59Z')
+
+    def test_dialogs_list(self):
+        rf = RequestFactory()
+        info = {'eid': 'test_eid1'}
+        request = rf.post('api/enter/test_dialogs_list/')
+        request._body = json.dumps(info).encode('utf8')
+        result = jrToJson(enterprise.enterprise_dialogs(request))['message']
+        self.assertEqual(len(result), 2)
+        self.assertEqual(result[0]['did'], 'test_did1')
+        self.assertEqual(result[0]['start_time'], '2007-08-05T01:33:59Z')
+        self.assertEqual(result[0]['end_time'], '2007-08-05T01:37:59Z')
+        self.assertEqual(result[1]['did'], 'test_did2')
+        self.assertEqual(result[1]['start_time'], '2012-08-05T01:33:59Z')
+        self.assertEqual(result[1]['end_time'], '2012-08-05T01:36:59Z')
