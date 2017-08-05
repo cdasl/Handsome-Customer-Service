@@ -499,3 +499,23 @@ class AvgmesDialogsTestCase(TestCase):
         request._body = json.dumps(info).encode('utf8')
         result = jrToJson(enterprise.enterprise_avgmes_dialogs(request))['message']
         self.assertEqual(result, 1.5)
+
+class AvgtimeDialogsTestCase(TestCase):
+    """
+        测试获取企业会话平均时间Api
+    """
+    def setUp(self):
+        self.time1 = timezone.now()
+        self.time2 = timezone.now()
+        self.time3 = timezone.now()
+        models.Dialog.objects.create(DID = 'test_did1', EID = 'test_eid1', start_time = self.time1, end_time = self.time2)
+        models.Dialog.objects.create(DID = 'test_did2', EID = 'test_eid1', start_time = self.time2, end_time =self. time3)
+
+    def test_avgmes_dialogs(self):
+        rf = RequestFactory()
+        info = {'eid': 'test_eid1'}
+        request = rf.post('api/enter/avgtime/')
+        request._body = json.dumps(info).encode('utf8')
+        result = jrToJson(enterprise.enterprise_avgtime_dialogs(request))['message']
+        result_number = (((self.time3 - self.time1) / 2).seconds) / 60
+        self.assertEqual(result, result_number)
