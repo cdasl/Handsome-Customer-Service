@@ -538,6 +538,9 @@ class SetChatboxTypeTestCase(TestCase):
         self.assertEqual(result, 'success')
 
 class SetUserMsgTestCase(TestCase):
+    """
+        测试设置企业发送用户信息
+    """
     def test_setuser_message(self):
         rf = RequestFactory()
         info = {
