@@ -388,3 +388,20 @@ def enterprise_dialogs(request):
         dialogs_list.append({'did': dialog.DID, 'start_time': dialog.start_time, 'end_time': dialog.end_time})
     return JsonResponse({'message': dialogs_list})
     
+
+@ensure_csrf_cookie
+def enterprise_dialog_messages(request):
+    """
+        获取企业某个会话的内容
+    """
+    info = json.loads(request.body.decode('utf8'))
+    DID = info['did']
+    #检查是否存在该did
+    dialog = models.Message.objects.filter(DID = DID)
+    if len(dialog) == 0:
+        return JsonResponse({'message': 'not exist this dialogID'})
+    messages_list = []    
+    messages = models.Message.objects.filter(DID = DID)
+    for message in messages:
+        messages_list.append({'mid': message.MID, 'sid': message.SID, 'content': message.content, 'rid': message.RID, 'date': message.date})
+    return JsonResponse({'message': messages_list})
