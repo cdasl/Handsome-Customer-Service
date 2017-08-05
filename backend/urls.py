@@ -39,4 +39,5 @@ urlpatterns = [
     url(r'^api/reset_password/$', enterprise.reset_password_request, name = 'reset_pwd_request'),
     url(r'^api/new_pwd_submit/$', enterprise.reset_password, name = 'reset_password_submit'),
     url(r'^api/enter/set_robot_message/$', enterprise.enterprise_set_robot_message, name = 'enterprise_set_robot_message'),
+    url(r'^api/enter/setuser_message/$', enterprise.enterprise_setuser_message, name = 'enterprise_setuser_message'),
 ]
