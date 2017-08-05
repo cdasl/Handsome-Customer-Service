@@ -294,9 +294,15 @@ class DialogsListTestCase(TestCase):
         测试获取企业全部会话列表Api
     """
     def setUp(self):
-        models.Dialog.objects.create(DID = 'test_did1', EID = 'test_eid1', start_time = '2007-08-05T01:33:59Z', end_time = '2007-08-05T01:37:59Z')
-        models.Dialog.objects.create(DID = 'test_did2', EID = 'test_eid1', start_time = '2012-08-05T01:33:59Z', end_time = '2012-08-05T01:36:59Z')
-        models.Dialog.objects.create(DID = 'test_did3', EID = 'test_eid2', start_time = '2017-08-05T01:33:59Z', end_time = '2017-08-05T01:34:59Z')
+        self.stime1 = timezone.now()
+        self.stime2 = timezone.now()
+        self.stime3 = timezone.now()
+        self.etime1 = timezone.now()
+        self.etime2 = timezone.now()
+        self.etime3 = timezone.now()
+        models.Dialog.objects.create(DID = 'test_did1', EID = 'test_eid1', start_time = self.stime1, end_time = self.etime1)
+        models.Dialog.objects.create(DID = 'test_did2', EID = 'test_eid1', start_time = self.stime2, end_time = self.etime2)
+        models.Dialog.objects.create(DID = 'test_did3', EID = 'test_eid2', start_time = self.stime3, end_time = self.etime3)
 
     def test_dialogs_list(self):
         rf = RequestFactory()
@@ -306,8 +312,4 @@ class DialogsListTestCase(TestCase):
         result = jrToJson(enterprise.enterprise_dialogs(request))['message']
         self.assertEqual(len(result), 2)
         self.assertEqual(result[0]['did'], 'test_did1')
-        self.assertEqual(result[0]['start_time'], '2007-08-05T01:33:59Z')
-        self.assertEqual(result[0]['end_time'], '2007-08-05T01:37:59Z')
         self.assertEqual(result[1]['did'], 'test_did2')
-        self.assertEqual(result[1]['start_time'], '2012-08-05T01:33:59Z')
-        self.assertEqual(result[1]['end_time'], '2012-08-05T01:36:59Z')
