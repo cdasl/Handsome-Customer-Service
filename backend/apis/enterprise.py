@@ -88,14 +88,21 @@ def enterprise_login_helper(info):
         password += right.salt
         md5.update(password.encode('utf8'))
         if md5.hexdigest() == right.password:
-            #成功
-            return (1, right.EID)
+            if right.state == 1:
+                #成功
+                return (1, right.EID)
+            elif right.state == 0:
+                #账号未激活
+                return (0, 'account not activeted')
+            elif right.state == -1:
+                #账号被注销
+                return (-1, 'account has been logged off')
         else:
             #密码错误
-            return (0, 'wrong password')
+            return (-2, 'wrong password')
     except Exception:
         #账号错误
-        return (-1, 'wrong account')
+        return (-3, 'wrong account')
 
 @ensure_csrf_cookie
 def enterprise_login(request):
@@ -104,7 +111,7 @@ def enterprise_login(request):
     """
     info = json.loads(request.body.decode('utf8'))
     code = enterprise_login_helper(info)
-    if code[0] == 0 or code[0] == -1:
+    if code[0] < 1:
         return JsonResponse({'message': code[1]})
     else:
         request.session['eid'] = code[1]
