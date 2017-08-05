@@ -17,7 +17,7 @@ def test(request):
     #ensure_ascii=False用于处理中文
 	return JsonResponse(data)
 
-@csrf_exempt
+@ensure_csrf_cookie
 def validate_customer(request):
     file = request.FILES['image']
     req = request.POST['user']
@@ -26,6 +26,14 @@ def validate_customer(request):
             destination.write(chunk)
     return JsonResponse({'message': req})
 
-@csrf_exempt
+@ensure_csrf_cookie
 def customer_active(request):
     return render(request, 'customer_active.html')
+
+@ensure_csrf_cookie
+def enterprise_manage(request):
+    return render(request, 'enterprise_manage.html')
+
+@ensure_csrf_cookie
+def user(request):
+    return render(request,'User.html')
