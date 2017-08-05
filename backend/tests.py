@@ -536,4 +536,16 @@ class SetChatboxTypeTestCase(TestCase):
         request._body = json.dumps(info).encode('utf8')
         result = jrToJson(enterprise.enterprise_set_chatbox_type(request))['message']
         self.assertEqual(result, 'success')
+
+class SetUserMsgTestCase(TestCase):
+    def test_setuser_message(self):
+        rf = RequestFactory()
+        info = {
+            'eid': 'ee',
+            'uid': 'sssss'
+        }
+        request = rf.post('api/enter/setuser_message')
+        request._body = json.dumps(info).encode('utf8')
+        result = jrToJson(enterprise.enterprise_setuser_message(request))['message']
+        self.assertEqual(result, 'success')
         
