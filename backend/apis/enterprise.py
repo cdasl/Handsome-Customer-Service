@@ -445,3 +445,25 @@ def enterprise_avgtime_dialogs(request):
     totaldialogs = enterprise_total_dialogs(request)
     avgtime = round(totaltime / totaldialogs, 2)
     return JsonResponse({'message': avgtime})
+
+@ensure_csrf_cookie
+def enterprise_set_robot_name(request):
+    """
+        设置企业机器人名字
+    """
+    info =  {'eid': -1}
+    EID = 'eid'
+    if hasattr(request, 'body'):
+        info = json.loads(request.body.decode('utf8'))
+    if hasattr(request, 'session') and hasattr(request.session, 'eid'):
+        EID = request.session['eid']
+    elif info['eid'] != -1:
+        EID = info['eid']
+    else:
+        return JsonResponse({'message': 'error'})
+    enterprise = models.Enterprise.objects.filter(EID = EID, state = 1)
+    try:
+        enterprise.update(robot_name = info['robot_name'])
+        return JsonResponse({'message': 'success'})
+    except Exception:
+        return JsonResponse({'message': 'error'})
