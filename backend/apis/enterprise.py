@@ -525,3 +525,24 @@ def enterprise_set_chatbox_type(request):
         return JsonResponse({'message': 'success'})
     except Exception:
         return JsonResponse({'message': 'error'})
+
+@ensure_csrf_cookie
+def enterprise_setuser_message(request):
+    """
+        企业将用户信息传给系统
+    """
+    info =  {'eid': -1}
+    EID = 'eid'
+    if hasattr(request, 'body'):
+        info = json.loads(request.body.decode('utf8'))
+    if hasattr(request, 'session') and hasattr(request.session, 'eid'):
+        EID = request.session['eid']
+    elif info['eid'] != -1:
+        EID = info['eid']
+    else:
+        return JsonResponse({'message': 'error'})
+    try:
+        models.User.objects.create(UID = info['uid'])
+        return JsonResponse({'message': 'success'})
+    except Exception:
+        return JsonResponse({'message': 'wrong'})
