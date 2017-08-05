@@ -519,3 +519,21 @@ class AvgtimeDialogsTestCase(TestCase):
         result = jrToJson(enterprise.enterprise_avgtime_dialogs(request))['message']
         result_number = (((self.time3 - self.time1) / 2).seconds) / 60
         self.assertEqual(result, result_number)
+
+class SetChatboxTypeTestCase(TestCase):
+    '''
+        测试更改聊天窗口弹出方式API
+    '''
+    def setUp(self):
+        models.Enterprise.objects.create(EID = 'eid1', email = '654321@qq.com', password = 'password1',
+             name = 'name1', robot_icon = 'ri1', robot_name = 'rn1', state = 1, salt = 'salt1', chatbox_type = 1)
+    
+    def test_set_chatbox_type(self):
+        rf = RequestFactory()
+        info = {'eid': 'eid1', 
+                'chatbox_type': 2}
+        request = rf.post('api/enter/set_chatbox_type/')
+        request._body = json.dumps(info).encode('utf8')
+        result = jrToJson(enterprise.enterprise_set_chatbox_type(request))['message']
+        self.assertEqual(result, 'success')
+        
