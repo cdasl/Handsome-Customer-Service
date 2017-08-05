@@ -426,3 +426,22 @@ def messages_between_chatters(request):
     for message in messages:
         messages_list.append({'mid': message.MID, 'sid': message.SID, 'content': message.content, 'rid': message.RID, 'date': message.date})
     return JsonResponse({'message': messages_list})
+
+def enterprise_avgtime_dialogs(request):
+    """
+        获取客服会话平均时间
+    """
+    info =  {'eid': -1}
+    EID = 'eid'
+    if hasattr(request, 'body'):
+        info = json.loads(request.body.decode('utf8'))
+    if hasattr(request, 'session') and hasattr(request.session, 'eid'):
+        EID = request.session['eid']
+    elif info['eid'] != -1:
+        EID = info['eid']
+    else:
+        return JsonResponse({'message': 'error'})
+    totaltime = enterprise_total_servicetime(request)
+    totaldialogs = enterprise_total_dialogs(request)
+    avgtime = round(totaltime / totaldialogs, 2)
+    return JsonResponse({'message': avgtime})
