@@ -387,7 +387,6 @@ def enterprise_dialogs(request):
     for dialog in dialogs:
         dialogs_list.append({'did': dialog.DID, 'start_time': dialog.start_time, 'end_time': dialog.end_time})
     return JsonResponse({'message': dialogs_list})
-    
 
 @ensure_csrf_cookie
 def enterprise_dialog_messages(request):
@@ -402,6 +401,28 @@ def enterprise_dialog_messages(request):
         return JsonResponse({'message': 'not exist this dialogID'})
     messages_list = []    
     messages = models.Message.objects.filter(DID = DID)
+    for message in messages:
+        messages_list.append({'mid': message.MID, 'sid': message.SID, 'content': message.content, 'rid': message.RID, 'date': message.date})
+    return JsonResponse({'message': messages_list})
+
+@ensure_csrf_cookie
+def messages_between_chatters(request):
+    """
+        根据聊天者ID获取聊天内容
+    """
+    info = json.loads(request.body.decode('utf8'))
+    SID = info['sid']
+    RID = info['rid']
+    #检查是否存在该sid
+    sid_mes = models.Message.objects.filter(SID = SID)
+    if len(sid_mes) == 0:
+        return JsonResponse({'message': 'not exist this SID'})
+    #检查是否存在该rid
+    rid_mes = models.Message.objects.filter(RID = RID)
+    if len(rid_mes) == 0:
+        return JsonResponse({'message': 'not exist this RID'})
+    messages_list = []    
+    messages = models.Message.objects.filter(SID=SID, RID=RID)
     for message in messages:
         messages_list.append({'mid': message.MID, 'sid': message.SID, 'content': message.content, 'rid': message.RID, 'date': message.date})
     return JsonResponse({'message': messages_list})
