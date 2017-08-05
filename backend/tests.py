@@ -517,5 +517,5 @@ class AvgtimeDialogsTestCase(TestCase):
         request = rf.post('api/enter/avgtime/')
         request._body = json.dumps(info).encode('utf8')
         result = jrToJson(enterprise.enterprise_avgtime_dialogs(request))['message']
-        result_number = (((self.time3-self.time1)/2).seconds)/60
+        result_number = (((self.time3 - self.time1) / 2).seconds) / 60
         self.assertEqual(result, result_number)
