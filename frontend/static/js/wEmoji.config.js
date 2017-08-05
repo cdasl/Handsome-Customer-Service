@@ -1,6 +1,6 @@
 (function (window) {
 
-  var path = "./", //项目所在的根地址
+  var path = "/static/js/", //项目所在的根地址
     emojis = {
       "paopao": {
         "name": "泡泡", //名字
