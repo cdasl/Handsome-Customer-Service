@@ -289,6 +289,31 @@ class GetChattedTestCase(TestCase):
         result = jrToJson(customer.customer_chatted(request))['message']
         self.assertEqual(set(result), set(['test_rid1', 'test_rid3', 'test_sid2']))
 
+class DialogsListTestCase(TestCase):
+    """
+        测试获取企业全部会话列表Api
+    """
+    def setUp(self):
+        self.stime1 = timezone.now()
+        self.stime2 = timezone.now()
+        self.stime3 = timezone.now()
+        self.etime1 = timezone.now()
+        self.etime2 = timezone.now()
+        self.etime3 = timezone.now()
+        models.Dialog.objects.create(DID = 'test_did1', EID = 'test_eid1', start_time = self.stime1, end_time = self.etime1)
+        models.Dialog.objects.create(DID = 'test_did2', EID = 'test_eid1', start_time = self.stime2, end_time = self.etime2)
+        models.Dialog.objects.create(DID = 'test_did3', EID = 'test_eid2', start_time = self.stime3, end_time = self.etime3)
+
+    def test_dialogs_list(self):
+        rf = RequestFactory()
+        info = {'eid': 'test_eid1'}
+        request = rf.post('api/enter/test_dialogs_list/')
+        request._body = json.dumps(info).encode('utf8')
+        result = jrToJson(enterprise.enterprise_dialogs(request))['message']
+        self.assertEqual(len(result), 2)
+        self.assertEqual(result[0]['did'], 'test_did1')
+        self.assertEqual(result[1]['did'], 'test_did2')
+
 class ResetPasswordTestCase(TestCase):
     '''
         测试重置密码API
