@@ -434,6 +434,7 @@ def messages_between_chatters(request):
         messages_list.append({'mid': message.MID, 'sid': message.SID, 'content': message.content, 'rid': message.RID, 'date': message.date})
     return JsonResponse({'message': messages_list})
 
+@ensure_csrf_cookie
 def enterprise_avgtime_dialogs(request):
     """
         获取客服会话平均时间
@@ -480,6 +481,7 @@ def enterprise_set_robot_message(request):
     except Exception:
         return JsonResponse({'message': 'error'})
 
+@ensure_csrf_cookie
 def enterprise_avgmes_dialogs(request):
     """
         获取企业会话的平均消息数
@@ -501,3 +503,25 @@ def enterprise_avgmes_dialogs(request):
     total_dialogs = len(models.Dialog.objects.filter(EID = EID))
     avgmes = round(total_messages / total_dialogs, 2)
     return JsonResponse({'message': avgmes})
+
+@ensure_csrf_cookie
+def enterprise_set_chatbox_type(request):
+    """
+        设置聊天窗口弹出方式
+    """
+    info =  {'eid': -1}
+    EID = 'eid'
+    if hasattr(request, 'body'):
+        info = json.loads(request.body.decode('utf8'))
+    if hasattr(request, 'session') and hasattr(request.session, 'eid'):
+        EID = request.session['eid']
+    elif info['eid'] != -1:
+        EID = info['eid']
+    else:
+        return JsonResponse({'message': 'error'})
+    enterprise = models.Enterprise.objects.filter(EID = EID, state = 1)
+    try:
+        enterprise.update(chatbox_type = info['chatbox_type'])
+        return JsonResponse({'message': 'success'})
+    except Exception:
+        return JsonResponse({'message': 'error'})
