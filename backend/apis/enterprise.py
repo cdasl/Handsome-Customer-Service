@@ -128,7 +128,7 @@ def enterprise_active(request):
     decrypt_str = helper.decrypt(9, active_code)
     decrypt_data = decrypt_str.split('|')
     email = decrypt_data[0]
-    enterprise = models.Enterprise.objects.filter(email =   email)
+    enterprise = models.Enterprise.objects.filter(email = email)
     if len(enterprise) == 0:
         #链接无效
         return JsonResponse({'message': 'invalid'})
