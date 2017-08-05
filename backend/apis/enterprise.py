@@ -448,8 +448,12 @@ def enterprise_avgtime_dialogs(request):
         EID = info['eid']
     else:
         return JsonResponse({'message': 'error'})
-    totaltime = enterprise_total_servicetime(request)
-    totaldialogs = enterprise_total_dialogs(request)
+    totaltime = 0
+    times = models.Dialog.objects.filter(EID = EID)
+    for t in times:
+        totaltime += (t.end_time - t.start_time).seconds
+    totaltime /= 60
+    totaldialogs = len(models.Dialog.objects.filter(EID = EID))
     avgtime = round(totaltime / totaldialogs, 2)
     return JsonResponse({'message': avgtime})
 
