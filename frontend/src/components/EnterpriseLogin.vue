@@ -12,8 +12,17 @@
       </Form-item>
       <Form-item style="margin-top:30px;">
           <Button type="primary" @click="submit">登录</Button>
+          <Button size="small" @click="findEmail">找回密码</Button>
       </Form-item>
     </Form>
+    <Modal
+        v-model="findback.modal"
+        title="找回密码"
+        @on-ok="ok"
+        @on-cancel="cancel">
+      <p>请输入企业邮箱</p>
+      <Input v-model="findback.email"></Input>
+    </Modal>
   </div>
 </template>
 <script>
@@ -25,10 +34,38 @@
         formItem: {
           email: '',
           password: ''
+        },
+        findback: {
+          modal: false,
+          email: ''
         }
       }
     },
     methods: {
+      findEmail () {
+        this.findback.modal = !this.findback.modal
+      },
+      ok () {
+        fetch('/api/reset_password/', {
+          method: 'post',
+          credentials: 'same-origin',
+          headers: {
+            'X-CSRFToken': this.getCookie('csrftoken'),
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({'email': this.findback.email})
+        }).then((res) => res.json())
+        .then((res) => {
+          this.findback.email = ''
+          if (res['message'] === 'enterprise_reset') {
+            this.warning('已发送一封邮件给您，请注意查看')
+          } else {
+            this.warning('发生错误')
+          }
+        })
+      },
+      cancel () {},
       getCookie (cName) {
         if (document.cookie.length > 0) {
           let cStart = document.cookie.indexOf(cName + '=')
