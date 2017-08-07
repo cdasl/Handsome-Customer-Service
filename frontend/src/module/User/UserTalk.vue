@@ -5,7 +5,7 @@
       <list></list>
     </div>
     <div class="main">
-      <message></message>
+      <message :content="content"></message>
       <text-input @onKeyup="send"></text-input>
     </div>
   </div>
@@ -19,24 +19,33 @@
     components: {Card, List, TextInput, Message},
     data () {
       return {
-        socket: null
+        socket: null,
+        content: []
       }
     },
     methods: {
       send (message) {
+        let msg = {}
+        msg['word'] = message
+        msg['time'] = new Date()
+        msg['self'] = true
+        this.content.push(msg)
         this.socket.emit('my broadcast event', {data: encodeURI(message)})
+        console.log(this.content)
       }
     },
     mounted: function () {
-      let namespace = '/test'
-      /* global location io: true */
-      this.socket = io.connect('http://' + document.domain + ':' + location.port + namespace)
-      this.socket.on('connect', function () {
-        console.log('connected')
-      })
-      this.socket.on('my response', function (msg) {
-        console.log(decodeURI(msg.data))
-      })
+      if (this.socket === null) {
+        let namespace = '/test'
+        /* global location io: true */
+        this.socket = io.connect('http://' + document.domain + ':' + location.port + namespace)
+        this.socket.on('connect', function () {
+          console.log('connected')
+        })
+        this.socket.on('my response', function (msg) {
+          console.log(decodeURI(msg.data))
+        })
+      }
     }
   }
 </script>

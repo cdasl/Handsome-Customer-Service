@@ -76,7 +76,7 @@
       wrapper.style.display = "none";
 
       content.innerHTML = "";
-      navRow.style.width = count / this.eachPartsNum * 75 + "%";
+      navRow.style.width = count / this.eachPartsNum * 100 + "%";
 
       for (var key in emojis) {
         var emj = emojis[key];
@@ -85,7 +85,7 @@
           continue;
 
         content.appendChild(this.__initContent(key, emj));
-        navRow.innerHTML += '<div class="wEmoji-list" data-eid="' + key + '" style="width:' + (1 / count * 75) + '%;">' + emj.name + '</div>';
+        navRow.innerHTML += '<div class="wEmoji-list" data-eid="' + key + '" style="width:' + (1 / count * 100) + '%;">' + emj.name + '</div>';
       }
 
       this.__initStyle();
@@ -145,7 +145,7 @@
           //自动生成code,方便后面的自动解析
           code = '[wem:' + key + "_" + imgArr.join(".") + "_" + type + ':wem]';
 
-          temp += '<div class="wEmoji-item" data-emj="' + code + '" style="width:' + (75 / col) + '%;">' +
+          temp += '<div class="wEmoji-item" data-emj="' + code + '" style="width:' + (100 / col) + '%;">' +
             '<img src="' + path + url + '" title="' + title + '" />' +
             '</div>';
         }
@@ -238,7 +238,6 @@
           return false;
 
         _self.callback.call(_self, emjCode);
-        console.log(emjCode);
       };
 
       content["on" + down] = function (e) {
@@ -323,7 +322,7 @@
         path = _self.emojis[eid].path;
         url = name + "." + type;
 
-        return '<img src="' + path + url + '" />';
+        return '<img src="' + path + url + '" style="width: 25px; height: 25px;"/>';
       });
     },
 
