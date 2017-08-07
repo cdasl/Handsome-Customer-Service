@@ -8,6 +8,7 @@ import json, hashlib, time, random, string
 from .. import models
 from chatterbot import ChatBot
 from . import helper, messages
+import django.utils.timezone as timezone
 
 def signup_init(info):
     """
@@ -149,11 +150,19 @@ def enterprise_invite(request):
     """
         邀请客服
     """
-    info = json.loads(request.body.decode('utf8'))
+    info =  {'eid': -1}
+    EID = 'eid'
+    if hasattr(request, 'body'):
+        info = json.loads(request.body.decode('utf8'))
+    if hasattr(request, 'session') and hasattr(request.session, 'eid'):
+        EID = request.session['eid']
+    elif info['eid'] != -1:
+        EID = info['eid']
+    else:
+        return JsonResponse({'flag': -12, 'message': ''})
     email = info['email']
     if len(models.Customer.objects.filter(email = email)) > 0:
         return JsonResponse({'flag': -10, 'message': ''})
-    EID = request.session['eid']
     md5 = hashlib.md5()
     md5.update(str(int(time.time())).encode('utf8'))
     CID = md5.hexdigest()
@@ -161,15 +170,15 @@ def enterprise_invite(request):
     password = '12345678'
     icon = 'demo.png'
     name = '张三'
-    last_login = date.today()
+    last_login = timezone.now()
     try:
         models.Customer.objects.create(CID = CID, EID = EID, email = email, password = password,
                                        icon = icon, name = name, last_login = last_login, salt = salt)
         active_code = helper.get_active_code(email)
-        mySubject = messages.customer_active_subject
+        mySubject = messages.customer_active_subject()
         myMessage = messages.customer_active_message(
             'http:/127.0.0.1:8000%s' % ('/customer_active/' + active_code))
-        helper.send_active_email(email, active_code, mySubject, myMessage)
+        helper.send_active_email(email, mySubject, myMessage)
         return JsonResponse({'flag': 1, 'message': ''})
     except Exception:
         return JsonResponse({'flag': -11, 'message': ''})
@@ -192,8 +201,8 @@ def reset_password_request(request):
     try:
         helper.send_active_email(email, mySubject, myMessage)
         if len(valid_enterprise) > 0:
-            return JsonResponse({'flag': 1, 'message': ''})
-        return JsonResponse({'flag': 1, 'message': ''})
+            return JsonResponse({'flag': 1, 'message': 'enterprise_reset'})
+        return JsonResponse({'flag': 1, 'message': 'customer_reset'})
     except Exception:
         return JsonResponse({'flag': -12, 'message': ''})
 
@@ -221,7 +230,7 @@ def reset_password(request):
         else:
             customer = models.Customer.objects.filter(email = email)
             customer.update(password = password, salt = salt)
-        return JsonResponse({'flag': 1, 'message': ''})
+        return JsonResponse({'flag': 1, 'message': 'reset'})
     except Exception:
         return JsonResponse({'flag': -12, 'message': ''})
 
