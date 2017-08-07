@@ -42,7 +42,7 @@ def enterprise_changepassword(info):
     md5.update((old_password + salt).encode('utf8'))
     password = md5.hexdigest()
     if password != obj.password:
-        return JsonResponse({'message': 'Wrong password'})
+        return JsonResponse({'message': -1})
     salt = ''.join(random.sample(string.ascii_letters + string.digits, 8))
     md5 = hashlib.md5()
     md5.update((new_password + salt).encode('utf8'))
@@ -51,9 +51,9 @@ def enterprise_changepassword(info):
         obj.salt = salt
         obj.password = password
         obj.save()
-        return JsonResponse({'message': 'Modified successfully'})
+        return JsonResponse({'message': 1})
     except Exception:
-        return JsonResponse({'message': 'Fail to modify'})
+        return JsonResponse({'message': -2})
 
 @ensure_csrf_cookie
 def enterprise_signup(request):
@@ -64,7 +64,7 @@ def enterprise_signup(request):
     email = info['email']
     #检查email是否已经存在
     if len(models.Enterprise.objects.filter(email = email)) > 0:
-        return JsonResponse({'message': 'This email has been registered'})
+        return JsonResponse({'message': -3})
     info_dict = signup_init(info)
     try:
         active_code = helper.get_active_code(email)
@@ -75,9 +75,9 @@ def enterprise_signup(request):
         models.Enterprise.objects.create(EID = info_dict['eid'], email = email, password = info_dict['password'],
                                          name = info_dict['name'], robot_icon = info_dict['ri'],
                                          robot_name = info_dict['rn'], salt = info_dict['salt'])
-        return JsonResponse({'message': 'Sign up successfully, please go to check your email'})
+        return JsonResponse({'message': 1})
     except Exception:
-        return JsonResponse({'message': 'Fail to sign up'})
+        return JsonResponse({'message': -4})
 
 def enterprise_login_helper(info):
     try:
@@ -93,16 +93,16 @@ def enterprise_login_helper(info):
                 return (1, right.EID)
             elif right.state == 0:
                 #账号未激活
-                return (0, 'account not activeted')
+                return (0, -5)
             elif right.state == -1:
                 #账号被注销
-                return (-1, 'account has been logged off')
+                return (-1, -6)
         else:
             #密码错误
-            return (-2, 'wrong password')
+            return (-2, -1)
     except Exception:
         #账号错误
-        return (-3, 'wrong account')
+        return (-3, -7)
 
 @ensure_csrf_cookie
 def enterprise_login(request):
@@ -116,7 +116,7 @@ def enterprise_login(request):
     else:
         request.session['eid'] = code[1]
         request.session['email'] = info['email']
-        return JsonResponse({'message': 'Login Success!'})
+        return JsonResponse({'message': 1})
 
 @csrf_exempt
 def enterprise_active(request):
@@ -131,18 +131,18 @@ def enterprise_active(request):
     enterprise = models.Enterprise.objects.filter(email = email)
     if len(enterprise) == 0:
         #链接无效
-        return JsonResponse({'message': 'invalid'})
+        return JsonResponse({'message': -8})
     create_date = time.mktime(time.strptime(decrypt_data[1], "%Y-%m-%d"))
     time_lag = time.time() - create_date
     if time_lag > 7 * 24 * 60 * 60:
         #链接过期
-        return JsonResponse({'message': 'expired'})
+        return JsonResponse({'message': -9})
     if enterprise[0].state == 1:
         #已经激活
-        return JsonResponse({'message': 'succeeded'})
+        return JsonResponse({'message': 1})
     enterprise.update(state = 1)
     #成功
-    return JsonResponse({'message': 'success'})
+    return JsonResponse({'message': 1})
 
 @ensure_csrf_cookie
 def enterprise_invite(request):
@@ -152,7 +152,7 @@ def enterprise_invite(request):
     info = json.loads(request.body.decode('utf8'))
     email = info['email']
     if len(models.Customer.objects.filter(email = email)) > 0:
-        return JsonResponse({'message': 'the mailbox has been registered'})
+        return JsonResponse({'message': -10})
     EID = request.session['eid']
     md5 = hashlib.md5()
     md5.update(str(int(time.time())).encode('utf8'))
@@ -170,9 +170,9 @@ def enterprise_invite(request):
         myMessage = messages.customer_active_message(
             'http:/127.0.0.1:8000%s' % ('/customer_active/' + active_code))
         helper.send_active_email(email, active_code, mySubject, myMessage)
-        return JsonResponse({'message': 'invite successfully'})
+        return JsonResponse({'message': 1})
     except Exception:
-        return JsonResponse({'message': 'invite failure'})
+        return JsonResponse({'message': -11})
 
 @ensure_csrf_cookie
 def reset_password_request(request):
@@ -184,7 +184,7 @@ def reset_password_request(request):
     valid_enterprise = models.Enterprise.objects.filter(email = email)
     vaild_customer = models.Customer.objects.filter(email = email)
     if len(valid_enterprise) == 0 and len(vaild_customer) == 0:
-        return JsonResponse({'message': 'invalid'})
+        return JsonResponse({'message': -8})
     active_code = helper.get_active_code(email)
     url = 'http://127.0.0.1:8000/password_reset/%s' % (active_code)
     mySubject = u"重置密码"
@@ -192,10 +192,10 @@ def reset_password_request(request):
     try:
         helper.send_active_email(email, mySubject, myMessage)
         if len(valid_enterprise) > 0:
-            return JsonResponse({'message': 'enterprise_reset'})
-        return JsonResponse({'message': 'customer_reset'})
+            return JsonResponse({'message': 1})
+        return JsonResponse({'message': 1})
     except Exception:
-        return JsonResponse({'message': 'error'})
+        return JsonResponse({'message': -12})
 
 @ensure_csrf_cookie
 def reset_password(request):
@@ -205,9 +205,9 @@ def reset_password(request):
     info = json.loads(request.body.decode('utf8'))
     tip = helper.active_code_check(info['active_code'])
     if tip == 'invalid':
-        return JsonResponse({'message': 'invalid'})
+        return JsonResponse({'message': -8})
     if tip == 'expired':
-        return JsonResponse({'message': 'expired'})
+        return JsonResponse({'message': -9})
     decrypt_str = helper.decrypt(9, info['active_code'])
     decrypt_data = decrypt_str.split('|')
     email = decrypt_data[0]
@@ -221,9 +221,9 @@ def reset_password(request):
         else:
             customer = models.Customer.objects.filter(email = email)
             customer.update(password = password, salt = salt)
-        return JsonResponse({'message': 'reset'})
+        return JsonResponse({'message': 1})
     except Exception:
-        return JsonResponse({'message': 'error'})
+        return JsonResponse({'message': -12})
 
 @ensure_csrf_cookie
 def enterprise_logoff_customer(request):
@@ -235,14 +235,14 @@ def enterprise_logoff_customer(request):
     #检查是否存在该客服
     customer = models.Customer.objects.filter(CID = CID)
     if len(customer) == 0:
-        return JsonResponse({'message': 'not exist this customer'})
+        return JsonResponse({'message': -13})
     customer_name = customer[0].name
     try:
         models.Customer.objects.filter(CID = CID).update(state = -1)
-        return JsonResponse({'message': 'log off ' + customer_name + ' successfully'})
+        return JsonResponse({'message': 1})
     except Exception:
         return JsonResponse({
-            'message': 'fail to log off ' + customer_name
+            'message': -14
             })
 
 @ensure_csrf_cookie
@@ -259,7 +259,7 @@ def enterprise_get_customers(request):
     elif info['eid'] != -1:
         EID = info['eid']
     else:
-        return JsonResponse({'message': 'error'})
+        return JsonResponse({'message': -12})
     customer_list = []
     customers = models.Customer.objects.filter(EID = EID)
     for customer in customers:
@@ -277,7 +277,7 @@ def inquire_customer_info(request):
     #检查是否存在该客服
     customer = models.Customer.objects.filter(CID = CID)
     if len(customer) == 0:
-        return JsonResponse({'message': 'not exist this customer'})
+        return JsonResponse({'message': -13})
     info = {
         'name': customer[0].name,
         'EID': customer[0].EID,
@@ -291,7 +291,7 @@ def inquire_customer_info(request):
     try:
         return JsonResponse({'message': info})
     except Exception:
-        return JsonResponse({'message': 'fail to inquire infomation of ' + CID})
+        return JsonResponse({'message': -15})
 
 @ensure_csrf_cookie
 def enterprise_online_customers(request):
@@ -307,7 +307,7 @@ def enterprise_online_customers(request):
     elif info['eid'] != -1:
         EID = info['eid']
     else:
-        return JsonResponse({'message': 'error'})
+        return JsonResponse({'message': -12})
     online_list = []
     customers = models.Customer.objects.filter(EID = EID, state = 2)
     for customer in customers:
@@ -328,7 +328,7 @@ def enterprise_total_servicetime(request):
     elif info['eid'] != -1:
         EID = info['eid']
     else:
-        return JsonResponse({'message': 'error'})
+        return JsonResponse({'message': -12})
     total = 0
     times = models.Dialog.objects.filter(EID = EID)
     for t in times:
@@ -350,7 +350,7 @@ def enterprise_total_messages(request):
     elif info['eid'] != -1:
         EID = info['eid']
     else:
-        return JsonResponse({'message': 'error'})
+        return JsonResponse({'message': -12})
     total = 0
     dialogs = models.Dialog.objects.filter(EID = EID)
     for dialog in dialogs:
@@ -371,7 +371,7 @@ def enterprise_total_dialogs(request):
     elif info['eid'] != -1:
         EID = info['eid']
     else:
-        return JsonResponse({'message': 'error'})
+        return JsonResponse({'message': -12})
     return JsonResponse({'message': len(models.Dialog.objects.filter(EID = EID))})
 
 @ensure_csrf_cookie
@@ -388,7 +388,7 @@ def enterprise_dialogs(request):
     elif info['eid'] != -1:
         EID = info['eid']
     else:
-        return JsonResponse({'message': 'error'})
+        return JsonResponse({'message': -12})
     dialogs_list = []
     dialogs = models.Dialog.objects.filter(EID = EID)
     for dialog in dialogs:
@@ -405,7 +405,7 @@ def enterprise_dialog_messages(request):
     #检查是否存在该did
     dialog = models.Message.objects.filter(DID = DID)
     if len(dialog) == 0:
-        return JsonResponse({'message': 'not exist this dialogID'})
+        return JsonResponse({'message': -16})
     messages_list = []    
     messages = models.Message.objects.filter(DID = DID)
     for message in messages:
@@ -423,11 +423,11 @@ def messages_between_chatters(request):
     #检查是否存在该sid
     sid_mes = models.Message.objects.filter(SID = SID)
     if len(sid_mes) == 0:
-        return JsonResponse({'message': 'not exist this SID'})
+        return JsonResponse({'message': -17})
     #检查是否存在该rid
     rid_mes = models.Message.objects.filter(RID = RID)
     if len(rid_mes) == 0:
-        return JsonResponse({'message': 'not exist this RID'})
+        return JsonResponse({'message': -18})
     messages_list = []    
     messages = models.Message.objects.filter(SID=SID, RID=RID)
     for message in messages:
@@ -448,7 +448,7 @@ def enterprise_avgtime_dialogs(request):
     elif info['eid'] != -1:
         EID = info['eid']
     else:
-        return JsonResponse({'message': 'error'})
+        return JsonResponse({'message': -12})
     totaltime = 0
     times = models.Dialog.objects.filter(EID = EID)
     for t in times:
@@ -472,14 +472,14 @@ def enterprise_set_robot_message(request):
     elif info['eid'] != -1:
         EID = info['eid']
     else:
-        return JsonResponse({'message': 'error'})
+        return JsonResponse({'message': -12})
     enterprise = models.Enterprise.objects.filter(EID = EID, state = 1)
     try:
         enterprise.update(robot_name = info['robot_name'])
         enterprise.update(robot_icon = info['robot_icon'])
-        return JsonResponse({'message': 'success'})
+        return JsonResponse({'message': 1})
     except Exception:
-        return JsonResponse({'message': 'error'})
+        return JsonResponse({'message': -12})
 
 @ensure_csrf_cookie
 def enterprise_avgmes_dialogs(request):
@@ -495,7 +495,7 @@ def enterprise_avgmes_dialogs(request):
     elif info['eid'] != -1:
         EID = info['eid']
     else:
-        return JsonResponse({'message': 'error'})
+        return JsonResponse({'message': -12})
     total_messages = 0
     dialogs = models.Dialog.objects.filter(EID = EID)
     for dialog in dialogs:
@@ -518,13 +518,13 @@ def enterprise_set_chatbox_type(request):
     elif info['eid'] != -1:
         EID = info['eid']
     else:
-        return JsonResponse({'message': 'error'})
+        return JsonResponse({'message': -12})
     enterprise = models.Enterprise.objects.filter(EID = EID, state = 1)
     try:
         enterprise.update(chatbox_type = info['chatbox_type'])
-        return JsonResponse({'message': 'success'})
+        return JsonResponse({'message': 1})
     except Exception:
-        return JsonResponse({'message': 'error'})
+        return JsonResponse({'message': -12})
 
 @ensure_csrf_cookie
 def enterprise_setuser_message(request):
@@ -540,9 +540,9 @@ def enterprise_setuser_message(request):
     elif info['eid'] != -1:
         EID = info['eid']
     else:
-        return JsonResponse({'message': 'error'})
+        return JsonResponse({'message': -12})
     try:
         models.User.objects.create(UID = info['uid'])
-        return JsonResponse({'message': 'success'})
+        return JsonResponse({'message': 1})
     except Exception:
-        return JsonResponse({'message': 'wrong'})
+        return JsonResponse({'message': -12})
