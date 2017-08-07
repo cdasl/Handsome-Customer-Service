@@ -24,7 +24,7 @@
     },
     methods: {
       send (message) {
-        this.socket.emit('my broadcast event', {data: message})
+        this.socket.emit('my broadcast event', {data: encodeURI(message)})
       }
     },
     mounted: function () {
@@ -35,7 +35,7 @@
         console.log('connected')
       })
       this.socket.on('my response', function (msg) {
-        console.log(msg.data)
+        console.log(decodeURI(msg.data))
       })
     }
   }
