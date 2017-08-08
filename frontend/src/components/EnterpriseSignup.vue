@@ -110,7 +110,7 @@
    width: 200px;
    margin-left: auto;
    margin-right: auto;
-   margin-top:100px;
+   margin-top: 100px;
 }
 .title {
   text-align: center;
