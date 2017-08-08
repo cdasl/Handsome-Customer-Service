@@ -6,7 +6,7 @@ describe('Test EnterpriseLogin', function () {
     this.timeout(5000)
     let vm = new Vue(EnterpriseLogin).$mount()
     it('Test findEmail', () => {
-        vm.findback.email='123'
+        vm.findback.email = '123'
         expect(vm.findback.email).to.equal('123')
     })
     it('Test ok', () => {
