@@ -41,11 +41,12 @@
 </template>
 <script>
   import ManageCustomer from '../../components/ManageCustomer'
+  import EnterpriseSetting from '../../components/EnterpriseSetting'
   export default {
-    components: {ManageCustomer},
+    components: {ManageCustomer, EnterpriseSetting},
     data () {
       return {
-        type: '',
+        type: 'enterprise-setting',
         spanLeft: 5,
         spanRight: 19
       }
@@ -68,6 +69,8 @@
       select (name) {
         if (name === '2') {
           this.type = 'manage-customer'
+        } else if (name === '5') {
+          this.type = 'enterprise-setting'
         }
       }
     }
@@ -76,7 +79,7 @@
 <style scoped>
 .row {
   display: flex;
-  height: 750px;
+  height: 100%;
 }
 .layout {
   border: 1px solid #d7dde4;
@@ -84,11 +87,13 @@
   position: relative;
   border-radius: 4px;
   overflow: hidden;
+  height: 100%;
 }
 .layout-breadcrumb {
   padding: 10px 15px 0;
 }
 .layout-content {
+  height: 100%;
   min-height: 450px;
   margin: 15px;
   overflow: hidden;
