@@ -45,6 +45,7 @@ def customer_login_helper(info):
         if md5.hexdigest() == customer.password:
             if customer.state == 1:
                 #成功
+                customer.update(state = 3)
                 return (1, customer.EID)
             elif customer.state == 0:
                 #账号未激活
@@ -70,3 +71,15 @@ def customer_login(request):
         request.session['eid'] = code[1]
         request.session['email'] = info['email']
         return JsonResponse({'flag': 1, 'message': ''})
+
+@ensure_csrf_cookie
+def customer_logout(request):
+    """客服退出"""
+    email = 'email1'
+    if hasattr(request.session, 'email'):
+        email = request.session['email']
+    else :
+        return response.JsonResponse({'flag': -12, 'message': ''})
+    customer = models.Customer.objects.filter(email = email)
+    customer.update(state = 1)
+    return response.JsonResponse({'flag': 1, 'message': ''})
