@@ -26,6 +26,14 @@
         we: null
       }
     },
+    watch: {
+      content (curVal, oldVal) {
+        this.$nextTick(() => {
+          let div = document.querySelector('.message')
+          div.scrollTop = div.scrollHeight
+        })
+      }
+    },
     methods: {
       explain: function (content) {
         return this.we.explain(content)

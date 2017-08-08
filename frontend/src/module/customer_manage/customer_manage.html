@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>客服管理</title>
+    <script type="text/javascript" src="//code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.1/socket.io.slim.js"></script>
+    <!--接入的地址在django的settings中进行设置，是通过django的路由来实现引入-->
+    <!--而在.vue文件中由于webpack的功能可以根据vue所在地址来查找文件-->
+    <script type="text/javascript" src="/static/js/wEmoji.config.js"></script>
+    <script type="text/javascript" src="/static/js/wEmoji.js"></script>
+    <link rel="stylesheet" type="text/css" href="/static/css/wEmoji.css">
+    <style type="text/css">
+      html, body {
+        height: 100%;
+      }
+      #customermanage {
+        height: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="customermanage">
+      <customer-manage></customer-manage>
+    </div>
+  </body>
+</html>
