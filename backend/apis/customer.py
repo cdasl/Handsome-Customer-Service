@@ -90,7 +90,7 @@ def customer_change_onlinestate(request):
     email = 'email1'
     if hasattr(request.session, 'email'):
         email = request.session['email']
-    else :
+    else:
         return response.JsonResponse({'flag': -12, 'message': ''})
     customer = models.Customer.objects.filter(email = email)
     if customer.state == 3:
