@@ -532,3 +532,28 @@ def enterprise_message_number(request):
             if time1 - time2 < 60 * 60 * 24:
                 total += 1
     return JsonResponse({'flag': 1, 'message': total})
+
+@ensure_csrf_cookie
+def enterprise_serviced_number(request):
+    """获取所有客服最近24小时服务的总人数"""
+    info = {'eid': -1}
+    EID = 'eid'
+    if hasattr(request, 'body'):
+        info = json.loads(request.body.decode('utf8'))
+    if hasattr(request, 'session') and hasattr(request.session, 'eid'):
+           EID = request.session['eid']
+    elif info['eid'] != -1:
+        EID = info['eid']
+    else:
+        return JsonResponse({'flag': -12, 'message': ''})
+    nowtime = timezone.now()
+    serviced = []
+    dialogs = models.Dialog.objects.filter(EID = EID)
+    for dialog in dialogs:
+        for message in models.Message.objects.filter(DID = dialog.DID):
+            time1 = time.mktime(nowtime.timetuple())
+            time2 = time.mktime(message.date.timetuple())
+            if time1 - time2 < 60 * 60 * 24:
+                serviced.append(message.RID)
+    return JsonResponse({'flag': 1, 'message': len(list(set(serviced)))})
+    
