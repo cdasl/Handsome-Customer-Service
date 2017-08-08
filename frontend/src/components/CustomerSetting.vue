@@ -59,14 +59,14 @@
 </script>
 <style scoped>
   h2 {
-    font-family: "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","微软雅黑",Arial,sans-serif;
+    font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial,sans-serif;
     font-size: 16px;
   }
   .form {
     margin-left: 30px;
   }
   .hr {
-    FILTER: alpha(opacity=100,finishopacity=0,style=3);
+    filter: alpha(opacity = 100,finishopacity = 0,style = 3);
     width: 80%;
     color: #987cb9;
     size: 3;
