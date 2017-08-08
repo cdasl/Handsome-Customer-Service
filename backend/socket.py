@@ -19,7 +19,7 @@ def background_thread():
     while True:
         sio.sleep(10)
         count += 1
-        sio.emit('my response', {'data': 'Server generated event'},
+        sio.emit('my responses', {'data': 'Server generated event'},
                  namespace = '/test')
 
 @sio.on('my event', namespace = '/test')
@@ -29,7 +29,7 @@ def test_message(sid, message):
 
 @sio.on('my broadcast event', namespace = '/test')
 def test_broadcast_message(sid, message):
-    sio.emit('my response', {'data': message['data']}, namespace = '/test')
+    sio.emit('my response', {'data': message['data'], 'sid': sid}, namespace = '/test')
 
 @sio.on('join', namespace = '/test')
 def join(sid, message):
@@ -61,7 +61,7 @@ def disconnect_request(sid):
 
 @sio.on('connect', namespace = '/test')
 def test_connect(sid, environ):
-    sio.emit('my response', {'data': 'Connected', 'count': 0}, room = sid,
+    sio.emit('connected', {'sid': sid}, room = sid,
              namespace = '/test')
 
 @sio.on('disconnect', namespace = '/test')

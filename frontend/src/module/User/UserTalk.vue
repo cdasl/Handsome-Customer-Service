@@ -20,18 +20,13 @@
     data () {
       return {
         socket: null,
-        content: []
+        content: [],
+        sid: ''
       }
     },
     methods: {
       send (message) {
-        let msg = {}
-        msg['word'] = message
-        msg['time'] = new Date()
-        msg['self'] = true
-        this.content.push(msg)
         this.socket.emit('my broadcast event', {data: encodeURI(message)})
-        console.log(this.content)
       }
     },
     mounted: function () {
@@ -39,11 +34,15 @@
         let namespace = '/test'
         /* global location io: true */
         this.socket = io.connect('http://' + document.domain + ':' + location.port + namespace)
-        this.socket.on('connect', function () {
-          console.log('connected')
+        this.socket.on('connected', (msg) => {
+          this.sid = msg['sid']
         })
-        this.socket.on('my response', function (msg) {
-          console.log(decodeURI(msg.data))
+        this.socket.on('my response', (msg) => {
+          let data = {}
+          data['word'] = decodeURI(msg['data'])
+          data['time'] = new Date()
+          data['self'] = msg['sid'] === this.sid
+          this.content.push(data)
         })
       }
     }
