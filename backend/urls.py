@@ -18,7 +18,7 @@ from django.contrib import admin
 from django.views.generic.base import TemplateView
 from django.conf.urls import include
 from . import views, api,socket
-from .apis import enterprise
+from .apis import enterprise, customer
 
 urlpatterns = [
     url(r'^$', api.index, name='index'),
@@ -41,4 +41,5 @@ urlpatterns = [
     url(r'^api/new_pwd_submit/$', enterprise.reset_password, name = 'reset_password_submit'),
     url(r'^api/enter/set_robot_message/$', enterprise.enterprise_set_robot_message, name = 'enterprise_set_robot_message'),
     url(r'^api/enter/setuser_message/$', enterprise.enterprise_setuser_message, name = 'enterprise_setuser_message'),
+    url(r'^api/enter/customer/login/$', customer.customer_login, name = 'customer_login'),
 ]
