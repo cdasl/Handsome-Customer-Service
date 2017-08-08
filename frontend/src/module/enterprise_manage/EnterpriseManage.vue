@@ -42,11 +42,12 @@
 <script>
   import ManageCustomer from '../../components/ManageCustomer'
   import EnterpriseSetting from '../../components/EnterpriseSetting'
+  import EnterpriseOverview from '../../components/EnterpriseOverview'
   export default {
-    components: {ManageCustomer, EnterpriseSetting},
+    components: {ManageCustomer, EnterpriseSetting, EnterpriseOverview},
     data () {
       return {
-        type: 'enterprise-setting',
+        type: 'enterprise-overview',
         spanLeft: 5,
         spanRight: 19
       }
@@ -67,7 +68,9 @@
         }
       },
       select (name) {
-        if (name === '2') {
+        if (name === '1') {
+          this.type = 'enterprise-overview'
+        } else if (name === '2') {
           this.type = 'manage-customer'
         } else if (name === '5') {
           this.type = 'enterprise-setting'
@@ -87,20 +90,21 @@
   position: relative;
   border-radius: 4px;
   overflow: hidden;
-  height: 100%;
+  min-height: 100%;
+  /* height: 100%; */
 }
 .layout-breadcrumb {
   padding: 10px 15px 0;
 }
 .layout-content {
-  height: 100%;
-  min-height: 450px;
+  min-height: 1080px;
   margin: 15px;
-  overflow: hidden;
+  overflow: auto;
   background: #fff;
   border-radius: 4px;
 }
 .layout-content-main {
+  width: 100%;
   padding: 10px;
 }
 .layout-copy{
