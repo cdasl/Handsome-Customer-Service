@@ -45,7 +45,7 @@ def customer_login_helper(info):
         if md5.hexdigest() == customer.password:
             if customer.state == 1:
                 #成功
-                customer.update(state = 3)
+                models.Customer.objects.filter(email = email)[0].update(state = 3)
                 return (1, customer.CID)
             elif customer.state == 0:
                 #账号未激活
