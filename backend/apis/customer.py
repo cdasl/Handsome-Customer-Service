@@ -75,24 +75,24 @@ def customer_login(request):
 @ensure_csrf_cookie
 def customer_logout(request):
     """客服退出"""
-    email = 'email1'
-    if hasattr(request.session, 'email'):
-        email = request.session['email']
+    CID = 'cid1'
+    if hasattr(request.session, 'cid'):
+        CID = request.session['cid']
     else :
         return response.JsonResponse({'flag': -12, 'message': ''})
-    customer = models.Customer.objects.filter(email = email)
+    customer = models.Customer.objects.filter(CID = CID)
     customer.update(state = 1)
     return response.JsonResponse({'flag': 1, 'message': ''})
 
 @ensure_csrf_cookie
 def customer_change_onlinestate(request):
     """客服改变在线状态"""
-    email = 'email1'
-    if hasattr(request.session, 'email'):
-        email = request.session['email']
+    CID = 'cid1'
+    if hasattr(request.session, 'cid'):
+        CID = request.session['cid']
     else:
         return response.JsonResponse({'flag': -12, 'message': ''})
-    customer = models.Customer.objects.filter(email = email)
+    customer = models.Customer.objects.filter(CID = CID)
     if customer.state == 3:
         customer.update(state = 2)
     elif customer.state == 2:
@@ -100,3 +100,15 @@ def customer_change_onlinestate(request):
     else :
         return response.JsonResponse({'flag': -12, 'message': ''})
     return response.JsonResponse({'flag': 1, 'message': ''})
+
+@ensure_csrf_cookie
+def customer_serviced_number(request):
+    """获取客服服务过的人数"""
+    CID = 'cid1'
+    if hasattr(request.session, 'cid'):
+        CID = request.session['cid']
+    else :
+        return response.JsonResponse({'flag': -12, 'message': ''})
+    customer = models.Customer.objects.filter(CID = CID)
+    return response.JsonResponse({'flag': 1, 'message': customer.serviced_number})
+    
