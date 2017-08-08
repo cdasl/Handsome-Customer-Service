@@ -172,8 +172,8 @@ def enterprise_invite(request):
     name = '张三'
     last_login = timezone.now()
     try:
-        models.Customer.objects.create(CID = CID, EID = EID, email = email, password = password,
-                                       icon = icon, name = name, last_login = last_login, salt = salt)
+        models.Customer.objects.create(CID = CID, EID = EID, email = email, password = password, 
+            icon = icon, name = name, last_login = last_login, salt = salt)
         active_code = helper.get_active_code(email)
         mySubject = messages.customer_active_subject()
         myMessage = messages.customer_active_message(

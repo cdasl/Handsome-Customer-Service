@@ -19,6 +19,6 @@ def customer_active_subject():
 def customer_active_message(url):
     return u'''
         <h2>客服(<a href="127.0.0.1:8000/" target="_blank">localhost</a>)</h2><br>
-        <p>您正在试图重置密码，若不是本人操作，请忽略此邮件。点击下面链接进行重置操作(3天后过期)：
+        <p>您正在试图激活客服账号，若不是本人操作，请忽略此邮件。点击下面链接进行重置操作(3天后过期)：
         <a href="%s" target="_blank">%s</a></p>
         ''' % (url, url)

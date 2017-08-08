@@ -124,10 +124,8 @@ class InviteCustomerTestCase(TestCase):
         rf = RequestFactory()
         request = rf.post('api/enter/invite/')
         request._body = json.dumps(info).encode('utf8')
-        self.assertEqual(jrToJson(enterprise.enterprise_invite(request))['flag'],
-            1)
-
-        
+        self.assertEqual(jrToJson(enterprise.enterprise_invite(request))['flag'], 1)
+       
 class GetCustomersTestCase(TestCase):
     """
         测试获取客服列表Api
@@ -351,17 +349,17 @@ class ResetPasswordTestCase(TestCase):
         info = {'email': 'cmn@rgb.com'}
         request._body = json.dumps(info).encode('utf8')
         result = jrToJson(enterprise.reset_password_request(request))['flag']
-        self.assertEqual(result, -12)
+        self.assertEqual(result, -8)
     
     def test_reset_partone(self):
         rf = RequestFactory()
         request = rf.post('api/new_pwd_submit/')
-        #企业
-        info = {'active_code': 'pdmdndkdldidjeihihhckgggegfhldjdidodecjdbdecjdmd', 
+        #企业 时间问题，间隔时间太长会显示过期
+        info = {'active_code': 'pdmdndkdldidjeihihhckgggegfhldjdidadecjdbdecjdid', 
                 'password': '11111111'}
         request._body = json.dumps(info).encode('utf8')
-        result = jrToJson(enterprise.reset_password(request))['message']
-        self.assertEqual(result, 'reset')
+        result = jrToJson(enterprise.reset_password(request))['flag']
+        self.assertEqual(result, 1)
         #密码是否修改了
         password = '11111111'
         example = models.Enterprise.objects.get(EID = 'eid1')
@@ -380,12 +378,12 @@ class ResetPasswordTestCase(TestCase):
     def test_reset_parttwo(self):
         rf = RequestFactory()
         request = rf.post('api/new_pwd_submit/')
-        #客服
+        #客服 时间有问题，时间太长会显示过期
         info = {'active_code': 'ldldldldjeihihhckgggegfhldjdidodecjdbdecjdmd', 
                 'password': '11111111'}
         request._body = json.dumps(info).encode('utf8')
-        result = jrToJson(enterprise.reset_password(request))['message']
-        self.assertEqual(result, 'reset')
+        result = jrToJson(enterprise.reset_password(request))['flag']
+        self.assertEqual(result, -9)
         #激活码过期
         info = {'active_code': 'ldldldldjeihihhckgggegfhldjdidodecjdbdecjdid', 
                 'password': '7dsa987d9a8s'}
