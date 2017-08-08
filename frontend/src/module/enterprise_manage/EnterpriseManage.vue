@@ -10,11 +10,19 @@
           </Menu-item>
           <Menu-item name="2">
             <Icon type="ios-keypad" :size="iconSize"></Icon>
-            <span class="layout-text">工作报表</span>
+            <span class="layout-text">客服管理</span>
           </Menu-item>
           <Menu-item name="3">
             <Icon type="ios-analytics" :size="iconSize"></Icon>
             <span class="layout-text">历史会话</span>
+          </Menu-item>
+          <Menu-item name="4">
+            <Icon type="cube" :size="iconSize"></Icon>
+            <span class="layout-text">知识库</span>
+          </Menu-item>
+          <Menu-item name="5">
+            <Icon type="settings" :size="iconSize"></Icon>
+            <span class="layout-text">设置</span>
           </Menu-item>
         </Menu>
       </i-col>
@@ -24,31 +32,22 @@
             <Icon type="navicon" size="32"></Icon>
           </i-button>
         </div>
-        <div class="layout-breadcrumb">
-          <Menu theme="light" mode="horizontal">
-            <Menu-item v-for="(item,index) in items" :name="item.data">
-              <span>{{ item.data }}</span>
-            </Menu-item>
-          </Menu>
-        </div>
         <div class="layout-content">
-          <div class="layout-content-main">内容区域</div>
+          <div class="layout-content-main"><div :is="type"></div></div>
         </div>
       </i-col>
     </Row>
   </div>
 </template>
 <script>
+  import ManageCustomer from '../../components/ManageCustomer'
   export default {
+    components: {ManageCustomer},
     data () {
       return {
+        type: '',
         spanLeft: 5,
-        spanRight: 19,
-        items: [
-          {'data': '按钮'},
-          {'data': '选项'},
-          {'data': '应用'}
-        ]
+        spanRight: 19
       }
     },
     computed: {
@@ -67,7 +66,9 @@
         }
       },
       select (name) {
-        console.log(name)
+        if (name === '2') {
+          this.type = 'manage-customer'
+        }
       }
     }
   }
