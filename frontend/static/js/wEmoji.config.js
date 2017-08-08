@@ -51,7 +51,7 @@
         ]
       },
       "baidu": {
-        "name": "百度表情",
+        "name": "表情",
         "col": 10,
         "path": path + "emojiSources/tiebaemoji/",
         "enable": true,
