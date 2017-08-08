@@ -11,9 +11,7 @@ from . import helper, messages
 import django.utils.timezone as timezone
 
 def signup_init(info):
-    """
-        初始化注册信息
-    """
+    """初始化注册信息"""
     md5 = hashlib.md5()
     md5.update(str(int(time.time())).encode('utf8'))
     salt = ''.join(random.sample(string.ascii_letters + string.digits, 8))
@@ -31,9 +29,7 @@ def signup_init(info):
             }
 
 def enterprise_changepassword(info):
-    """
-        修改密码
-    """
+    """修改密码"""
     email = info['email']
     old_password = info['old']
     new_password = info['new']
@@ -58,9 +54,7 @@ def enterprise_changepassword(info):
 
 @ensure_csrf_cookie
 def enterprise_signup(request):
-    """
-        企业注册
-    """
+    """企业注册"""
     info = json.loads(request.body.decode('utf8'))
     email = info['email']
     #检查email是否已经存在
@@ -107,9 +101,7 @@ def enterprise_login_helper(info):
 
 @ensure_csrf_cookie
 def enterprise_login(request):
-    """
-        企业登录
-    """
+    """企业登录"""
     info = json.loads(request.body.decode('utf8'))
     code = enterprise_login_helper(info)
     if code[0] < 1:
@@ -121,9 +113,7 @@ def enterprise_login(request):
 
 @csrf_exempt
 def enterprise_active(request):
-    """
-        企业激活
-    """
+    """企业激活"""
     info = json.loads(request.body.decode("utf8"))
     active_code = info['active_code']
     decrypt_str = helper.decrypt(9, active_code)
@@ -147,33 +137,16 @@ def enterprise_active(request):
 
 @ensure_csrf_cookie
 def enterprise_invite(request):
-    """
-        邀请客服
-    """
-    info =  {'eid': -1}
-    EID = 'eid'
-    if hasattr(request, 'body'):
-        info = json.loads(request.body.decode('utf8'))
+    """邀请客服"""
+    EID = 'test_eid'
+    info = json.loads(request.body.decode('utf8'))
     if hasattr(request, 'session') and hasattr(request.session, 'eid'):
         EID = request.session['eid']
-    elif info['eid'] != -1:
-        EID = info['eid']
-    else:
-        return JsonResponse({'flag': -12, 'message': ''})
     email = info['email']
     if len(models.Customer.objects.filter(email = email)) > 0:
         return JsonResponse({'flag': -10, 'message': ''})
-    md5 = hashlib.md5()
-    md5.update(str(int(time.time())).encode('utf8'))
-    CID = md5.hexdigest()
-    salt = ''.join(random.sample(string.ascii_letters + string.digits, 8))
-    password = '12345678'
-    icon = 'demo.png'
-    name = '张三'
-    last_login = timezone.now()
     try:
-        models.Customer.objects.create(CID = CID, EID = EID, email = email, password = password, 
-            icon = icon, name = name, last_login = last_login, salt = salt)
+        set_customer_message(email, EID)
         active_code = helper.get_active_code(email)
         mySubject = messages.customer_active_subject()
         myMessage = messages.customer_active_message(
@@ -183,11 +156,21 @@ def enterprise_invite(request):
     except Exception:
         return JsonResponse({'flag': -11, 'message': ''})
 
+def set_customer_message(email, EID):
+    md5 = hashlib.md5()
+    md5.update(str(int(time.time())).encode('utf8'))
+    CID = md5.hexdigest()
+    salt = ''.join(random.sample(string.ascii_letters + string.digits, 8))
+    password = '12345678'
+    icon = 'demo.png'
+    name = '张三'
+    last_login = timezone.now()
+    models.Customer.objects.create(CID = CID, EID = EID, email = email, password = password, 
+        icon = icon, name = name, last_login = last_login, salt = salt)
+
 @ensure_csrf_cookie
 def reset_password_request(request):
-    """
-        重置密码请求
-    """
+    """重置密码请求"""
     info = json.loads(request.body.decode('utf8'))
     email = info['email']
     valid_enterprise = models.Enterprise.objects.filter(email = email)
@@ -208,9 +191,7 @@ def reset_password_request(request):
 
 @ensure_csrf_cookie
 def reset_password(request):
-    '''
-        重置密码，前端发送激活码，新密码
-    '''
+    """重置密码，前端发送激活码，新密码"""
     info = json.loads(request.body.decode('utf8'))
     tip = helper.active_code_check(info['active_code'])
     if tip == 'invalid':
@@ -221,12 +202,10 @@ def reset_password(request):
     decrypt_data = decrypt_str.split('|')
     email = decrypt_data[0]
     password_salt = helper.password_add_salt(info['password'])
-    password = password_salt['password']
-    salt = password_salt['salt']
     try:
         enterprise = models.Enterprise.objects.filter(email = email)
         if len(enterprise) > 0:
-            enterprise.update(password = password, salt = salt)
+            enterprise.update(password = password_salt['password'], salt = password_salt['salt'])
         else:
             customer = models.Customer.objects.filter(email = email)
             customer.update(password = password, salt = salt)
@@ -235,10 +214,8 @@ def reset_password(request):
         return JsonResponse({'flag': -12, 'message': ''})
 
 @ensure_csrf_cookie
-def enterprise_logoff_customer(request):
-    """
-        注销客服
-    """
+def reset_customer_state(request):
+    """改变客服激活与否的状态"""
     info = json.loads(request.body.decode('utf8'))
     CID = info['cid']
     #检查是否存在该客服
@@ -247,8 +224,12 @@ def enterprise_logoff_customer(request):
         return JsonResponse({'flag': -13, 'message': ''})
     customer_name = customer[0].name
     try:
-        models.Customer.objects.filter(CID = CID).update(state = -1)
-        return JsonResponse({'flag': 1, 'message': ''})
+        if customer[0].state > 0:
+            models.Customer.objects.filter(CID = CID).update(state = -1)
+            return JsonResponse({'flag': 1, 'message': 'logoff success'})
+        elif customer[0].state == -1:
+            models.Customer.objects.filter(CID = CID).update(state = 1)
+            return JsonResponse({'flag': 1, 'message': 'activate success'})
     except Exception:
         return JsonResponse({
             'flag': -14, 'message': ''
@@ -256,9 +237,7 @@ def enterprise_logoff_customer(request):
 
 @ensure_csrf_cookie
 def enterprise_get_customers(request):
-    """
-        获取客服人员列表
-    """
+    """获取客服人员列表"""
     info =  {'eid': -1}
     EID = 'eid'
     if hasattr(request, 'body'):
@@ -279,9 +258,7 @@ def enterprise_get_customers(request):
     
 @ensure_csrf_cookie
 def inquire_customer_info(request):
-    """
-        根据客服ID查询客服信息
-    """
+    """根据客服ID查询客服信息"""
     info = json.loads(request.body.decode('utf8'))
     CID = info['cid']
     #检查是否存在该客服
@@ -305,9 +282,7 @@ def inquire_customer_info(request):
 
 @ensure_csrf_cookie
 def enterprise_online_customers(request):
-    """
-        获取在线客服人员列表
-    """
+    """获取在线客服人员列表"""
     info =  {'eid': -1}
     EID = 'eid'
     if hasattr(request, 'body'):
@@ -326,9 +301,7 @@ def enterprise_online_customers(request):
 
 @ensure_csrf_cookie
 def enterprise_total_servicetime(request):
-    """
-        获取企业总的服务时间，返回的是分钟
-    """
+    """获取企业总的服务时间，返回的是分钟"""
     info = {'eid': -1}
     EID = 'eid'
     if hasattr(request, 'body'):
@@ -348,9 +321,7 @@ def enterprise_total_servicetime(request):
 
 @ensure_csrf_cookie
 def enterprise_total_messages(request):
-    """
-        获取企业发送的总消息数
-    """
+    """获取企业发送的总消息数"""
     info = {'eid': -1}
     EID = 'eid'
     if hasattr(request, 'body'):
@@ -369,9 +340,7 @@ def enterprise_total_messages(request):
 
 @ensure_csrf_cookie
 def enterprise_total_dialogs(request):
-    """
-        获取企业发送的总会话数
-    """
+    """获取企业发送的总会话数"""
     info = {'eid': -1}
     EID = 'eid'
     if hasattr(request, 'body'):
@@ -386,9 +355,7 @@ def enterprise_total_dialogs(request):
 
 @ensure_csrf_cookie
 def enterprise_dialogs(request):
-    """
-        获取企业全部会话列表
-    """
+    """获取企业全部会话列表"""
     info =  {'eid': -1}
     EID = 'eid'
     if hasattr(request, 'body'):
@@ -407,9 +374,7 @@ def enterprise_dialogs(request):
 
 @ensure_csrf_cookie
 def enterprise_dialog_messages(request):
-    """
-        获取企业某个会话的内容
-    """
+    """获取企业某个会话的内容"""
     info = json.loads(request.body.decode('utf8'))
     DID = info['did']
     #检查是否存在该did
@@ -424,9 +389,7 @@ def enterprise_dialog_messages(request):
 
 @ensure_csrf_cookie
 def messages_between_chatters(request):
-    """
-        根据聊天者ID获取聊天内容
-    """
+    """根据聊天者ID获取聊天内容"""
     info = json.loads(request.body.decode('utf8'))
     SID = info['sid']
     RID = info['rid']
@@ -446,9 +409,7 @@ def messages_between_chatters(request):
 
 @ensure_csrf_cookie
 def enterprise_avgtime_dialogs(request):
-    """
-        获取客服会话平均时间
-    """
+    """获取客服会话平均时间"""
     info =  {'eid': -1}
     EID = 'eid'
     if hasattr(request, 'body'):
@@ -470,9 +431,7 @@ def enterprise_avgtime_dialogs(request):
 
 @ensure_csrf_cookie
 def enterprise_set_robot_message(request):
-    """
-        设置企业机器人名字，头像
-    """
+    """设置企业机器人名字，头像"""
     info =  {'eid': -1}
     EID = 'eid'
     if hasattr(request, 'body'):
@@ -493,9 +452,7 @@ def enterprise_set_robot_message(request):
 
 @ensure_csrf_cookie
 def enterprise_avgmes_dialogs(request):
-    """
-        获取企业会话的平均消息数
-    """
+    """获取企业会话的平均消息数"""
     info =  {'eid': -1}
     EID = 'eid'
     if hasattr(request, 'body'):
@@ -516,9 +473,7 @@ def enterprise_avgmes_dialogs(request):
 
 @ensure_csrf_cookie
 def enterprise_set_chatbox_type(request):
-    """
-        设置聊天窗口弹出方式
-    """
+    """设置聊天窗口弹出方式"""
     info =  {'eid': -1}
     EID = 'eid'
     if hasattr(request, 'body'):
@@ -538,9 +493,7 @@ def enterprise_set_chatbox_type(request):
 
 @ensure_csrf_cookie
 def enterprise_setuser_message(request):
-    """
-        企业将用户信息传给系统
-    """
+    """企业将用户信息传给系统"""
     info =  {'eid': -1}
     EID = 'eid'
     if hasattr(request, 'body'):

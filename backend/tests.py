@@ -75,9 +75,9 @@ class SendEmailTestCase(TestCase):
         #该功能的测试与企业邀请客服的重合
         pass
 
-class LogoffCustomerTestCase(TestCase):
+class ResetCustomerStateTestCase(TestCase):
     """
-        测试注销客服Api
+        测试改变客服激活与否的状态Api
     """
     def setUp(self):
         models.Customer.objects.create(CID = 'test_cid', EID = 'test_eid', email = 'test_email', salt = 'testsalt',
@@ -88,12 +88,14 @@ class LogoffCustomerTestCase(TestCase):
     def test_logoff(self):
         info = {'cid': 'cid'}
         rf = RequestFactory()
-        request = rf.post('api/enter/logoff/')
+        request = rf.post('api/enter/reset/')
         request._body = json.dumps(info).encode('utf8')
-        self.assertEqual(jrToJson(enterprise.enterprise_logoff_customer(request))['flag'], -13)
+        self.assertEqual(jrToJson(enterprise.reset_customer_state(request))['flag'], -13)
         info['cid'] = 'test_cid'
         request._body = json.dumps(info).encode('utf8')
-        self.assertEqual(jrToJson(enterprise.enterprise_logoff_customer(request))['flag'], 1)
+        self.assertEqual(jrToJson(enterprise.reset_customer_state(request))['message'], 'logoff success')
+        models.Customer.objects.filter(CID = 'test_cid').update(state = -1)
+        self.assertEqual(jrToJson(enterprise.reset_customer_state(request))['message'], 'activate success')
 
 class InviteCustomerTestCase(TestCase):
     """

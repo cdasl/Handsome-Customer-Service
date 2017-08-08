@@ -32,7 +32,7 @@ urlpatterns = [
     #apis
     url(r'^api/enter/signup/$', enterprise.enterprise_signup, name = 'enter_signup'),
     url(r'^api/enter/login/$', enterprise.enterprise_login, name = 'enter_login'),
-    url(r'^api/enter/logoff/$', enterprise.enterprise_logoff_customer, name = 'enter_logoff'),
+    url(r'^api/enter/reset/$', enterprise.reset_customer_state, name = 'reset_customer_state'),
     url(r'^api/active/$', enterprise.enterprise_active, name = 'active'),
     url(r'^user/$', socket.user, name = 'socket'),
     url(r'^socketio*', socket.user, name = 'socketio'),
