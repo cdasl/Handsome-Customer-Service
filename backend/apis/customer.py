@@ -46,7 +46,7 @@ def customer_login_helper(info):
             if customer.state == 1:
                 #成功
                 customer.update(state = 3)
-                return (1, customer.EID)
+                return (1, customer.CID)
             elif customer.state == 0:
                 #账号未激活
                 return (0, -5)
@@ -68,7 +68,7 @@ def customer_login(request):
     if code[0] < 1:
         return JsonResponse({'flag': code[1], 'message': ''})
     else:
-        request.session['eid'] = code[1]
+        request.session['cid'] = code[1]
         request.session['email'] = info['email']
         return JsonResponse({'flag': 1, 'message': ''})
 
@@ -82,4 +82,21 @@ def customer_logout(request):
         return response.JsonResponse({'flag': -12, 'message': ''})
     customer = models.Customer.objects.filter(email = email)
     customer.update(state = 1)
+    return response.JsonResponse({'flag': 1, 'message': ''})
+
+@ensure_csrf_cookie
+def customer_change_onlinestate(request):
+    """客服改变在线状态"""
+    email = 'email1'
+    if hasattr(request.session, 'email'):
+        email = request.session['email']
+    else :
+        return response.JsonResponse({'flag': -12, 'message': ''})
+    customer = models.Customer.objects.filter(email = email)
+    if customer.state == 3:
+        customer.update(state = 2)
+    elif customer.state == 2:
+        customer.update(state = 3)
+    else :
+        return response.JsonResponse({'flag': -12, 'message': ''})
     return response.JsonResponse({'flag': 1, 'message': ''})
