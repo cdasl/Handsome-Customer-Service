@@ -231,9 +231,7 @@ def reset_customer_state(request):
             models.Customer.objects.filter(CID = CID).update(state = 1)
             return JsonResponse({'flag': 1, 'message': 'activate success'})
     except Exception:
-        return JsonResponse({
-            'flag': -14, 'message': ''
-            })
+        return JsonResponse({'flag': -14, 'message': ''})
 
 @ensure_csrf_cookie
 def enterprise_get_customers(request):
@@ -254,7 +252,7 @@ def enterprise_get_customers(request):
         customer_list.append({'cid': customer.CID, 'name': customer.name, 'email': customer.email,
             'state': customer.state, 'service_number': customer.service_number, 'serviced_number': customer.serviced_number})
     #return JsonResponse({'message': customer_list})
-    return JsonResponse({'flag': 1,'message': customer_list})
+    return JsonResponse({'flag': 1, 'message': customer_list})
     
 @ensure_csrf_cookie
 def inquire_customer_info(request):
