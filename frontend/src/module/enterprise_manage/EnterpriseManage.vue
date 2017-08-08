@@ -2,25 +2,25 @@
   <div class="layout" :class="{'layout-hide-text': spanLeft < 5}">
     <Row type="flex" class="row">
       <i-col :span="spanLeft" class="layout-menu-left">
-        <Menu active-name="1" theme="dark" width="auto" @on-select="select">
+        <Menu active-name="enterprise-overview" theme="dark" width="auto" @on-select="select">
           <div class="layout-logo-left"></div>
-          <Menu-item name="1">
+          <Menu-item name="enterprise-overview">
             <Icon type="ios-navigate" :size="iconSize"></Icon>
             <span class="layout-text">主页</span>
           </Menu-item>
-          <Menu-item name="2">
+          <Menu-item name="manage-customer">
             <Icon type="ios-keypad" :size="iconSize"></Icon>
             <span class="layout-text">客服管理</span>
           </Menu-item>
-          <Menu-item name="3">
+          <Menu-item name="manage-customer">
             <Icon type="ios-analytics" :size="iconSize"></Icon>
             <span class="layout-text">历史会话</span>
           </Menu-item>
-          <Menu-item name="4">
+          <Menu-item name="manage-customer">
             <Icon type="cube" :size="iconSize"></Icon>
             <span class="layout-text">知识库</span>
           </Menu-item>
-          <Menu-item name="5">
+          <Menu-item name="enterprise-setting">
             <Icon type="settings" :size="iconSize"></Icon>
             <span class="layout-text">设置</span>
           </Menu-item>
@@ -42,11 +42,12 @@
 <script>
   import ManageCustomer from '../../components/ManageCustomer'
   import EnterpriseSetting from '../../components/EnterpriseSetting'
+  import EnterpriseOverview from '../../components/EnterpriseOverview'
   export default {
-    components: {ManageCustomer, EnterpriseSetting},
+    components: {ManageCustomer, EnterpriseSetting, EnterpriseOverview},
     data () {
       return {
-        type: 'enterprise-setting',
+        type: 'enterprise-overview',
         spanLeft: 5,
         spanRight: 19
       }
@@ -67,11 +68,7 @@
         }
       },
       select (name) {
-        if (name === '2') {
-          this.type = 'manage-customer'
-        } else if (name === '5') {
-          this.type = 'enterprise-setting'
-        }
+        this.type = name
       }
     }
   }
@@ -87,20 +84,21 @@
   position: relative;
   border-radius: 4px;
   overflow: hidden;
-  height: 100%;
+  min-height: 100%;
+  /* height: 100%; */
 }
 .layout-breadcrumb {
   padding: 10px 15px 0;
 }
 .layout-content {
-  height: 100%;
-  min-height: 450px;
+  min-height: 1080px;
   margin: 15px;
-  overflow: hidden;
+  overflow: auto;
   background: #fff;
   border-radius: 4px;
 }
 .layout-content-main {
+  width: 100%;
   padding: 10px;
 }
 .layout-copy{

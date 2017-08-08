@@ -20,7 +20,8 @@
     "less-loader": "^4.0.5",
     "vue": "^2.0.1",
     "vuex": "^2.3.1",
-    "whatwg-fetch": "^2.0.3"
+    "whatwg-fetch": "^2.0.3",
+    "schart":"^1.0.2",
   },
   "devDependencies": {
     "autoprefixer": "^6.4.0",
