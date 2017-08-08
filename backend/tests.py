@@ -31,12 +31,10 @@ class EnterSignupTestCase(TestCase):
         rf = RequestFactory()
         request = rf.post('api/enter/signup/')
         request._body = json.dumps(info).encode('utf8')
-        self.assertEqual(jrToJson(enterprise.enterprise_signup(request))['message'],
-            'This email has been registered')
+        self.assertEqual(jrToJson(enterprise.enterprise_signup(request))['flag'], -3)
         info['email'] = '123456@qq.com'
         request._body = json.dumps(info).encode('utf8')
-        self.assertEqual(jrToJson(enterprise.enterprise_signup(request))['message'],
-            'Sign up successfully, please go to check your email')
+        self.assertEqual(jrToJson(enterprise.enterprise_signup(request))['flag'], 1)
 
 class EnterLoginTestCase(TestCase):
     """
@@ -63,13 +61,11 @@ class EnterLoginTestCase(TestCase):
         #测试密码错误
         info['password'] = '123456789'
         request._body = json.dumps(info).encode('utf8')
-        self.assertEqual(jrToJson(enterprise.enterprise_login(request))['message'], 
-            'wrong password')
+        self.assertEqual(jrToJson(enterprise.enterprise_login(request))['flag'], -1)
         #测试登录失败
         info['email'] = '123456@qq.com'
         request._body = json.dumps(info).encode('utf8')
-        self.assertEqual(jrToJson(enterprise.enterprise_login(request))['message'], 
-            'wrong account')
+        self.assertEqual(jrToJson(enterprise.enterprise_login(request))['flag'], -7)
 
 class SendEmailTestCase(TestCase):
     """
@@ -94,12 +90,10 @@ class LogoffCustomerTestCase(TestCase):
         rf = RequestFactory()
         request = rf.post('api/enter/logoff/')
         request._body = json.dumps(info).encode('utf8')
-        self.assertEqual(jrToJson(enterprise.enterprise_logoff_customer(request))['message'],
-            'not exist this customer')
+        self.assertEqual(jrToJson(enterprise.enterprise_logoff_customer(request))['flag'], -13)
         info['cid'] = 'test_cid'
         request._body = json.dumps(info).encode('utf8')
-        self.assertEqual(jrToJson(enterprise.enterprise_logoff_customer(request))['message'],
-            'log off test_name successfully')
+        self.assertEqual(jrToJson(enterprise.enterprise_logoff_customer(request))['flag'], 1)
 
 class InviteCustomerTestCase(TestCase):
     """
@@ -112,13 +106,26 @@ class InviteCustomerTestCase(TestCase):
 
     def test_invite(self):
         #测试邮箱所属客服已注册过
-        info = {'email': '123456@qq.com'}
+        info = {
+            'eid': 'test_eid',
+            'email': '123456@qq.com'
+            }
         rf = RequestFactory()
         request = rf.post('api/enter/invite/')
         request._body = json.dumps(info).encode('utf8')
-        self.assertEqual(jrToJson(enterprise.enterprise_invite(request))['message'],
-            'the mailbox has been registered') 
-        
+        self.assertEqual(jrToJson(enterprise.enterprise_invite(request))['flag'],
+            -10)
+
+    def test_invite_successful(self):
+        info = {
+            'eid': 'test_eid1',
+            'email': '1234567@qq.com'
+            }
+        rf = RequestFactory()
+        request = rf.post('api/enter/invite/')
+        request._body = json.dumps(info).encode('utf8')
+        self.assertEqual(jrToJson(enterprise.enterprise_invite(request))['flag'], 1)
+       
 class GetCustomersTestCase(TestCase):
     """
         测试获取客服列表Api
@@ -156,7 +163,7 @@ class InquireCustomerInfoTestCase(TestCase):
         rf = RequestFactory()
         request = rf.post('api/enter/inquireinfo/')
         request._body = json.dumps(info).encode('utf8')
-        self.assertEqual(jrToJson(enterprise.inquire_customer_info(request))['message'], 'not exist this customer')
+        self.assertEqual(jrToJson(enterprise.inquire_customer_info(request))['flag'], -13)
         #测试查询成功
         info['cid'] = 'test_cid'
         request._body = json.dumps(info).encode('utf8')
@@ -341,18 +348,18 @@ class ResetPasswordTestCase(TestCase):
         #错误
         info = {'email': 'cmn@rgb.com'}
         request._body = json.dumps(info).encode('utf8')
-        result = jrToJson(enterprise.reset_password_request(request))['message']
-        self.assertEqual(result, 'invalid')
+        result = jrToJson(enterprise.reset_password_request(request))['flag']
+        self.assertEqual(result, -8)
     
     def test_reset_partone(self):
         rf = RequestFactory()
         request = rf.post('api/new_pwd_submit/')
-        #企业
-        info = {'active_code': 'pdmdndkdldidjeihihhckgggegfhldjdidodecjdbdecjdmd', 
+        #企业 时间问题，间隔时间太长会显示过期
+        info = {'active_code': 'pdmdndkdldidjeihihhckgggegfhldjdidadecjdbdecjdid', 
                 'password': '11111111'}
         request._body = json.dumps(info).encode('utf8')
-        result = jrToJson(enterprise.reset_password(request))['message']
-        self.assertEqual(result, 'reset')
+        result = jrToJson(enterprise.reset_password(request))['flag']
+        self.assertEqual(result, 1)
         #密码是否修改了
         password = '11111111'
         example = models.Enterprise.objects.get(EID = 'eid1')
@@ -365,24 +372,24 @@ class ResetPasswordTestCase(TestCase):
         info = {'active_code': 'thisisawrongexample', 
                 'password': '7dsa987d9a8s'}
         request._body = json.dumps(info).encode('utf8')
-        result = jrToJson(enterprise.reset_password(request))['message']
-        self.assertEqual(result, 'invalid')
+        result = jrToJson(enterprise.reset_password(request))['flag']
+        self.assertEqual(result, -8)
 
     def test_reset_parttwo(self):
         rf = RequestFactory()
         request = rf.post('api/new_pwd_submit/')
-        #客服
+        #客服 时间有问题，时间太长会显示过期
         info = {'active_code': 'ldldldldjeihihhckgggegfhldjdidodecjdbdecjdmd', 
                 'password': '11111111'}
         request._body = json.dumps(info).encode('utf8')
-        result = jrToJson(enterprise.reset_password(request))['message']
-        self.assertEqual(result, 'reset')
+        result = jrToJson(enterprise.reset_password(request))['flag']
+        self.assertEqual(result, -9)
         #激活码过期
         info = {'active_code': 'ldldldldjeihihhckgggegfhldjdidodecjdbdecjdid', 
                 'password': '7dsa987d9a8s'}
         request._body = json.dumps(info).encode('utf8')
-        result = jrToJson(enterprise.reset_password(request))['message']
-        self.assertEqual(result, 'expired')
+        result = jrToJson(enterprise.reset_password(request))['flag']
+        self.assertEqual(result, -9)
 
 class DialogMessagesTestCase(TestCase):
     """
@@ -430,8 +437,8 @@ class SetRobotMessageTestCase(TestCase):
                 }
         request = rf.post('api/enter/set_robot_name/')
         request._body = json.dumps(info).encode('utf8')
-        result = jrToJson(enterprise.enterprise_set_robot_message(request))['message']
-        self.assertEqual(result, 'success')
+        result = jrToJson(enterprise.enterprise_set_robot_message(request))['flag']
+        self.assertEqual(result, 1)
         test_case1 = models.Enterprise.objects.get(EID = 'eid1').robot_name
         self.assertEqual('test1', test_case1)
         test_case2 = models.Enterprise.objects.get(EID = 'eid1').robot_icon
@@ -534,8 +541,8 @@ class SetChatboxTypeTestCase(TestCase):
                 'chatbox_type': 2}
         request = rf.post('api/enter/set_chatbox_type/')
         request._body = json.dumps(info).encode('utf8')
-        result = jrToJson(enterprise.enterprise_set_chatbox_type(request))['message']
-        self.assertEqual(result, 'success')
+        result = jrToJson(enterprise.enterprise_set_chatbox_type(request))['flag']
+        self.assertEqual(result, 1)
 
 class SetUserMsgTestCase(TestCase):
     """
@@ -549,6 +556,6 @@ class SetUserMsgTestCase(TestCase):
         }
         request = rf.post('api/enter/setuser_message')
         request._body = json.dumps(info).encode('utf8')
-        result = jrToJson(enterprise.enterprise_setuser_message(request))['message']
-        self.assertEqual(result, 'success')
+        result = jrToJson(enterprise.enterprise_setuser_message(request))['flag']
+        self.assertEqual(result, 1)
         
