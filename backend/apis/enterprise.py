@@ -78,18 +78,18 @@ def enterprise_login_helper(info):
     try:
         email = info['email']
         password = info['password']
-        right = models.Enterprise.objects.get(email = email)
+        enterprise = models.Enterprise.objects.get(email = email)
         md5 = hashlib.md5()
-        password += right.salt
+        password += enterprise.salt
         md5.update(password.encode('utf8'))
-        if md5.hexdigest() == right.password:
-            if right.state == 1:
+        if md5.hexdigest() == enterprise.password:
+            if enterprise.state == 1:
                 #成功
-                return (1, right.EID)
-            elif right.state == 0:
+                return (1, enterprise.EID)
+            elif enterprise.state == 0:
                 #账号未激活
                 return (0, -5)
-            elif right.state == -1:
+            elif enterprise.state == -1:
                 #账号被注销
                 return (-1, -6)
         else:
