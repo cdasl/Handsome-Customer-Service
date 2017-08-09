@@ -206,11 +206,11 @@ def reset_password(request):
     try:
         enterprise = models.Enterprise.objects.filter(email = email)
         if len(enterprise) > 0:
-            models.Enterprise.objects.filter(email = email)[0].update(password = password_salt['password'], 
+            models.Enterprise.objects.filter(email = email).update(password = password_salt['password'], 
                 salt = password_salt['salt'])
         else:
             customer = models.Customer.objects.filter(email = email)
-            models.Customer.objects.filter(email = email)[0].update(password = password, salt = salt)
+            models.Customer.objects.filter(email = email).update(password = password, salt = salt)
         return JsonResponse({'flag': 1, 'message': 'reset'})
     except Exception:
         return JsonResponse({'flag': -12, 'message': ''})
@@ -444,8 +444,8 @@ def enterprise_set_robot_message(request):
         return JsonResponse({'flag': -12, 'message': ''})
     #enterprise = models.Enterprise.objects.filter(EID = EID, state = 1)
     try:
-        models.Enterprise.objects.filter(EID = EID, state = 1)[0].update(robot_name = info['robot_name'])
-        models.Enterprise.objects.filter(EID = EID, state = 1)[0].update(robot_icon = info['robot_icon'])
+        models.Enterprise.objects.filter(EID = EID, state = 1).update(robot_name = info['robot_name'])
+        models.Enterprise.objects.filter(EID = EID, state = 1).update(robot_icon = info['robot_icon'])
         return JsonResponse({'flag': 1, 'message': ''})
     except Exception:
         return JsonResponse({'flag': -12, 'message': ''})
@@ -486,7 +486,7 @@ def enterprise_set_chatbox_type(request):
         return JsonResponse({'flag': -12, 'message': ''})
     #enterprise = models.Enterprise.objects.filter(EID = EID, state = 1)
     try:
-        models.Enterprise.objects.filter(EID = EID, state = 1)[0].update(chatbox_type = info['chatbox_type'])
+        models.Enterprise.objects.filter(EID = EID, state = 1).update(chatbox_type = info['chatbox_type'])
         return JsonResponse({'flag': 1, 'message': ''})
     except Exception:
         return JsonResponse({'flag': -12, 'message': ''})
