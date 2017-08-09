@@ -568,7 +568,7 @@ def enterprise_dialogs_oneday(request):
     if hasattr(request, 'body'):
         info = json.loads(request.body.decode('utf8'))
     if hasattr(request, 'session') and 'eid' in request.session:
-           EID = request.session['eid']
+        EID = request.session['eid']
     elif info['eid'] != -1:
         EID = info['eid']
     else:
