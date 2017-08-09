@@ -9,6 +9,7 @@ from .. import models
 from chatterbot import ChatBot
 from . import helper, messages
 import django.utils.timezone as timezone
+import datetime, time
 
 def signup_init(info):
     """初始化注册信息"""
@@ -309,7 +310,7 @@ def enterprise_total_servicetime(request):
     elif info['eid'] != -1:
         EID = info['eid']
     else:
-        return JsonResponse({'flag': 1, 'message': ''})
+        return JsonResponse({'flag': -12, 'message': ''})
     total = 0
     times = models.Dialog.objects.filter(EID = EID)
     for t in times:
@@ -329,7 +330,7 @@ def enterprise_total_messages(request):
     elif info['eid'] != -1:
         EID = info['eid']
     else:
-        return JsonResponse({'flag': 1, 'message': ''})
+        return JsonResponse({'flag': -12, 'message': ''})
     total = 0
     dialogs = models.Dialog.objects.filter(EID = EID)
     for dialog in dialogs:
@@ -507,3 +508,27 @@ def enterprise_setuser_message(request):
         return JsonResponse({'flag': 1, 'message': ''})
     except Exception:
         return JsonResponse({'flag': -12, 'message': ''})
+
+@ensure_csrf_cookie
+def enterprise_message_number(request):
+    """获取企业近24小时的消息数"""
+    info = {'eid': -1}
+    EID = 'eid'
+    if hasattr(request, 'body'):
+        info = json.loads(request.body.decode('utf8'))
+    if hasattr(request, 'session') and hasattr(request.session, 'eid'):
+           EID = request.session['eid']
+    elif info['eid'] != -1:
+        EID = info['eid']
+    else:
+        return JsonResponse({'flag': -12, 'message': ''})
+    total = 0
+    nowtime = timezone.now()
+    dialogs = models.Dialog.objects.filter(EID = EID)
+    for dialog in dialogs:
+        for message in models.Message.objects.filter(DID = dialog.DID):
+            time1 = time.mktime(nowtime.timetuple())
+            time2 = time.mktime(message.date.timetuple())
+            if time1 - time2 < 60 * 60 * 24:
+                total += 1
+    return JsonResponse({'flag': 1, 'message': total})

@@ -38,14 +38,14 @@ def customer_login_helper(info):
     try:
         email = info['email']
         password = info['password']
-        customer = models.Customer.objects.get(email = email)
+        customer = models.Customer.objects.filter(email = email)[0]
         md5 = hashlib.md5()
         password += customer.salt
         md5.update(password.encode('utf8'))
         if md5.hexdigest() == customer.password:
             if customer.state == 1:
                 #成功
-                customer.update(state = 3)
+                models.Customer.objects.filter(email = email).update(state = 3)
                 return (1, customer.CID)
             elif customer.state == 0:
                 #账号未激活
