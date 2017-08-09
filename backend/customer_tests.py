@@ -90,6 +90,28 @@ class OnlineStateTestCase(TestCase):
         self.assertEqual(tests.jrToJson(customer.customer_change_onlinestate(request))['flag'], 1)
         self.assertEqual(models.Customer.objects.get(CID = 'test_cid').state, 2)
 
+class ServicedNumTestCase(TestCase):
+    '''
+        测试客服服务过的人数
+    '''
+    def setUp(self):
+        models.Customer.objects.create(CID = 'test_cid', EID = 'test_eid', email = '2222@qq.com', salt = 'salt',
+            password = 'password', icon = 'test_icon', name = 'test_name', state = 2,
+            service_number = 0, serviced_number = 100, last_login = datetime.datetime.now()
+        )
+
+    def test_serviced_number(self):
+        rf = RequestFactory()
+        request = rf.post('api/customer/get_serviced_num/')
+        request.session =  {}
+        info = {}
+        #成功
+        request.session['cid'] = 'test_cid'
+        request._body = json.dumps(info).encode('utf8')
+        self.assertEqual(tests.jrToJson(customer.customer_serviced_number(request))['message'], 100)
+
+
+
 
 
 

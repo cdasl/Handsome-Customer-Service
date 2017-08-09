@@ -109,7 +109,7 @@ def customer_serviced_number(request):
     else:
         return JsonResponse({'flag': -12, 'message': ''})
     customer = models.Customer.objects.filter(CID = CID)
-    return JsonResponse({'flag': 1, 'message': customer.serviced_number})
+    return JsonResponse({'flag': 1, 'message': customer[0].serviced_number})
 
 @ensure_csrf_cookie
 def customer_dialogs_oneday(request):
