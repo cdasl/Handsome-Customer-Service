@@ -79,10 +79,10 @@ def customer_logout(request):
     if hasattr(request.session, 'cid'):
         CID = request.session['cid']
     else :
-        return response.JsonResponse({'flag': -12, 'message': ''})
+        return JsonResponse({'flag': -12, 'message': ''})
     customer = models.Customer.objects.filter(CID = CID)
     customer.update(state = 1)
-    return response.JsonResponse({'flag': 1, 'message': ''})
+    return JsonResponse({'flag': 1, 'message': ''})
 
 @ensure_csrf_cookie
 def customer_change_onlinestate(request):
@@ -91,15 +91,15 @@ def customer_change_onlinestate(request):
     if hasattr(request.session, 'cid'):
         CID = request.session['cid']
     else:
-        return response.JsonResponse({'flag': -12, 'message': ''})
+        return JsonResponse({'flag': -12, 'message': ''})
     customer = models.Customer.objects.filter(CID = CID)
     if customer.state == 3:
         customer.update(state = 2)
     elif customer.state == 2:
         customer.update(state = 3)
     else :
-        return response.JsonResponse({'flag': -12, 'message': ''})
-    return response.JsonResponse({'flag': 1, 'message': ''})
+        return JsonResponse({'flag': -12, 'message': ''})
+    return JsonResponse({'flag': 1, 'message': ''})
 
 @ensure_csrf_cookie
 def customer_serviced_number(request):
@@ -108,7 +108,6 @@ def customer_serviced_number(request):
     if hasattr(request.session, 'cid'):
         CID = request.session['cid']
     else :
-        return response.JsonResponse({'flag': -12, 'message': ''})
+        return JsonResponse({'flag': -12, 'message': ''})
     customer = models.Customer.objects.filter(CID = CID)
-    return response.JsonResponse({'flag': 1, 'message': customer.serviced_number})
-    
+    return JsonResponse({'flag': 1, 'message': customer.serviced_number})
