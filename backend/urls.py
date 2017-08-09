@@ -42,4 +42,5 @@ urlpatterns = [
     url(r'^api/enter/set_robot_message/$', enterprise.enterprise_set_robot_message, name = 'enterprise_set_robot_message'),
     url(r'^api/enter/setuser_message/$', enterprise.enterprise_setuser_message, name = 'enterprise_setuser_message'),
     url(r'^api/enter/customer/login/$', customer.customer_login, name = 'customer_login'),
+    url(r'^api/customer/logout/$', customer.customer_logout, name = 'customer_logout'),
 ]
