@@ -2,7 +2,7 @@
   <div class="layout" :class="{'layout-hide-text': spanLeft < 5}">
     <Row type="flex" class="row">
       <i-col :span="spanLeft" class="layout-menu-left">
-        <Menu active-name="enterprise-overview" theme="dark" width="auto" @on-select="select">
+        <Menu active-name="enterprise-overview" theme="dark" width="auto" @on-select="select" :class="leftClass">
           <div class="layout-logo-left"></div>
           <Menu-item name="enterprise-overview">
             <Icon type="ios-navigate" :size="iconSize"></Icon>
@@ -12,7 +12,7 @@
             <Icon type="ios-keypad" :size="iconSize"></Icon>
             <span class="layout-text">客服管理</span>
           </Menu-item>
-          <Menu-item name="manage-customer">
+          <Menu-item name="history-dialog">
             <Icon type="ios-analytics" :size="iconSize"></Icon>
             <span class="layout-text">历史会话</span>
           </Menu-item>
@@ -43,11 +43,13 @@
   import ManageCustomer from '../../components/ManageCustomer'
   import EnterpriseSetting from '../../components/EnterpriseSetting'
   import EnterpriseOverview from '../../components/EnterpriseOverview'
+  import HistoryDialog from '../../components/HistoryDialog'
   export default {
-    components: {ManageCustomer, EnterpriseSetting, EnterpriseOverview},
+    components: {ManageCustomer, EnterpriseSetting, EnterpriseOverview, HistoryDialog},
     data () {
       return {
-        type: 'enterprise-overview',
+        leftClass: 'my-fixed',
+        type: 'history-dialog',
         spanLeft: 5,
         spanRight: 19
       }
@@ -62,9 +64,11 @@
         if (this.spanLeft === 5) {
           this.spanLeft = 2
           this.spanRight = 22
+          this.leftClass = 'my-fixed-shrink'
         } else {
           this.spanLeft = 5
           this.spanRight = 19
+          this.leftClass = 'my-fixed'
         }
       },
       select (name) {
@@ -108,6 +112,17 @@
 }
 .layout-menu-left {
   background: #464c5b;
+  position: relative;
+}
+.my-fixed {
+  position: fixed;
+  width: 20.88%!important;
+  left: 0;
+}
+.my-fixed-shrink {
+  position: fixed;
+  width: 8.33%!important;
+  left: 0;
 }
 .layout-header {
   height: 60px;
