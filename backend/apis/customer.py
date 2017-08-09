@@ -127,3 +127,18 @@ def customer_dialogs_oneday(request):
         if time1 - time2 < 60 * 60 * 24:
             total += 1
     return JsonResponse({'flag': 1, 'message': total})
+
+@ensure_csrf_cookie
+def customer_tatol_servicedtime(request):
+    """返回客服总的服务时间(分钟)"""
+    CID = 'cid1'
+    if 'eid' in request.session:
+        CID = request.session['cid']
+    else:
+        return JsonResponse({'flag': -12, 'message': ''})
+    totaltime = 0
+    dialogs = models.Dialog.objects.filter(CID = CID)
+    for dialog in dialogs:
+        totaltime += (dialog.end_time - dialog.start_time).seconds
+    totaltime /= 60
+    return JsonResponse({'flag': 1, 'message': totaltime})
