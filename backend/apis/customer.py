@@ -111,4 +111,3 @@ def customer_serviced_number(request):
         return JsonResponse({'flag': -12, 'message': ''})
     customer = models.Customer.objects.filter(CID = CID)
     return JsonResponse({'flag': 1, 'message': customer.serviced_number})
-    
