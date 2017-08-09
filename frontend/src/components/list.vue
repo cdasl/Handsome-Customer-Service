@@ -1,14 +1,32 @@
 <template>
-<div class="list">
-  <ul>
-    <li class="active">
-      <img class="avatar" width="30" height="30">
-      <p class="name">联系人名字</p>
-    </li>
-  </ul>
-</div>
+  <div class="list">
+    <ul>
+      <li v-for="(item,index) in lists" @click="swit(item, index)">
+        <img class="avatar" width="30" height="30">
+        <p class="name">联系人名字</p>
+      </li>
+    </ul>
+  </div>
 </template>
 <script>
+  export default {
+    props: {
+      lists: {
+        type: Array
+      }
+    },
+    data () {
+      return {
+        activeindex: 0
+      }
+    },
+    methods: {
+      swit (item, index) {
+        this.activeindex = index
+        this.$emit('swit', item)
+      }
+    }
+  }
 </script>
 <style scoped lang="less">
 .list {

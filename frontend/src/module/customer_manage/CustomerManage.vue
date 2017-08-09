@@ -33,7 +33,7 @@
           </i-select>
         </div>
         <div class="layout-content">
-          <div class="layout-content-main" :is="type" @send="send" :content="currentcontent"></div>
+          <div class="layout-content-main" :is="type" @send="send" @swit="swit" :content="currentcontent" :lists="lists"></div>
         </div>
       </i-col>
     </Row>
@@ -54,7 +54,7 @@
         spanRight: 20,
         content: [],
         socket: null,
-        list: [],
+        lists: [],
         currentcontent: [],
         status: '2',
         sid: ''
@@ -75,8 +75,32 @@
           this.spanRight = 20
         }
       },
+      swit (item) {
+        this.sid = item
+        this.currentcontent = this.content[item]
+      },
+      dateformat (date) {
+        let seperator1 = '/'
+        let seperator2 = ':'
+        let month = date.getMonth() + 1
+        let strDate = date.getDate()
+        if (month >= 1 && month <= 9) {
+          month = '0' + month
+        }
+        if (strDate >= 0 && strDate <= 9) {
+          strDate = '0' + strDate
+        }
+        var currentdate = date.getFullYear() + seperator1 + month + seperator1 + strDate + ' ' + date.getHours() + seperator2 + date.getMinutes() + seperator2 + date.getSeconds()
+        return currentdate
+      },
       send (msg) {
-        this.socket.emit('my broadcast event', {data: encodeURI(msg)})
+        let data = {}
+        data['word'] = msg
+        data['time'] = this.dateformat(new Date())
+        data['self'] = true
+        data['src'] = '/static/js/emojiSources/huaji/1.jpg'
+        this.currentcontent.push(data)
+        this.socket.emit('customer message', {data: encodeURI(msg), time: data['time'], sid: this.sid, src: encodeURI(data['src'])})
       },
       select (name) {
         this.type = name
@@ -115,14 +139,22 @@
       if (this.socket === null) {
           /* global location io: true */
         this.socket = io.connect('http://' + document.domain + ':' + location.port + '/test')
-        this.socket.on('connected', (msg) => {
+        this.socket.emit('a customer connected', {cid: 'a customer connected'})
+        this.socket.on('customer connected', (msg) => {
+          console.log(msg['data'])
+        })
+        this.socket.on('new user', (msg) => {
+          this.lists.unshift(msg['sid'])
           this.sid = msg['sid']
+          this.content[msg['sid']] = []
+          this.currentcontent = this.content[msg['sid']]
         })
         this.socket.on('my response', (msg) => {
           let data = {}
           data['word'] = decodeURI(msg['data'])
-          data['time'] = new Date()
-          data['self'] = msg['sid'] === this.sid
+          data['time'] = this.dateformat(new Date())
+          data['self'] = false
+          data['src'] = decodeURI(msg['src'])
           this.currentcontent.push(data)
         })
       }

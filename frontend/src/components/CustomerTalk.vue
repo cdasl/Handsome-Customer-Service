@@ -2,7 +2,7 @@
   <div id="app">
     <div class="sidebar">
       <card></card>
-      <list></list>
+      <list :lists="lists" @swit="swit"></list>
     </div>
     <div class="main">
       <message :content="content"></message>
@@ -20,11 +20,17 @@
     props: {
       content: {
         type: Array
+      },
+      lists: {
+        type: Array
       }
     },
     methods: {
       send (message) {
         this.$emit('send', message)
+      },
+      swit (item) {
+        this.$emit('swit', item)
       }
     }
   }

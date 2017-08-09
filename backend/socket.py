@@ -5,64 +5,54 @@ from django.views.decorators.csrf import ensure_csrf_cookie,csrf_exempt
 async_mode = None
 sio = socketio.Server(async_mode = async_mode)
 thread = None
+talker_list = {}
+customer_list = {}
+conversation = {}
 
 @csrf_exempt
 def user(request):
-    global thread
-    if thread is None:
-        thread = sio.start_background_task(background_thread)
     return render(request, 'user.html')
 
-def background_thread():
-    """Example of how to send server generated events to clients."""
-    count = 0
-    while True:
-        sio.sleep(10)
-        count += 1
-        sio.emit('my responses', {'data': 'Server generated event'},
-                 namespace = '/test')
+@sio.on('user message', namespace = '/test')
+def user_message(sid, message):
+    global conversation, talker_list
+    sio.emit('my response', {'data': message['data'], 'time': message['time'], 'src': message['src']}, room = message['sid'], namespace = '/test')
+    conversation[sid].append({'send': talker_list[sid], 'receive': talker_list[message['sid']], 'time': message['time'], 'data': message['data']})
 
-@sio.on('my event', namespace = '/test')
-def test_message(sid, message):
-    sio.emit('my response', {'data': message['data']}, room = sid,
-             namespace = '/test')
+@sio.on('customer message', namespace = '/test')
+def customer_message(sid, message):
+    global conversation, talker_list
+    sio.emit('my response', {'data': message['data'], 'time': message['time'], 'src': message['src']}, room = message['sid'], namespace = '/test')
+    conversation[message['sid']].append({'send': talker_list[sid], 'receive': talker_list[message['sid']], 'time': message['time'], 'data': message['data']})
 
-@sio.on('my broadcast event', namespace = '/test')
-def test_broadcast_message(sid, message):
-    sio.emit('my response', {'data': message['data'], 'sid': sid}, namespace = '/test')
+@sio.on('a user connected', namespace = '/test')
+def user_connect(sid, message):
+    global talker_list, customer_list, conversation
+    talker_list[sid] = message['uid']
+    num = 100
+    target = None
+    for customer_sid in customer_list:
+        if customer_list[customer_sid] < num:
+            target = customer_sid
+            num = customer_list[customer_sid]
+    if target == None:
+        sio.emit('no customer online', {'data': 'no customer on line'}, room = sid, namespace = '/test')
+    else:
+        sio.emit('connect to customer', {'sid': target}, room = sid, namespace = '/test')
+        sio.emit('new user', {'sid': sid}, room = target, namespace = '/test')
+        customer_list[target] += 1
+        conversation[sid] = []
 
-@sio.on('join', namespace = '/test')
-def join(sid, message):
-    sio.enter_room(sid, message['room'], namespace = '/test')
-    sio.emit('my response', {'data': 'Entered room: ' + message['room']},
-             room=sid, namespace = '/test')
-
-@sio.on('leave', namespace = '/test')
-def leave(sid, message):
-    sio.leave_room(sid, message['room'], namespace = '/test')
-    sio.emit('my response', {'data': 'Left room: ' + message['room']},
-             room = sid, namespace = '/test')
-
-@sio.on('close room', namespace = '/test')
-def close(sid, message):
-    sio.emit('my response',
-             {'data': 'Room ' + message['room'] + ' is closing.'},
-             room = message['room'], namespace = '/test')
-    sio.close_room(message['room'], namespace = '/test')
-
-@sio.on('my room event', namespace = '/test')
-def send_room_message(sid, message):
-    sio.emit('my response', {'data': message['data']}, room = message['room'],
-             namespace = '/test')
+@sio.on('a customer connected', namespace = '/test')
+def customer_connect(sid, message):
+    global talker_list, customer_list
+    talker_list[sid] = message['cid']
+    customer_list[sid] = 0
+    sio.emit('customer connected', {'data': 'connected'}, room = sid, namespace = '/test')
 
 @sio.on('disconnect request', namespace = '/test')
 def disconnect_request(sid):
     sio.disconnect(sid, namespace = '/test')
-
-@sio.on('connect', namespace = '/test')
-def test_connect(sid, environ):
-    sio.emit('connected', {'sid': sid}, room = sid,
-             namespace = '/test')
 
 @sio.on('disconnect', namespace = '/test')
 def test_disconnect(sid):
