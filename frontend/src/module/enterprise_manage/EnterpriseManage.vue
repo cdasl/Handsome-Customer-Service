@@ -16,7 +16,7 @@
             <Icon type="ios-analytics" :size="iconSize"></Icon>
             <span class="layout-text">历史会话</span>
           </Menu-item>
-          <Menu-item name="manage-customer">
+          <Menu-item name="set-robot">
             <Icon type="cube" :size="iconSize"></Icon>
             <span class="layout-text">知识库</span>
           </Menu-item>
@@ -44,12 +44,13 @@
   import EnterpriseSetting from '../../components/EnterpriseSetting'
   import EnterpriseOverview from '../../components/EnterpriseOverview'
   import HistoryDialog from '../../components/HistoryDialog'
+  import SetRobot from '../../components/SetRobot'
   export default {
-    components: {ManageCustomer, EnterpriseSetting, EnterpriseOverview, HistoryDialog},
+    components: {ManageCustomer, EnterpriseSetting, EnterpriseOverview, HistoryDialog, SetRobot},
     data () {
       return {
         leftClass: 'my-fixed',
-        type: 'history-dialog',
+        type: 'set-robot',
         spanLeft: 5,
         spanRight: 19
       }
