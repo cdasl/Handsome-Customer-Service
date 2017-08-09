@@ -6,8 +6,8 @@
     <Input v-model="customerEmail" class="email-input" placeholder="输入邮箱邀请客服"></Input>
     <Button @click="invite">邀请客服</Button>
     <Row>
-        <Table border :columns="columns7" :data="showData" ref="table"></Table>
-        <Page :total="data6.length" @on-change="changePage" :page-size="pageSize"></Page>
+        <Table border :columns="customerForm" :data="customerDataShow" ref="table"></Table>
+        <Page :total="customerData.length" @on-change="changePage" :page-size="pageSize"></Page>
     </Row>
     <br>
     <Button type="primary" size="large" @click="exportData(1)"><Icon type="ios-download-outline"></Icon> 导出原始数据</Button>
@@ -23,7 +23,7 @@
         warn: false,
         warnMes: '',
         customerEmail: '',
-        columns7: [
+        customerForm: [
           {
             title: '姓名',
             key: 'name'
@@ -69,8 +69,8 @@
             }
           }
         ],
-        data6: [],
-        showData: [{
+        customerData: [],
+        customerDataShow: [{
           name: 'Name',
           age: 45,
           address: 'Addr'
@@ -109,17 +109,17 @@
           .then((res) => res.json())
           .then((res) => {
             this.warning(res['message'])
-            this.data6.push(res['message'])
+            this.customerData.push(res['message'])
           })
         }
       },
       changePage (current) {
         this.current = current
-        this.showData = this.data6.slice((this.current - 1) * this.pageSize, Math.min((this.current - 1) * this.pageSize + this.pageSize, this.data6.length))
+        this.customerDataShow = this.customerData.slice((this.current - 1) * this.pageSize, Math.min((this.current - 1) * this.pageSize + this.pageSize, this.customerData.length))
       },
       logoff (index) {
         // pass
-        console.log(this.showData[index]['cid'])
+        console.log(this.customerDataShow[index]['cid'])
         fetch('/api/enter/logoff/', {
           method: 'post',
           credentials: 'same-origin',
@@ -128,16 +128,16 @@
             'Accept': 'application/json',
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify({'cid': this.showData[index]['cid']})
+          body: JSON.stringify({'cid': this.customerDataShow[index]['cid']})
         })
         .then((res) => res.json())
         .then((res) => {
           console.log(res['message'])
-          this.showData[index]['state'] = -1
+          this.customerDataShow[index]['state'] = -1
         })
       },
       remove (index) {
-        this.data6.splice(index, 1)
+        this.customerData.splice(index, 1)
       },
       exportData (type) {
         if (type === 1) {
@@ -152,15 +152,15 @@
         }
       },
       add () {
-        this.data6.push({
+        this.customerData.push({
           name: String(Math.random()),
           age: 'age',
           address: 'dd'
         })
-        this.showData = this.data6.slice((this.current - 1) * this.pageSize, Math.min((this.current - 1) * this.pageSize + this.pageSize, this.data6.length))
+        this.customerDataShow = this.customerData.slice((this.current - 1) * this.pageSize, Math.min((this.current - 1) * this.pageSize + this.pageSize, this.customerData.length))
       },
       replace () {
-        this.data6 = [{
+        this.customerData = [{
           name: 'name',
           age: 4,
           address: 'dd'
@@ -197,8 +197,8 @@
       .then((res) => {
         console.log('what the fuck')
         console.log(res['message'])
-        this.data6 = res['message']
-        this.showData = this.data6.slice((this.current - 1) * this.pageSize, Math.min((this.current - 1) * this.pageSize + this.pageSize, this.data6.length))
+        this.customerData = res['message']
+        this.customerDataShow = this.customerData.slice((this.current - 1) * this.pageSize, Math.min((this.current - 1) * this.pageSize + this.pageSize, this.customerData.length))
       })
     }
   }
