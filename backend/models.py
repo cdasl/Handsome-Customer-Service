@@ -2,8 +2,8 @@ from django.db import models
 
 # Create your models here.
 
-#enterprise
 class Enterprise(models.Model):
+    #enterprise
     EID = models.CharField(max_length = 50, primary_key = True)
     email = models.CharField(max_length = 30)
     password = models.CharField(max_length = 50)
@@ -17,8 +17,8 @@ class Enterprise(models.Model):
     def __str__(self):
         return self.email + ',' + self.name
 
-#customer
 class Customer(models.Model):
+    #customer
     CID = models.CharField(max_length = 50, primary_key = True)
     EID = models.CharField(max_length = 50)
     email = models.CharField(max_length = 30)
@@ -33,13 +33,13 @@ class Customer(models.Model):
     def __str__(self):
         return self.email + ',' + self.name
 
-#user
 class User(models.Model):
+    #user
     UID = models.CharField(max_length = 50, primary_key = True)
     info = models.CharField(max_length = 100)
 
-#dialog
 class Dialog(models.Model):
+    #dialog
     DID = models.CharField(max_length = 50, primary_key = True)
     EID = models.CharField(max_length = 50)
     start_time = models.DateTimeField('start time')
@@ -48,8 +48,8 @@ class Dialog(models.Model):
     CID = models.CharField(max_length = 50)
     feedback = models.IntegerField(default = 0)
 
-#messages
 class Message(models.Model):
+    #messages
     MID = models.CharField(max_length = 50, primary_key = True)
     SID = models.CharField(max_length = 50)
     RID = models.CharField(max_length = 50)
@@ -59,8 +59,8 @@ class Message(models.Model):
     def __str__(self):
         return self.SID + ',' + self.RID + ',' + self.content
 
-#question
 class Question(models.Model):
+    #question
     QID = models.CharField(max_length = 50, primary_key = True)
     EID = models.CharField(max_length = 50)
     question = models.TextField()
