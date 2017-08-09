@@ -195,9 +195,9 @@ def reset_password(request):
     """重置密码，前端发送激活码，新密码"""
     info = json.loads(request.body.decode('utf8'))
     tip = helper.active_code_check(info['active_code'])
-    if tip == 'invalid':
+    if tip == -8:
         return JsonResponse({'flag': -8, 'message': ''})
-    if tip == 'expired':
+    if tip == -9:
         return JsonResponse({'flag': -9, 'message': ''})
     decrypt_str = helper.decrypt(9, info['active_code'])
     decrypt_data = decrypt_str.split('|')
@@ -227,10 +227,10 @@ def reset_customer_state(request):
     customer_name = customer[0].name
     try:
         if customer[0].state > 0:
-            models.Customer.objects.filter(CID = CID)[0].update(state = -1)
+            models.Customer.objects.filter(CID = CID).update(state = -1)
             return JsonResponse({'flag': 1, 'message': 'logoff success'})
         elif customer[0].state == -1:
-            models.Customer.objects.filter(CID = CID)[0].update(state = 1)
+            models.Customer.objects.filter(CID = CID).update(state = 1)
             return JsonResponse({'flag': 1, 'message': 'activate success'})
     except Exception:
         return JsonResponse({'flag': -14, 'message': ''})
@@ -444,8 +444,8 @@ def enterprise_set_robot_message(request):
         return JsonResponse({'flag': -12, 'message': ''})
     #enterprise = models.Enterprise.objects.filter(EID = EID, state = 1)
     try:
-        models.Enterprise.objects.filter(EID = EID, state = 1).update(robot_name = info['robot_name'])
-        models.Enterprise.objects.filter(EID = EID, state = 1).update(robot_icon = info['robot_icon'])
+        models.Enterprise.objects.filter(EID = EID, state = 1).update(robot_name = info['robot_name'], 
+            robot_icon = info['robot_icon'])
         return JsonResponse({'flag': 1, 'message': ''})
     except Exception:
         return JsonResponse({'flag': -12, 'message': ''})
