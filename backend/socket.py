@@ -16,7 +16,7 @@ def user(request):
 @sio.on('user message', namespace = '/test')
 def user_message(sid, message):
     global conversation, talker_list
-    sio.emit('my response', {'data': message['data'], 'time': message['time'], 'src': message['src']}, room = message['sid'], namespace = '/test')
+    sio.emit('my response', {'data': message['data'], 'time': message['time'], 'src': message['src'], 'sid': sid}, room = message['sid'], namespace = '/test')
     conversation[sid].append({'send': talker_list[sid], 'receive': talker_list[message['sid']], 'time': message['time'], 'data': message['data']})
 
 @sio.on('customer message', namespace = '/test')

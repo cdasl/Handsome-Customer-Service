@@ -78,6 +78,12 @@
       swit (item) {
         this.sid = item
         this.currentcontent = this.content[item]
+        for (let i = 0; i < this.lists.length; ++i) {
+          if (this.lists[i]['sid'] === item) {
+            this.lists[i]['num'] = 0
+            break
+          }
+        }
       },
       dateformat (date) {
         let seperator1 = '/'
@@ -144,7 +150,7 @@
           console.log(msg['data'])
         })
         this.socket.on('new user', (msg) => {
-          this.lists.unshift(msg['sid'])
+          this.lists.unshift({'sid': msg['sid'], 'num': 0})
           this.sid = msg['sid']
           this.content[msg['sid']] = []
           this.currentcontent = this.content[msg['sid']]
@@ -155,7 +161,18 @@
           data['time'] = this.dateformat(new Date())
           data['self'] = false
           data['src'] = decodeURI(msg['src'])
-          this.currentcontent.push(data)
+          this.content[msg['sid']].push(data)
+          console.log(this.lists.length)
+          if (this.sid !== msg['sid']) {
+            let i = 0
+            for (i = 0; i < this.lists.length; ++i) {
+              if (this.lists[i]['sid'] === msg['sid']) {
+                this.lists[i]['num'] += 1
+                console.log(this.lists[i]['num'])
+                break
+              }
+            }
+          }
         })
       }
     }
@@ -178,7 +195,7 @@
   padding: 10px 15px 0;
 }
 .layout-content {
-  min-height: 450px;
+  min-height: 600px;
   margin: 15px;
   overflow: hidden;
   background: #fff;
