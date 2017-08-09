@@ -3,10 +3,10 @@
   <ul>
     <li v-for="(item,index) in content">
       <p class="time">
-        <span>{{ dateformat(item.time) }}</span>
+        <span>{{ item.time }}</span>
       </p>
       <div class="main" :class="{self: item.self}">
-        <img class="avatar" width="30" height="30">
+        <img class="avatar" width="30" height="30" :src="item.src">
         <div class="text" v-html="explain(item.word)"></div>
       </div>
     </li>
@@ -37,20 +37,6 @@
     methods: {
       explain: function (content) {
         return this.we.explain(content)
-      },
-      dateformat: function (date) {
-        let seperator1 = '/'
-        let seperator2 = ':'
-        let month = date.getMonth() + 1
-        let strDate = date.getDate()
-        if (month >= 1 && month <= 9) {
-          month = '0' + month
-        }
-        if (strDate >= 0 && strDate <= 9) {
-          strDate = '0' + strDate
-        }
-        var currentdate = date.getFullYear() + seperator1 + month + seperator1 + strDate + ' ' + date.getHours() + seperator2 + date.getMinutes() + seperator2 + date.getSeconds()
-        return currentdate
       }
     },
     mounted: function () {
