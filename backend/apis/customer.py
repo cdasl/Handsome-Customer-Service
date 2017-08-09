@@ -110,3 +110,20 @@ def customer_serviced_number(request):
         return JsonResponse({'flag': -12, 'message': ''})
     customer = models.Customer.objects.filter(CID = CID)
     return JsonResponse({'flag': 1, 'message': customer.serviced_number})
+
+@ensure_csrf_cookie
+def customer_dialogs_oneday(request):
+    """获取客服最近24小时会话数"""
+    CID = 'cid1'
+    if 'eid' in request.session:
+        CID = request.session['cid']
+    else:
+        return JsonResponse({'flag': -12, 'message': ''})
+    total = 0
+    dialogs = models.Dialog.objects.filter(CID = CID)
+    for dialog in dialogs:
+        time1 = time.mktime(nowtime.timetuple())
+        time2 = time.mktime(dialog.start_time.timetuple())
+        if time1 - time2 < 60 * 60 * 24:
+            total += 1
+    return JsonResponse({'flag': 1, 'message': total})
