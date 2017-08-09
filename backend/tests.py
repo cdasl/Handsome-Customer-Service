@@ -86,11 +86,13 @@ class ResetCustomerStateTestCase(TestCase):
             )
 
     def test_logoff(self):
+        #失败
         info = {'cid': 'cid'}
         rf = RequestFactory()
         request = rf.post('api/enter/reset/')
         request._body = json.dumps(info).encode('utf8')
         self.assertEqual(jrToJson(enterprise.reset_customer_state(request))['flag'], -13)
+        #成功
         info['cid'] = 'test_cid'
         request._body = json.dumps(info).encode('utf8')
         self.assertEqual(jrToJson(enterprise.reset_customer_state(request))['message'], 'logoff success')
