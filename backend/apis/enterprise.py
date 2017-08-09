@@ -141,7 +141,7 @@ def enterprise_invite(request):
     """邀请客服"""
     EID = 'test_eid'
     info = json.loads(request.body.decode('utf8'))
-    if hasattr(request, 'session') and hasattr(request.session, 'eid'):
+    if hasattr(request, 'session') and 'eid' in request.session:
         EID = request.session['eid']
     email = info['email']
     if len(models.Customer.objects.filter(email = email)) > 0:
@@ -242,7 +242,7 @@ def enterprise_get_customers(request):
     EID = 'eid'
     if hasattr(request, 'body'):
         info = json.loads(request.body.decode('utf8'))
-    if hasattr(request, 'session') and hasattr(request.session, 'eid'):
+    if hasattr(request, 'session') and 'eid' in request.session:
         EID = request.session['eid']
     elif info['eid'] != -1:
         EID = info['eid']
@@ -287,7 +287,7 @@ def enterprise_online_customers(request):
     EID = 'eid'
     if hasattr(request, 'body'):
         info = json.loads(request.body.decode('utf8'))
-    if hasattr(request, 'session') and hasattr(request.session, 'eid'):
+    if hasattr(request, 'session') and 'eid' in request.session:
         EID = request.session['eid']
     elif info['eid'] != -1:
         EID = info['eid']
@@ -306,8 +306,8 @@ def enterprise_total_servicetime(request):
     EID = 'eid'
     if hasattr(request, 'body'):
         info = json.loads(request.body.decode('utf8'))
-    if hasattr(request, 'session') and hasattr(request.session, 'eid'):
-           EID = request.session['eid']
+    if hasattr(request, 'session') and 'eid' in request.session:
+        EID = request.session['eid']
     elif info['eid'] != -1:
         EID = info['eid']
     else:
@@ -326,8 +326,8 @@ def enterprise_total_messages(request):
     EID = 'eid'
     if hasattr(request, 'body'):
         info = json.loads(request.body.decode('utf8'))
-    if hasattr(request, 'session') and hasattr(request.session, 'eid'):
-           EID = request.session['eid']
+    if hasattr(request, 'session') and 'eid' in request.session:
+        EID = request.session['eid']
     elif info['eid'] != -1:
         EID = info['eid']
     else:
@@ -345,8 +345,8 @@ def enterprise_total_dialogs(request):
     EID = 'eid'
     if hasattr(request, 'body'):
         info = json.loads(request.body.decode('utf8'))
-    if hasattr(request, 'session') and hasattr(request.session, 'eid'):
-           EID = request.session['eid']
+    if hasattr(request, 'session') and 'eid' in request.session:
+        EID = request.session['eid']
     elif info['eid'] != -1:
         EID = info['eid']
     else:
@@ -360,7 +360,7 @@ def enterprise_dialogs(request):
     EID = 'eid'
     if hasattr(request, 'body'):
         info = json.loads(request.body.decode('utf8'))
-    if hasattr(request, 'session') and hasattr(request.session, 'eid'):
+    if hasattr(request, 'session') and 'eid' in request.session:
         EID = request.session['eid']
     elif info['eid'] != -1:
         EID = info['eid']
@@ -414,7 +414,7 @@ def enterprise_avgtime_dialogs(request):
     EID = 'eid'
     if hasattr(request, 'body'):
         info = json.loads(request.body.decode('utf8'))
-    if hasattr(request, 'session') and hasattr(request.session, 'eid'):
+    if hasattr(request, 'session') and 'eid' in request.session:
         EID = request.session['eid']
     elif info['eid'] != -1:
         EID = info['eid']
@@ -436,7 +436,7 @@ def enterprise_set_robot_message(request):
     EID = 'eid'
     if hasattr(request, 'body'):
         info = json.loads(request.body.decode('utf8'))
-    if hasattr(request, 'session') and hasattr(request.session, 'eid'):
+    if hasattr(request, 'session') and 'eid' in request.session:
         EID = request.session['eid']
     elif info['eid'] != -1:
         EID = info['eid']
@@ -457,7 +457,7 @@ def enterprise_avgmes_dialogs(request):
     EID = 'eid'
     if hasattr(request, 'body'):
         info = json.loads(request.body.decode('utf8'))
-    if hasattr(request, 'session') and hasattr(request.session, 'eid'):
+    if hasattr(request, 'session') and 'eid' in request.session:
         EID = request.session['eid']
     elif info['eid'] != -1:
         EID = info['eid']
@@ -478,7 +478,7 @@ def enterprise_set_chatbox_type(request):
     EID = 'eid'
     if hasattr(request, 'body'):
         info = json.loads(request.body.decode('utf8'))
-    if hasattr(request, 'session') and hasattr(request.session, 'eid'):
+    if hasattr(request, 'session') and 'eid' in request.session:
         EID = request.session['eid']
     elif info['eid'] != -1:
         EID = info['eid']
@@ -498,7 +498,7 @@ def enterprise_setuser_message(request):
     EID = 'eid'
     if hasattr(request, 'body'):
         info = json.loads(request.body.decode('utf8'))
-    if hasattr(request, 'session') and hasattr(request.session, 'eid'):
+    if hasattr(request, 'session') and 'eid' in request.session:
         EID = request.session['eid']
     elif info['eid'] != -1:
         EID = info['eid']
@@ -517,8 +517,8 @@ def enterprise_message_number(request):
     EID = 'eid'
     if hasattr(request, 'body'):
         info = json.loads(request.body.decode('utf8'))
-    if hasattr(request, 'session') and hasattr(request.session, 'eid'):
-           EID = request.session['eid']
+    if hasattr(request, 'session') and 'eid' in request.session:
+        EID = request.session['eid']
     elif info['eid'] != -1:
         EID = info['eid']
     else:
@@ -542,8 +542,8 @@ def enterprise_serviced_number(request):
     EID = 'eid'
     if hasattr(request, 'body'):
         info = json.loads(request.body.decode('utf8'))
-    if hasattr(request, 'session') and hasattr(request.session, 'eid'):
-           EID = request.session['eid']
+    if hasattr(request, 'session') and 'eid' in request.session:
+        EID = request.session['eid']
     elif info['eid'] != -1:
         EID = info['eid']
     else:
@@ -567,7 +567,7 @@ def enterprise_dialogs_oneday(request):
     EID = 'eid'
     if hasattr(request, 'body'):
         info = json.loads(request.body.decode('utf8'))
-    if hasattr(request, 'session') and hasattr(request.session, 'eid'):
+    if hasattr(request, 'session') and 'eid' in request.session:
            EID = request.session['eid']
     elif info['eid'] != -1:
         EID = info['eid']
