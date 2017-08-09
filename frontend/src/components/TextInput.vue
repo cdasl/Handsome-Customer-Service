@@ -51,7 +51,8 @@
     padding: 10px;
     height: 100%;
     width: 100%;
-    border: none;
+    border-bottom: 1px solid #2e3238;
+    border-right: 1px solid #243238;
     outline: none;
     font-family: "Micrsofot Yahei";
     resize: none;
