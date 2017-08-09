@@ -19,8 +19,8 @@ def customer_chatted(request):
     CID = 'cid'
     if hasattr(request, 'body'):
         info = json.loads(request.body.decode('utf8'))
-    if hasattr(request, 'session') and hasattr(request.session, 'cid'):
-           CID = request.session['cid']
+    if hasattr(request, 'session') and 'cid' in request.session:
+        CID = request.session['cid']
     elif info['cid'] != -1:
         CID = info['cid']
     else:
@@ -76,28 +76,27 @@ def customer_login(request):
 def customer_logout(request):
     """客服退出"""
     CID = 'cid1'
-    if hasattr(request.session, 'cid'):
+    if 'cid' in request.session:
         CID = request.session['cid']
-    else :
+    else:
         return JsonResponse({'flag': -12, 'message': ''})
-    customer = models.Customer.objects.filter(CID = CID)
-    customer.update(state = 1)
+    models.Customer.objects.filter(CID = CID)[0].update(state = 1)
     return JsonResponse({'flag': 1, 'message': ''})
 
 @ensure_csrf_cookie
 def customer_change_onlinestate(request):
     """客服改变在线状态"""
     CID = 'cid1'
-    if hasattr(request.session, 'cid'):
+    if 'eid' in request.session:
         CID = request.session['cid']
     else:
         return JsonResponse({'flag': -12, 'message': ''})
     customer = models.Customer.objects.filter(CID = CID)
     if customer.state == 3:
-        customer.update(state = 2)
+        models.Customer.objects.filter(CID = CID)[0].update(state = 2)
     elif customer.state == 2:
-        customer.update(state = 3)
-    else :
+        models.Customer.objects.filter(CID = CID)[0].update(state = 3)
+    else:
         return JsonResponse({'flag': -12, 'message': ''})
     return JsonResponse({'flag': 1, 'message': ''})
 
@@ -105,9 +104,9 @@ def customer_change_onlinestate(request):
 def customer_serviced_number(request):
     """获取客服服务过的人数"""
     CID = 'cid1'
-    if hasattr(request.session, 'cid'):
+    if 'eid' in request.session:
         CID = request.session['cid']
-    else :
+    else:
         return JsonResponse({'flag': -12, 'message': ''})
     customer = models.Customer.objects.filter(CID = CID)
     return JsonResponse({'flag': 1, 'message': customer.serviced_number})
