@@ -44,4 +44,5 @@ urlpatterns = [
     url(r'^api/enter/customer/login/$', customer.customer_login, name = 'customer_login'),
     url(r'^api/customer/logout/$', customer.customer_logout, name = 'customer_logout'),
     url(r'^api/enter/get_enterprise_msgnum/$', enterprise.enterprise_message_number),
+    url(r'^api/customer/change_ol/$', customer.customer_change_onlinestate),
 ]
