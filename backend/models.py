@@ -13,6 +13,7 @@ class Enterprise(models.Model):
     state = models.IntegerField(default = 0)
     salt = models.CharField(max_length = 8)
     chatbox_type = models.IntegerField(default = 1)
+    robot_state = models.IntegerField(default = 0)
     def __str__(self):
         return self.email + ',' + self.name
 
@@ -60,5 +61,7 @@ class Question(models.Model):
     EID = models.CharField(max_length = 50)
     question = models.TextField()
     answer = models.TextField()
+    CID = models.CharField(max_length = 50)
+    UID = models.CharField(max_length = 50)
     def __str__(self):
         return self.question + ',' + self.answer

@@ -75,6 +75,7 @@
       },
       uploadImg () {
         let input = document.querySelector('#file')
+        /* global FormData: true */
         let data = new FormData()
         data.append('file', input.files[0])
         fetch('http://123.206.94.77:3980/picture', {
