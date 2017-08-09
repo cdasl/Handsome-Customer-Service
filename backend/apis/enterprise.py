@@ -562,7 +562,7 @@ def enterprise_serviced_number(request):
 
 @ensure_csrf_cookie
 def enterprise_dialogs_oneday(request):
-    """获取企业所有客服24小时内会话数"""
+    """获取企业所有客服24小时内会话总数"""
     info = {'eid': -1}
     EID = 'eid'
     if hasattr(request, 'body'):
