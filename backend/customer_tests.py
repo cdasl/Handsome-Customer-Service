@@ -7,9 +7,7 @@ import django.utils.timezone as timezone
 from . import tests
 
 class CustomerLoginTestCase(TestCase):
-    """
-        测试用户登录Api
-    """
+    """测试用户登录Api"""
     def setUp(self):
         md5 = hashlib.md5()
         salt = 'testsalt'
@@ -43,9 +41,7 @@ class CustomerLoginTestCase(TestCase):
         self.assertEqual(tests.jrToJson(customer.customer_login(request))['flag'], -7)
 
 class CustomerLogoutTestCase(TestCase):
-    '''
-        测试客服退出Api
-    '''
+    """测试客服退出Api"""
     def setUp(self):
         models.Customer.objects.create(CID = 'test_cid', EID = 'test_eid', email = '2222@qq.com', salt = 'salt',
             password = 'password', icon = 'test_icon', name = 'test_name', state = 2,
@@ -66,9 +62,7 @@ class CustomerLogoutTestCase(TestCase):
         self.assertEqual(tests.jrToJson(customer.customer_logout(request))['flag'], 1)
 
 class OnlineStateTestCase(TestCase):
-    '''
-    测试改变在线状态
-    '''
+    """测试改变在线状态"""
     def setUp(self):
         models.Customer.objects.create(CID = 'test_cid', EID = 'test_eid', email = '2222@qq.com', salt = 'salt',
             password = 'password', icon = 'test_icon', name = 'test_name', state = 2,
@@ -91,9 +85,7 @@ class OnlineStateTestCase(TestCase):
         self.assertEqual(models.Customer.objects.get(CID = 'test_cid').state, 2)
 
 class ServicedNumTestCase(TestCase):
-    '''
-        测试客服服务过的人数
-    '''
+    """测试客服服务过的人数"""
     def setUp(self):
         models.Customer.objects.create(CID = 'test_cid', EID = 'test_eid', email = '2222@qq.com', salt = 'salt',
             password = 'password', icon = 'test_icon', name = 'test_name', state = 2,
