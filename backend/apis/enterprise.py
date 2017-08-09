@@ -132,7 +132,7 @@ def enterprise_active(request):
     if enterprise[0].state == 1:
         #已经激活
         return JsonResponse({'flag': 1, 'message': ''})
-    enterprise.update(state = 1)
+    models.Enterprise.objects.filter(email = email)[0].update(state = 1)
     #成功
     return JsonResponse({'flag': 1, 'message': ''})
 
@@ -206,10 +206,11 @@ def reset_password(request):
     try:
         enterprise = models.Enterprise.objects.filter(email = email)
         if len(enterprise) > 0:
-            enterprise.update(password = password_salt['password'], salt = password_salt['salt'])
+            models.Enterprise.objects.filter(email = email)[0].update(password = password_salt['password'], 
+                salt = password_salt['salt'])
         else:
             customer = models.Customer.objects.filter(email = email)
-            customer.update(password = password, salt = salt)
+            models.Customer.objects.filter(email = email)[0].update(password = password, salt = salt)
         return JsonResponse({'flag': 1, 'message': 'reset'})
     except Exception:
         return JsonResponse({'flag': -12, 'message': ''})
@@ -226,10 +227,10 @@ def reset_customer_state(request):
     customer_name = customer[0].name
     try:
         if customer[0].state > 0:
-            models.Customer.objects.filter(CID = CID).update(state = -1)
+            models.Customer.objects.filter(CID = CID)[0].update(state = -1)
             return JsonResponse({'flag': 1, 'message': 'logoff success'})
         elif customer[0].state == -1:
-            models.Customer.objects.filter(CID = CID).update(state = 1)
+            models.Customer.objects.filter(CID = CID)[0].update(state = 1)
             return JsonResponse({'flag': 1, 'message': 'activate success'})
     except Exception:
         return JsonResponse({'flag': -14, 'message': ''})
@@ -441,10 +442,10 @@ def enterprise_set_robot_message(request):
         EID = info['eid']
     else:
         return JsonResponse({'flag': -12, 'message': ''})
-    enterprise = models.Enterprise.objects.filter(EID = EID, state = 1)
+    #enterprise = models.Enterprise.objects.filter(EID = EID, state = 1)
     try:
-        enterprise.update(robot_name = info['robot_name'])
-        enterprise.update(robot_icon = info['robot_icon'])
+        models.Enterprise.objects.filter(EID = EID, state = 1)[0].update(robot_name = info['robot_name'])
+        models.Enterprise.objects.filter(EID = EID, state = 1)[0].update(robot_icon = info['robot_icon'])
         return JsonResponse({'flag': 1, 'message': ''})
     except Exception:
         return JsonResponse({'flag': -12, 'message': ''})
@@ -483,9 +484,9 @@ def enterprise_set_chatbox_type(request):
         EID = info['eid']
     else:
         return JsonResponse({'flag': -12, 'message': ''})
-    enterprise = models.Enterprise.objects.filter(EID = EID, state = 1)
+    #enterprise = models.Enterprise.objects.filter(EID = EID, state = 1)
     try:
-        enterprise.update(chatbox_type = info['chatbox_type'])
+        models.Enterprise.objects.filter(EID = EID, state = 1)[0].update(chatbox_type = info['chatbox_type'])
         return JsonResponse({'flag': 1, 'message': ''})
     except Exception:
         return JsonResponse({'flag': -12, 'message': ''})
@@ -527,6 +528,7 @@ def enterprise_message_number(request):
     dialogs = models.Dialog.objects.filter(EID = EID)
     for dialog in dialogs:
         for message in models.Message.objects.filter(DID = dialog.DID):
+            #获取当前时间距离1970.1.1的秒数
             time1 = time.mktime(nowtime.timetuple())
             time2 = time.mktime(message.date.timetuple())
             if time1 - time2 < 60 * 60 * 24:
@@ -551,9 +553,33 @@ def enterprise_serviced_number(request):
     dialogs = models.Dialog.objects.filter(EID = EID)
     for dialog in dialogs:
         for message in models.Message.objects.filter(DID = dialog.DID):
+            #获取当前时间距离1970.1.1的秒数
             time1 = time.mktime(nowtime.timetuple())
             time2 = time.mktime(message.date.timetuple())
             if time1 - time2 < 60 * 60 * 24:
                 serviced.append(message.RID)
     return JsonResponse({'flag': 1, 'message': len(list(set(serviced)))})
-    
+
+@ensure_csrf_cookie
+def enterprise_dialogs_oneday(request):
+    """获取企业所有客服24小时内会话数"""
+    info = {'eid': -1}
+    EID = 'eid'
+    if hasattr(request, 'body'):
+        info = json.loads(request.body.decode('utf8'))
+    if hasattr(request, 'session') and hasattr(request.session, 'eid'):
+           EID = request.session['eid']
+    elif info['eid'] != -1:
+        EID = info['eid']
+    else:
+        return JsonResponse({'flag': -12, 'message': ''})
+    total = 0
+    nowtime = timezone.now()
+    dialogs = models.Dialog.objects.filter(EID = EID)
+    for dialog in dialogs:
+        #获取当前时间距离1970.1.1的秒数
+        time1 = time.mktime(nowtime.timetuple())
+        time2 = time.mktime(dialog.start_time.timetuple())
+        if time1 - time2 < 60 * 60 * 24:
+            total += 1
+    return JsonResponse({'flag': 1, 'message': total})
