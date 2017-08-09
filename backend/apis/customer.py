@@ -87,7 +87,7 @@ def customer_logout(request):
 def customer_change_onlinestate(request):
     """客服改变在线状态"""
     CID = 'cid1'
-    if 'eid' in request.session:
+    if 'cid' in request.session:
         CID = request.session['cid']
     else:
         return JsonResponse({'flag': -12, 'message': ''})
@@ -104,7 +104,7 @@ def customer_change_onlinestate(request):
 def customer_serviced_number(request):
     """获取客服服务过的人数"""
     CID = 'cid1'
-    if 'eid' in request.session:
+    if 'cid' in request.session:
         CID = request.session['cid']
     else:
         return JsonResponse({'flag': -12, 'message': ''})
@@ -115,7 +115,7 @@ def customer_serviced_number(request):
 def customer_dialogs_oneday(request):
     """获取客服最近24小时会话数"""
     CID = 'cid1'
-    if 'eid' in request.session:
+    if 'cid' in request.session:
         CID = request.session['cid']
     else:
         return JsonResponse({'flag': -12, 'message': ''})
@@ -132,7 +132,7 @@ def customer_dialogs_oneday(request):
 def customer_tatol_servicedtime(request):
     """返回客服总的服务时间(分钟)"""
     CID = 'cid1'
-    if 'eid' in request.session:
+    if 'cid' in request.session:
         CID = request.session['cid']
     else:
         return JsonResponse({'flag': -12, 'message': ''})
