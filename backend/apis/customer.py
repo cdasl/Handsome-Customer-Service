@@ -80,7 +80,7 @@ def customer_logout(request):
         CID = request.session['cid']
     else:
         return JsonResponse({'flag': -12, 'message': ''})
-    models.Customer.objects.filter(CID = CID)[0].update(state = 1)
+    models.Customer.objects.filter(CID = CID).update(state = 1)
     return JsonResponse({'flag': 1, 'message': ''})
 
 @ensure_csrf_cookie
