@@ -78,7 +78,7 @@ def customer_logout(request):
     CID = 'cid1'
     if 'cid' in request.session:
         CID = request.session['cid']
-    else :
+    else:
         return JsonResponse({'flag': -12, 'message': ''})
     models.Customer.objects.filter(CID = CID)[0].update(state = 1)
     return JsonResponse({'flag': 1, 'message': ''})
@@ -96,7 +96,7 @@ def customer_change_onlinestate(request):
         models.Customer.objects.filter(CID = CID)[0].update(state = 2)
     elif customer.state == 2:
         models.Customer.objects.filter(CID = CID)[0].update(state = 3)
-    else :
+    else:
         return JsonResponse({'flag': -12, 'message': ''})
     return JsonResponse({'flag': 1, 'message': ''})
 
@@ -106,7 +106,7 @@ def customer_serviced_number(request):
     CID = 'cid1'
     if 'eid' in request.session:
         CID = request.session['cid']
-    else :
+    else:
         return JsonResponse({'flag': -12, 'message': ''})
     customer = models.Customer.objects.filter(CID = CID)
     return JsonResponse({'flag': 1, 'message': customer.serviced_number})
