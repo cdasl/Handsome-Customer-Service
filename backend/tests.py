@@ -560,4 +560,45 @@ class SetUserMsgTestCase(TestCase):
         request._body = json.dumps(info).encode('utf8')
         result = jrToJson(enterprise.enterprise_setuser_message(request))['flag']
         self.assertEqual(result, 1)
+
+class EnterpriseMsgNumTestCase(TestCase):
+    '''
+        测试企业24h内的消息数
+    '''
+    def setUp(self):
+        models.Dialog.objects.create(DID = '1', EID = 'test_eid1', 
+                                    start_time = '2017-8-9 17:00:00',
+                                    end_time = '2017-8-9 18:00:00')
+        models.Dialog.objects.create(DID = '2', EID = 'test_eid1', 
+                                    start_time = '2017-8-9 17:00:00',
+                                    end_time = '2017-8-9 18:00:00')
+        models.Dialog.objects.create(DID = '3', EID = 'test_eid1', 
+                                    start_time = '2017-8-1 17:00:00',
+                                    end_time = '2017-8-9 18:00:00')
+        models.Dialog.objects.create(DID = '4', EID = 'test_eid2', 
+                                    start_time = '2017-8-9 17:00:00',
+                                    end_time = '2017-8-9 18:00:00')
+        models.Message.objects.create(MID = 'a', SID = 'wang', RID = 'zhang', DID = '1',
+                                    content = '123', date = '2017-8-9 17:00:00')
+        models.Message.objects.create(MID = 'b', SID = 'wang', RID = 'zhang', DID = '1',
+                                    content = '123', date = '2017-8-9 17:00:00')
+        models.Message.objects.create(MID = 'c', SID = 'wang', RID = 'zhang', DID = '2',
+                                    content = '123', date = '2017-8-9 17:00:00')
+        models.Message.objects.create(MID = 'd', SID = 'wang', RID = 'zhang', DID = '2',
+                                    content = '123', date = '2017-8-9 17:00:00')
+        models.Message.objects.create(MID = 'e', SID = 'wang', RID = 'zhang', DID = '3',
+                                    content = '123', date = '2017-8-1 17:00:00')
+        models.Message.objects.create(MID = 'f', SID = 'wang', RID = 'zhang', DID = '3',
+                                    content = '123', date = '2017-8-1 17:00:00')
+        models.Message.objects.create(MID = 'g', SID = 'wang', RID = 'zhang', DID = '4',
+                                    content = '123', date = '2017-8-9 17:00:00')
         
+    def test_enterprise_msg_number(self):
+        rf = RequestFactory()
+        request = rf.post('api/enter/get_enterprise_msgnum')
+        info = {}
+        request.session = {}
+        request.session['eid'] = 'test_eid1' 
+        request._body = json.dumps(info).encode('utf8')
+        result = jrToJson(enterprise.enterprise_message_number(request))['message']
+        self.assertEqual(result, 4)
