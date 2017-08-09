@@ -43,30 +43,30 @@
   }
 </script>
 <style type="text/css" scoped>
-  .text {
+.text {
   height: 160px;
   border-top: solid 1px #ddd;
-  }
-  .text textarea {
-    padding: 10px;
-    height: 100%;
-    width: 100%;
-    border-bottom: 1px solid #2e3238;
-    border-right: 1px solid #243238;
-    outline: none;
-    font-family: "Micrsofot Yahei";
-    resize: none;
-  }
-  .wrapper {
-    position: absolute;
-    bottom: 35%;
-    height: 200px;
-    left: 0;
-  }
-  .icon {
-    position: absolute;
-    bottom: 27%;
-    left: 0;
-    z-index: 10;
-  }
+}
+.text textarea {
+  padding: 10px;
+  height: 100%;
+  width: 100%;
+  border-bottom: 1px solid #2e3238;
+  border-right: 1px solid #243238;
+  outline: none;
+  font-family: "Micrsofot Yahei";
+  resize: none;
+}
+.wrapper {
+  position: absolute;
+  bottom: 35%;
+  height: 200px;
+  left: 0;
+}
+.icon {
+  position: absolute;
+  bottom: 27%;
+  left: 0;
+  z-index: 10;
+}
 </style>

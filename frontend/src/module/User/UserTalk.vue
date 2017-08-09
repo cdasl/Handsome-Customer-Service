@@ -80,8 +80,7 @@
   overflow: hidden;
   border-radius: 3px;
 }
-#app .sidebar,
-#app .main {
+#app .sidebar, #app .main {
   height: 100%;
 }
 #app .sidebar {
