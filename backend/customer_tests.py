@@ -21,7 +21,7 @@ class CustomerLoginTestCase(TestCase):
             password = password, icon = 'test_icon', name = 'test_name', state = 1,
             service_number = 0, serviced_number = 100, last_login = datetime.datetime.now()
         )
-        
+
     def test_login(self):
         #测试登录成功
         info = {    
@@ -54,7 +54,7 @@ class CustomerLogoutTestCase(TestCase):
 
     def test_logout(self):
         rf = RequestFactory()
-        request = rf.post('api/customer/logout')
+        request = rf.post('api/customer/logout/')
         request.session = {}
         #登出失败
         info = {}
@@ -64,3 +64,35 @@ class CustomerLogoutTestCase(TestCase):
         request.session['cid'] = 'test_cid'
         request._body = json.dumps(info).encode('utf8')
         self.assertEqual(tests.jrToJson(customer.customer_logout(request))['flag'], 1)
+
+class OnlineStateTestCase(TestCase):
+    '''
+    测试改变在线状态
+    '''
+    def setUp(self):
+        models.Customer.objects.create(CID = 'test_cid', EID = 'test_eid', email = '2222@qq.com', salt = 'salt',
+            password = 'password', icon = 'test_icon', name = 'test_name', state = 2,
+            service_number = 0, serviced_number = 100, last_login = datetime.datetime.now()
+        )
+
+    def test_online_state_change(self):
+        rf = RequestFactory()
+        request = rf.post('api/customer/change_ol/')
+        request.session =  {}
+        info = {}
+        #失败
+        request._body = json.dumps(info).encode('utf8')
+        self.assertEqual(tests.jrToJson(customer.customer_change_onlinestate(request))['flag'], -12)
+        #成功
+        request.session['cid'] = 'test_cid'
+        self.assertEqual(tests.jrToJson(customer.customer_change_onlinestate(request))['flag'], 1)
+        self.assertEqual(models.Customer.objects.get(CID = 'test_cid').state, 3)
+        self.assertEqual(tests.jrToJson(customer.customer_change_onlinestate(request))['flag'], 1)
+        self.assertEqual(models.Customer.objects.get(CID = 'test_cid').state, 2)
+
+
+
+
+
+
+
