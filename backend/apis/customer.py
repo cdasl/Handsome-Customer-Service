@@ -91,11 +91,11 @@ def customer_change_onlinestate(request):
         CID = request.session['cid']
     else:
         return JsonResponse({'flag': -12, 'message': ''})
-    customer = models.Customer.objects.filter(CID = CID)
+    customer = models.Customer.objects.filter(CID = CID)[0]
     if customer.state == 3:
-        models.Customer.objects.filter(CID = CID)[0].update(state = 2)
+        models.Customer.objects.filter(CID = CID).update(state = 2)
     elif customer.state == 2:
-        models.Customer.objects.filter(CID = CID)[0].update(state = 3)
+        models.Customer.objects.filter(CID = CID).update(state = 3)
     else:
         return JsonResponse({'flag': -12, 'message': ''})
     return JsonResponse({'flag': 1, 'message': ''})
@@ -142,3 +142,18 @@ def customer_tatol_servicedtime(request):
         totaltime += (dialog.end_time - dialog.start_time).seconds
     totaltime /= 60
     return JsonResponse({'flag': 1, 'message': totaltime})
+
+@ensure_csrf_cookie
+def customer_total_messages(request):
+    """返回客服发送总的消息数"""
+    CID = 'cid1'
+    if 'cid' in request.session:
+        CID = request.session['cid']
+    else:
+        return JsonResponse({'flag': -12, 'message': ''})
+    total = 0
+    dialogs = models.Dialog.objects.filter(CID = CID)
+    for dialog in dialogs:
+        for message in models.Message.objects.filter(DID = dialog.DID):
+            total += 1
+    return JsonResponse({'flag': 1, 'message': total})
