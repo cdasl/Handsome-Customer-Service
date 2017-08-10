@@ -238,16 +238,16 @@ class CustomerTotalDialogTestCase(TestCase):
 class CustomerAvgTimeTestCase(TestCase):
     '''测试客服会话平均时间'''
     def setUp(self):
-        models.Dialog.objects.create(DID = '1', CID = 'test_cid1', 
+        models.Dialog.objects.create(DID = '1', CID = 'test_cid1', UID = 7, 
                                     start_time = '2017-8-9 17:00:00',
                                     end_time = '2017-8-9 18:00:00')
-        models.Dialog.objects.create(DID = '2', CID = 'test_cid1', 
+        models.Dialog.objects.create(DID = '2', CID = 'test_cid1', UID = 7, 
                                     start_time = '2017-8-9 17:00:00',
                                     end_time = '2017-8-9 17:30:05')
-        models.Dialog.objects.create(DID = '3', CID = 'test_cid1', 
+        models.Dialog.objects.create(DID = '3', CID = 'test_cid1', UID = 77, 
                                     start_time = '2017-8-9 17:05:32',
                                     end_time = '2017-8-9 17:27:01')
-        models.Dialog.objects.create(DID = '4', CID = 'test_cid2', 
+        models.Dialog.objects.create(DID = '4', CID = 'test_cid2', UID = 7, 
                                     start_time = '2017-8-9 17:00:00',
                                     end_time = '2017-8-9 18:00:00')
 
@@ -286,7 +286,7 @@ class CustomerAvgMegTestCase(TestCase):
         models.Message.objects.create(MID = 'c', SID = 'wang', RID = 'zhao', DID = '2',
                                     content = '123', date = '2017-8-29 17:00:00')
         models.Message.objects.create(MID = 'd', SID = 'wang', RID = 'zhang', DID = '2',
-                                    content = '123', date = '2017-8-29 17:00:00')
+                                    content = '12358', date = '2017-8-29 17:00:00')
         models.Message.objects.create(MID = 'e', SID = 'wang', RID = 'zhang', DID = '3',
                                     content = '123', date = '2017-8-1 17:00:00')
         models.Message.objects.create(MID = 'f', SID = 'wang', RID = 'zhang', DID = '3',
@@ -306,5 +306,73 @@ class CustomerAvgMegTestCase(TestCase):
         #失败
         del request.session['cid']
         self.assertEqual(tests.jrToJson(customer.customer_avgmes_dialogs(request))['flag'], -12)
+
+class CustomerDialogListTestCase(TestCase):
+    '''测试获取客服所有会话列表'''
+    def setUp(self):
+        CustomerAvgTimeTestCase.setUp(self)
+
+    def test_customer_dialog_list(self):
+        rf = RequestFactory()
+        request = rf.post('api/customer/dialog_list/')
+        request.session =  {}
+        info = {}
+        #成功
+        request.session['cid'] = 'test_cid1'
+        request._body = json.dumps(info).encode('utf8')
+        result = tests.jrToJson(customer.customer_dialogs(request))['message']
+        self.assertEqual(len(result), 3)
+        self.assertEqual((result[1])['uid'], '7')
+        #失败
+        del request.session['cid']
+        self.assertEqual(tests.jrToJson(customer.customer_dialogs(request))['flag'], -12)
+
+class CustomerDialogMsgTestCase(TestCase):
+    '''测试获取客服某个会话内容'''
+    def setUp(self):
+        CustomerAvgMegTestCase.setUp(self)
+
+    def test_customer_dialog_msg(self):
+        rf = RequestFactory()
+        request = rf.post('api/customer/dialog_msg/')
+        info = {
+            'did': '2'
+        }
+        #成功
+        request._body = json.dumps(info).encode('utf8')
+        result = tests.jrToJson(customer.customer_dialog_messages(request))['message']
+        self.assertEqual(len(result), 2)
+        self.assertEqual((result[1])['content'], '12358')
+        #失败
+        info['did'] = '10086'
+        request._body = json.dumps(info).encode('utf8')
+        self.assertEqual(tests.jrToJson(customer.customer_dialog_messages(request))['flag'], -16)
+
+class CustomerModifyTestCase(TestCase):
+    '''测试客服修改'''
+    def setUp(self):
+        CustomerLogoutTestCase.setUp(self)
+
+    def test_customer_modify(self):
+        rf = RequestFactory()
+        request = rf.post('api/customer/modify/')
+        request.session =  {}
+        info = {
+            'icon': 'umaru',
+            'name': 'Takahashi'
+        }
+        #成功
+        request.session['cid'] = 'test_cid'
+        request._body = json.dumps(info).encode('utf8')
+        self.assertEqual(tests.jrToJson(customer.customer_modify_icon(request))['flag'], 1)
+        self.assertEqual(models.Customer.objects.get(CID = 'test_cid').name, 'Takahashi')
+        self.assertEqual(models.Customer.objects.get(CID = 'test_cid').icon, 'umaru')
+        #失败
+        del request.session['cid']
+        self.assertEqual(tests.jrToJson(customer.customer_modify_icon(request))['flag'], -12)
+
+
+
+
 
 
