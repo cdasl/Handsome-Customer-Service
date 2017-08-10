@@ -165,7 +165,7 @@ def set_customer_message(email, EID):
     password = '12345678'
     icon = 'demo.png'
     name = '张三'
-    last_login = timezone.now()
+    last_login = datetime.datetime.now()
     models.Customer.objects.create(CID = CID, EID = EID, email = email, password = password, 
         icon = icon, name = name, last_login = last_login, salt = salt)
 
@@ -369,7 +369,8 @@ def enterprise_dialogs(request):
     dialogs_list = []
     dialogs = models.Dialog.objects.filter(EID = EID)
     for dialog in dialogs:
-        dialogs_list.append({'did': dialog.DID, 'start_time': dialog.start_time, 'end_time': dialog.end_time})
+        dialogs_list.append({'did': dialog.DID, 'start_time': dialog.start_time, 'end_time': dialog.end_time,
+            'uid': dialog.UID, 'cid': dialog.cid})
     return JsonResponse({'flag': 1, 'message': dialogs_list})
 
 @ensure_csrf_cookie
@@ -540,7 +541,7 @@ def enterprise_message_number(request):
     else:
         return JsonResponse({'flag': -12, 'message': ''})
     total = 0
-    nowtime = timezone.now()
+    nowtime = datetime.datetime.now()
     dialogs = models.Dialog.objects.filter(EID = EID)
     for dialog in dialogs:
         for message in models.Message.objects.filter(DID = dialog.DID):
@@ -564,7 +565,7 @@ def enterprise_serviced_number(request):
     #     EID = info['eid']
     else:
         return JsonResponse({'flag': -12, 'message': ''})
-    nowtime = timezone.now()
+    nowtime = datetime.datetime.now()
     serviced = []
     dialogs = models.Dialog.objects.filter(EID = EID)
     for dialog in dialogs:
@@ -589,7 +590,7 @@ def enterprise_dialogs_oneday(request):
     else:
         return JsonResponse({'flag': -12, 'message': ''})
     total = 0
-    nowtime = timezone.now()
+    nowtime = datetime.datetime.now()
     dialogs = models.Dialog.objects.filter(EID = EID)
     for dialog in dialogs:
         #获取当前时间距离1970.1.1的秒数
