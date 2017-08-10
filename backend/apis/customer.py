@@ -155,3 +155,16 @@ def customer_total_messages(request):
         for message in models.Message.objects.filter(DID = dialog.DID):
             total += 1
     return JsonResponse({'flag': 1, 'message': total})
+
+@ensure_csrf_cookie
+def customer_total_dialogs(request):
+    """获取客服总会话数"""
+    CID = 'cid1'
+    if 'cid' in request.session:
+        CID = request.session['cid']
+    else:
+        return JsonResponse({'flag': -12, 'message': ''})
+    total = 0
+    dialogs = models.Dialog.objects.filter(CID = CID)
+    total = len(dialogs)
+    return JsonResponse({'flag': 1, 'message': total})
