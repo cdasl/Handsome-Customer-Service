@@ -370,9 +370,3 @@ class CustomerModifyTestCase(TestCase):
         #失败
         del request.session['cid']
         self.assertEqual(tests.jrToJson(customer.customer_modify_icon(request))['flag'], -12)
-
-
-
-
-
-
