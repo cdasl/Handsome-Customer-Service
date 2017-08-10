@@ -46,4 +46,6 @@ urlpatterns = [
     url(r'^api/enter/get_enterprise_msgnum/$', enterprise.enterprise_message_number),
     url(r'^api/customer/change_ol/$', customer.customer_change_onlinestate),
     url(r'^api/customer/get_serviced_num/$', customer.customer_serviced_number),
+    url(r'^api/enter/get_enter_serviced_num/$', enterprise.enterprise_serviced_number),
+    url(r'^api/enter/get_oneday/$', enterprise.enterprise_dialogs_oneday),
 ]

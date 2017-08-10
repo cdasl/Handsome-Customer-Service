@@ -238,14 +238,14 @@ def reset_customer_state(request):
 @ensure_csrf_cookie
 def enterprise_get_customers(request):
     """获取客服人员列表"""
-    info =  {'eid': -1}
+    # info =  {'eid': -1}
     EID = 'eid'
     if hasattr(request, 'body'):
         info = json.loads(request.body.decode('utf8'))
     if hasattr(request, 'session') and 'eid' in request.session:
         EID = request.session['eid']
-    elif info['eid'] != -1:
-        EID = info['eid']
+    # elif info['eid'] != -1:
+    #     EID = info['eid']
     else:
         return JsonResponse({'flag': -12, 'message': ''})
     customer_list = []
@@ -283,14 +283,14 @@ def inquire_customer_info(request):
 @ensure_csrf_cookie
 def enterprise_online_customers(request):
     """获取在线客服人员列表"""
-    info =  {'eid': -1}
+    # info =  {'eid': -1}
     EID = 'eid'
     if hasattr(request, 'body'):
         info = json.loads(request.body.decode('utf8'))
     if hasattr(request, 'session') and 'eid' in request.session:
         EID = request.session['eid']
-    elif info['eid'] != -1:
-        EID = info['eid']
+    # elif info['eid'] != -1:
+    #     EID = info['eid']
     else:
         return JsonResponse({'flag': -12, 'message': ''})
     online_list = []
@@ -302,14 +302,14 @@ def enterprise_online_customers(request):
 @ensure_csrf_cookie
 def enterprise_total_servicetime(request):
     """获取企业总的服务时间，返回的是分钟"""
-    info = {'eid': -1}
+    # info = {'eid': -1}
     EID = 'eid'
     if hasattr(request, 'body'):
         info = json.loads(request.body.decode('utf8'))
     if hasattr(request, 'session') and 'eid' in request.session:
         EID = request.session['eid']
-    elif info['eid'] != -1:
-        EID = info['eid']
+    # elif info['eid'] != -1:
+    #     EID = info['eid']
     else:
         return JsonResponse({'flag': -12, 'message': ''})
     total = 0
@@ -322,14 +322,14 @@ def enterprise_total_servicetime(request):
 @ensure_csrf_cookie
 def enterprise_total_messages(request):
     """获取企业发送的总消息数"""
-    info = {'eid': -1}
+    # info = {'eid': -1}
     EID = 'eid'
     if hasattr(request, 'body'):
         info = json.loads(request.body.decode('utf8'))
     if hasattr(request, 'session') and 'eid' in request.session:
         EID = request.session['eid']
-    elif info['eid'] != -1:
-        EID = info['eid']
+    # elif info['eid'] != -1:
+    #     EID = info['eid']
     else:
         return JsonResponse({'flag': -12, 'message': ''})
     total = 0
@@ -341,14 +341,14 @@ def enterprise_total_messages(request):
 @ensure_csrf_cookie
 def enterprise_total_dialogs(request):
     """获取企业发送的总会话数"""
-    info = {'eid': -1}
+    # info = {'eid': -1}
     EID = 'eid'
     if hasattr(request, 'body'):
         info = json.loads(request.body.decode('utf8'))
     if hasattr(request, 'session') and 'eid' in request.session:
         EID = request.session['eid']
-    elif info['eid'] != -1:
-        EID = info['eid']
+    # elif info['eid'] != -1:
+    #     EID = info['eid']
     else:
         return JsonResponse({'flag': -12, 'message': ''})
     return JsonResponse({'flag': 1, 'message': len(models.Dialog.objects.filter(EID = EID))})
@@ -356,14 +356,14 @@ def enterprise_total_dialogs(request):
 @ensure_csrf_cookie
 def enterprise_dialogs(request):
     """获取企业全部会话列表"""
-    info =  {'eid': -1}
+    # info =  {'eid': -1}
     EID = 'eid'
     if hasattr(request, 'body'):
         info = json.loads(request.body.decode('utf8'))
     if hasattr(request, 'session') and 'eid' in request.session:
         EID = request.session['eid']
-    elif info['eid'] != -1:
-        EID = info['eid']
+    # elif info['eid'] != -1:
+    #     EID = info['eid']
     else:
         return JsonResponse({'flag': -12, 'message': ''})
     dialogs_list = []
@@ -410,14 +410,14 @@ def messages_between_chatters(request):
 @ensure_csrf_cookie
 def enterprise_avgtime_dialogs(request):
     """获取客服会话平均时间"""
-    info =  {'eid': -1}
+    # info =  {'eid': -1}
     EID = 'eid'
     if hasattr(request, 'body'):
         info = json.loads(request.body.decode('utf8'))
     if hasattr(request, 'session') and 'eid' in request.session:
         EID = request.session['eid']
-    elif info['eid'] != -1:
-        EID = info['eid']
+    # elif info['eid'] != -1:
+    #     EID = info['eid']
     else:
         return JsonResponse({'flag': -12, 'message': ''})
     totaltime = 0
@@ -432,14 +432,14 @@ def enterprise_avgtime_dialogs(request):
 @ensure_csrf_cookie
 def enterprise_set_robot_message(request):
     """设置企业机器人名字，头像"""
-    info =  {'eid': -1}
+    # info =  {'eid': -1}
     EID = 'eid'
     if hasattr(request, 'body'):
         info = json.loads(request.body.decode('utf8'))
     if hasattr(request, 'session') and 'eid' in request.session:
         EID = request.session['eid']
-    elif info['eid'] != -1:
-        EID = info['eid']
+    # elif info['eid'] != -1:
+    #     EID = info['eid']
     else:
         return JsonResponse({'flag': -12, 'message': ''})
     #enterprise = models.Enterprise.objects.filter(EID = EID, state = 1)
@@ -453,14 +453,14 @@ def enterprise_set_robot_message(request):
 @ensure_csrf_cookie
 def enterprise_avgmes_dialogs(request):
     """获取企业会话的平均消息数"""
-    info =  {'eid': -1}
+    # info =  {'eid': -1}
     EID = 'eid'
     if hasattr(request, 'body'):
         info = json.loads(request.body.decode('utf8'))
     if hasattr(request, 'session') and 'eid' in request.session:
         EID = request.session['eid']
-    elif info['eid'] != -1:
-        EID = info['eid']
+    # elif info['eid'] != -1:
+    #     EID = info['eid']
     else:
         return JsonResponse({'flag': -12, 'message': ''})
     total_messages = 0
@@ -474,14 +474,14 @@ def enterprise_avgmes_dialogs(request):
 @ensure_csrf_cookie
 def enterprise_set_chatbox_type(request):
     """设置聊天窗口弹出方式"""
-    info =  {'eid': -1}
+    # info =  {'eid': -1}
     EID = 'eid'
     if hasattr(request, 'body'):
         info = json.loads(request.body.decode('utf8'))
     if hasattr(request, 'session') and 'eid' in request.session:
         EID = request.session['eid']
-    elif info['eid'] != -1:
-        EID = info['eid']
+    # elif info['eid'] != -1:
+    #     EID = info['eid']
     else:
         return JsonResponse({'flag': -12, 'message': ''})
     #enterprise = models.Enterprise.objects.filter(EID = EID, state = 1)
@@ -494,14 +494,14 @@ def enterprise_set_chatbox_type(request):
 @ensure_csrf_cookie
 def enterprise_setuser_message(request):
     """企业将用户信息传给系统"""
-    info =  {'eid': -1}
+    # info = {'eid': -1}
     EID = 'eid'
     if hasattr(request, 'body'):
         info = json.loads(request.body.decode('utf8'))
     if hasattr(request, 'session') and 'eid' in request.session:
         EID = request.session['eid']
-    elif info['eid'] != -1:
-        EID = info['eid']
+    # elif info['eid'] != -1:
+    #     EID = info['eid']
     else:
         return JsonResponse({'flag': -12, 'message': ''})
     try:
@@ -513,14 +513,14 @@ def enterprise_setuser_message(request):
 @ensure_csrf_cookie
 def enterprise_message_number(request):
     """获取企业近24小时的消息数"""
-    info = {'eid': -1}
+    # info = {'eid': -1}
     EID = 'eid'
     if hasattr(request, 'body'):
         info = json.loads(request.body.decode('utf8'))
     if hasattr(request, 'session') and 'eid' in request.session:
         EID = request.session['eid']
-    elif info['eid'] != -1:
-        EID = info['eid']
+    # elif info['eid'] != -1:
+    #     EID = info['eid']
     else:
         return JsonResponse({'flag': -12, 'message': ''})
     total = 0
@@ -538,14 +538,14 @@ def enterprise_message_number(request):
 @ensure_csrf_cookie
 def enterprise_serviced_number(request):
     """获取所有客服最近24小时服务的总人数"""
-    info = {'eid': -1}
+    # info = {'eid': -1}
     EID = 'eid'
     if hasattr(request, 'body'):
         info = json.loads(request.body.decode('utf8'))
     if hasattr(request, 'session') and 'eid' in request.session:
         EID = request.session['eid']
-    elif info['eid'] != -1:
-        EID = info['eid']
+    # elif info['eid'] != -1:
+    #     EID = info['eid']
     else:
         return JsonResponse({'flag': -12, 'message': ''})
     nowtime = timezone.now()
@@ -563,14 +563,14 @@ def enterprise_serviced_number(request):
 @ensure_csrf_cookie
 def enterprise_dialogs_oneday(request):
     """获取企业所有客服24小时内会话总数"""
-    info = {'eid': -1}
+    # info = {'eid': -1}
     EID = 'eid'
     if hasattr(request, 'body'):
         info = json.loads(request.body.decode('utf8'))
     if hasattr(request, 'session') and 'eid' in request.session:
         EID = request.session['eid']
-    elif info['eid'] != -1:
-        EID = info['eid']
+    # elif info['eid'] != -1:
+    #     EID = info['eid']
     else:
         return JsonResponse({'flag': -12, 'message': ''})
     total = 0

@@ -144,12 +144,17 @@ class GetCustomersTestCase(TestCase):
 
     def test_get_customers(self):
         rf = RequestFactory()
-        info = {'eid': 'test_eid'}
+        info = {}
         request = rf.post('api/enter/test_get_customers')
         request._body = json.dumps(info).encode('utf8')
+        request.session = {}
+        request.session['eid'] = 'test_eid'
         result = jrToJson(enterprise.enterprise_get_customers(request))['message']
         self.assertEqual(result[0]['cid'], 'test_cid1')
         self.assertEqual(result[1]['cid'], 'test_cid2')
+        del request.session['eid']
+        result = jrToJson(enterprise.enterprise_dialogs_oneday(request))['flag']
+        self.assertEqual(result, -12)
 
 class InquireCustomerInfoTestCase(TestCase):
     """
@@ -197,15 +202,20 @@ class OnlineCustomersTestCase(TestCase):
 
     def test_online_customers(self):
         rf = RequestFactory()
-        info = {'eid': 'test_eid'}
+        info = {}
         request = rf.post('api/enter/test_online_customers/')
         request._body = json.dumps(info).encode('utf8')
+        request.session = {}
+        request.session['eid'] = 'test_eid'
         result = jrToJson(enterprise.enterprise_online_customers(request))['message']
         self.assertEqual(len(result), 2)
         self.assertEqual(result[0]['cid'], 'test_cid2')
         self.assertEqual(result[0]['name'], 'test_name2')
         self.assertEqual(result[1]['cid'], 'test_cid3')
         self.assertEqual(result[1]['name'], 'test_name3')
+        del request.session['eid']
+        result = jrToJson(enterprise.enterprise_dialogs_oneday(request))['flag']
+        self.assertEqual(result, -12)
 
 class GetTotalTimeTestCase(TestCase):
     """
@@ -222,11 +232,16 @@ class GetTotalTimeTestCase(TestCase):
 
     def test_total_time(self):
         rf = RequestFactory()
-        info = {'eid': 'test_eid1'}
+        info = {}
         request = rf.post('api/enter/total_time/')
         request._body = json.dumps(info).encode('utf8')
+        request.session = {}
+        request.session['eid'] = 'test_eid1'
         result = jrToJson(enterprise.enterprise_total_servicetime(request))['message']
         self.assertEqual(result, 8.0)
+        del request.session['eid']
+        result = jrToJson(enterprise.enterprise_dialogs_oneday(request))['flag']
+        self.assertEqual(result, -12)
 
 class GetTotalMessagesTestCase(TestCase):
     """
@@ -248,11 +263,16 @@ class GetTotalMessagesTestCase(TestCase):
 
     def test_total_messages(self):
         rf = RequestFactory()
-        info = {'eid': 'test_eid1'}
+        info = {}
         request = rf.post('api/enter/total_time/')
         request._body = json.dumps(info).encode('utf8')
+        request.session = {}
+        request.session['eid'] = 'test_eid1'
         result = jrToJson(enterprise.enterprise_total_messages(request))['message']
         self.assertEqual(result, 3)
+        del request.session['eid']
+        result = jrToJson(enterprise.enterprise_dialogs_oneday(request))['flag']
+        self.assertEqual(result, -12)
 
 class GetCountOfDialogsTestCase(TestCase):
     """
@@ -269,11 +289,16 @@ class GetCountOfDialogsTestCase(TestCase):
 
     def test_count_of_dialogs(self):
         rf = RequestFactory()
-        info = {'eid': 'test_eid1'}
+        info = {}
         request = rf.post('api/enter/total_dialogs/')
         request._body = json.dumps(info).encode('utf8')
+        request.session = {}
+        request.session['eid'] = 'test_eid1'
         result = jrToJson(enterprise.enterprise_total_dialogs(request))['message']
         self.assertEqual(result, 3)
+        del request.session['eid']
+        result = jrToJson(enterprise.enterprise_dialogs_oneday(request))['flag']
+        self.assertEqual(result, -12)
 
 class GetChattedTestCase(TestCase):
     """
@@ -317,13 +342,18 @@ class DialogsListTestCase(TestCase):
 
     def test_dialogs_list(self):
         rf = RequestFactory()
-        info = {'eid': 'test_eid1'}
+        info = {}
         request = rf.post('api/enter/test_dialogs_list/')
         request._body = json.dumps(info).encode('utf8')
+        request.session = {}
+        request.session['eid'] = 'test_eid1'
         result = jrToJson(enterprise.enterprise_dialogs(request))['message']
         self.assertEqual(len(result), 2)
         self.assertEqual(result[0]['did'], 'test_did1')
         self.assertEqual(result[1]['did'], 'test_did2')
+        del request.session['eid']
+        result = jrToJson(enterprise.enterprise_dialogs_oneday(request))['flag']
+        self.assertEqual(result, -12)
 
 class ResetPasswordTestCase(TestCase):
     '''
@@ -435,18 +465,23 @@ class SetRobotMessageTestCase(TestCase):
     
     def test_set_robot_message(self):
         rf = RequestFactory()
-        info = {'eid': 'eid1', 
+        info = { 
                 'robot_name': 'test1',
                 'robot_icon': 'test2'
-                }
+        }
         request = rf.post('api/enter/set_robot_name/')
         request._body = json.dumps(info).encode('utf8')
+        request.session = {}
+        request.session['eid'] = 'eid1'
         result = jrToJson(enterprise.enterprise_set_robot_message(request))['flag']
         self.assertEqual(result, 1)
         test_case1 = models.Enterprise.objects.get(EID = 'eid1').robot_name
         self.assertEqual('test1', test_case1)
         test_case2 = models.Enterprise.objects.get(EID = 'eid1').robot_icon
         self.assertEqual('test2', test_case2)
+        del request.session['eid']
+        result = jrToJson(enterprise.enterprise_dialogs_oneday(request))['flag']
+        self.assertEqual(result, -12)
 
 class MessagesBetweenChattersTestCase(TestCase):
     """
@@ -505,11 +540,16 @@ class AvgmesDialogsTestCase(TestCase):
 
     def test_avgmes_dialogs(self):
         rf = RequestFactory()
-        info = {'eid': 'test_eid1'}
+        info = {}
         request = rf.post('api/enter/avgmes/')
         request._body = json.dumps(info).encode('utf8')
+        request.session = {}
+        request.session['eid'] = 'test_eid1'
         result = jrToJson(enterprise.enterprise_avgmes_dialogs(request))['message']
         self.assertEqual(result, 1.5)
+        del request.session['eid']
+        result = jrToJson(enterprise.enterprise_dialogs_oneday(request))['flag']
+        self.assertEqual(result, -12)
 
 class AvgtimeDialogsTestCase(TestCase):
     """
@@ -524,12 +564,17 @@ class AvgtimeDialogsTestCase(TestCase):
 
     def test_avgmes_dialogs(self):
         rf = RequestFactory()
-        info = {'eid': 'test_eid1'}
+        info = {}
         request = rf.post('api/enter/avgtime/')
         request._body = json.dumps(info).encode('utf8')
+        request.session = {}
+        request.session['eid'] = 'test_eid1'
         result = jrToJson(enterprise.enterprise_avgtime_dialogs(request))['message']
         result_number = (((self.time3 - self.time1) / 2).seconds) / 60
         self.assertEqual(result, result_number)
+        del request.session['eid']
+        result = jrToJson(enterprise.enterprise_dialogs_oneday(request))['flag']
+        self.assertEqual(result, -12)
 
 class SetChatboxTypeTestCase(TestCase):
     '''
@@ -541,12 +586,18 @@ class SetChatboxTypeTestCase(TestCase):
     
     def test_set_chatbox_type(self):
         rf = RequestFactory()
-        info = {'eid': 'eid1', 
-                'chatbox_type': 2}
+        info = {
+            'chatbox_type': 2
+        }
         request = rf.post('api/enter/set_chatbox_type/')
         request._body = json.dumps(info).encode('utf8')
+        request.session = {}
+        request.session['eid'] = 'eid1'
         result = jrToJson(enterprise.enterprise_set_chatbox_type(request))['flag']
         self.assertEqual(result, 1)
+        del request.session['eid']
+        result = jrToJson(enterprise.enterprise_dialogs_oneday(request))['flag']
+        self.assertEqual(result, -12)
 
 class SetUserMsgTestCase(TestCase):
     """
@@ -555,13 +606,17 @@ class SetUserMsgTestCase(TestCase):
     def test_setuser_message(self):
         rf = RequestFactory()
         info = {
-            'eid': 'ee',
             'uid': 'sssss'
         }
         request = rf.post('api/enter/setuser_message')
         request._body = json.dumps(info).encode('utf8')
+        request.session = {}
+        request.session['eid'] = 'eid1'
         result = jrToJson(enterprise.enterprise_setuser_message(request))['flag']
         self.assertEqual(result, 1)
+        del request.session['eid']
+        result = jrToJson(enterprise.enterprise_dialogs_oneday(request))['flag']
+        self.assertEqual(result, -12)
 
 class EnterpriseMsgNumTestCase(TestCase):
     '''
@@ -569,10 +624,10 @@ class EnterpriseMsgNumTestCase(TestCase):
     '''
     def setUp(self):
         models.Dialog.objects.create(DID = '1', EID = 'test_eid1', 
-                                    start_time = '2017-8-9 17:00:00',
+                                    start_time = '2017-8-29 17:00:00',
                                     end_time = '2017-8-9 18:00:00')
         models.Dialog.objects.create(DID = '2', EID = 'test_eid1', 
-                                    start_time = '2017-8-9 17:00:00',
+                                    start_time = '2017-8-29 17:00:00',
                                     end_time = '2017-8-9 18:00:00')
         models.Dialog.objects.create(DID = '3', EID = 'test_eid1', 
                                     start_time = '2017-8-1 17:00:00',
@@ -581,13 +636,13 @@ class EnterpriseMsgNumTestCase(TestCase):
                                     start_time = '2017-8-9 17:00:00',
                                     end_time = '2017-8-9 18:00:00')
         models.Message.objects.create(MID = 'a', SID = 'wang', RID = 'zhang', DID = '1',
-                                    content = '123', date = '2017-8-9 17:00:00')
+                                    content = '123', date = '2017-8-29 17:00:00')
         models.Message.objects.create(MID = 'b', SID = 'wang', RID = 'zhang', DID = '1',
-                                    content = '123', date = '2017-8-9 17:00:00')
+                                    content = '123', date = '2017-8-29 17:00:00')
         models.Message.objects.create(MID = 'c', SID = 'wang', RID = 'zhang', DID = '2',
-                                    content = '123', date = '2017-8-9 17:00:00')
+                                    content = '123', date = '2017-8-29 17:00:00')
         models.Message.objects.create(MID = 'd', SID = 'wang', RID = 'zhang', DID = '2',
-                                    content = '123', date = '2017-8-9 17:00:00')
+                                    content = '123', date = '2017-8-29 17:00:00')
         models.Message.objects.create(MID = 'e', SID = 'wang', RID = 'zhang', DID = '3',
                                     content = '123', date = '2017-8-1 17:00:00')
         models.Message.objects.create(MID = 'f', SID = 'wang', RID = 'zhang', DID = '3',
@@ -604,3 +659,84 @@ class EnterpriseMsgNumTestCase(TestCase):
         request._body = json.dumps(info).encode('utf8')
         result = jrToJson(enterprise.enterprise_message_number(request))['message']
         self.assertEqual(result, 4)
+        del request.session['eid']
+        result = jrToJson(enterprise.enterprise_dialogs_oneday(request))['flag']
+        self.assertEqual(result, -12)
+
+class EnterServicedNumTestCase(TestCase):
+    '''
+        测试企业24h服务的人数
+    '''
+    def setUp(self):
+        models.Dialog.objects.create(DID = '1', EID = 'test_eid1', 
+                                    start_time = '2017-8-29 17:00:00',
+                                    end_time = '2017-8-9 18:00:00')
+        models.Dialog.objects.create(DID = '2', EID = 'test_eid1', 
+                                    start_time = '2017-8-29 17:00:00',
+                                    end_time = '2017-8-9 18:00:00')
+        models.Dialog.objects.create(DID = '3', EID = 'test_eid1', 
+                                    start_time = '2017-8-1 17:00:00',
+                                    end_time = '2017-8-9 18:00:00')
+        models.Dialog.objects.create(DID = '4', EID = 'test_eid2', 
+                                    start_time = '2017-8-9 17:00:00',
+                                    end_time = '2017-8-9 18:00:00')
+        models.Message.objects.create(MID = 'a', SID = 'wang', RID = 'zhang', DID = '1',
+                                    content = '123', date = '2017-8-29 17:00:00')
+        models.Message.objects.create(MID = 'b', SID = 'wang', RID = 'lee', DID = '1',
+                                    content = '123', date = '2017-8-29 17:00:00')
+        models.Message.objects.create(MID = 'c', SID = 'wang', RID = 'zhao', DID = '2',
+                                    content = '123', date = '2017-8-29 17:00:00')
+        models.Message.objects.create(MID = 'd', SID = 'wang', RID = 'zhang', DID = '2',
+                                    content = '123', date = '2017-8-29 17:00:00')
+        models.Message.objects.create(MID = 'e', SID = 'wang', RID = 'zhang', DID = '3',
+                                    content = '123', date = '2017-8-1 17:00:00')
+        models.Message.objects.create(MID = 'f', SID = 'wang', RID = 'zhang', DID = '3',
+                                    content = '123', date = '2017-8-1 17:00:00')
+        models.Message.objects.create(MID = 'g', SID = 'wang', RID = 'zhang', DID = '4',
+                                    content = '123', date = '2017-8-9 17:00:00')
+
+    def test_enter_serviced_num(self):
+        rf = RequestFactory()
+        request = rf.post('api/enter/get_enter_serviced_num/')
+        info = {}
+        request.session = {}
+        request._body = json.dumps(info).encode('utf8')
+        #成功
+        request.session['eid'] = 'test_eid1' 
+        result = jrToJson(enterprise.enterprise_serviced_number(request))['message']
+        self.assertEqual(result, 3)
+        #失败
+        del request.session['eid']
+        result = jrToJson(enterprise.enterprise_serviced_number(request))['flag']
+        self.assertEqual(result, -12)
+
+class DialoginOneDayTestCase(TestCase):
+    '''测试一天内的对话量'''
+    def setUp(self):
+        models.Dialog.objects.create(DID = '1', EID = 'test_eid1', 
+                                    start_time = '2017-8-29 17:00:00',
+                                    end_time = '2017-8-9 18:00:00')
+        models.Dialog.objects.create(DID = '2', EID = 'test_eid1', 
+                                    start_time = '2017-8-29 17:00:00',
+                                    end_time = '2017-8-9 18:00:00')
+        models.Dialog.objects.create(DID = '3', EID = 'test_eid1', 
+                                    start_time = '2017-8-1 17:00:00',
+                                    end_time = '2017-8-9 18:00:00')
+        models.Dialog.objects.create(DID = '4', EID = 'test_eid2', 
+                                    start_time = '2017-8-9 17:00:00',
+                                    end_time = '2017-8-9 18:00:00')
+
+    def test_oneday(self):
+        rf = RequestFactory()
+        request = rf.post('api/enter/get_oneday/')
+        info = {}
+        request.session = {}
+        request._body = json.dumps(info).encode('utf8')
+        #成功
+        request.session['eid'] = 'test_eid1' 
+        result = jrToJson(enterprise.enterprise_dialogs_oneday(request))['message']
+        self.assertEqual(result, 2)
+        #失败
+        del request.session['eid']
+        result = jrToJson(enterprise.enterprise_dialogs_oneday(request))['flag']
+        self.assertEqual(result, -12)
