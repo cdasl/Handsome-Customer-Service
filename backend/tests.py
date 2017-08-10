@@ -740,5 +740,3 @@ class DialoginOneDayTestCase(TestCase):
         del request.session['eid']
         result = jrToJson(enterprise.enterprise_dialogs_oneday(request))['flag']
         self.assertEqual(result, -12)
-
-
