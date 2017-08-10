@@ -570,13 +570,13 @@ def enterprise_serviced_number(request):
         return JsonResponse({'flag': -12, 'message': ''})
     nowtime = datetime.datetime.now()
     time1 = nowtime.hour
-    serviced = [0 for x in range(24)]
+    serviced = [[] for x in range(24)]
     dialogs = models.Dialog.objects.filter(EID = EID)
     for dialog in dialogs:
         if time.mktime(nowtime.timetuple()) - time.mktime(dialog.start_time.timetuple()) < 60 * 60 * 24:
             time2 = dialog.start_time.hour
             if time1 < time2:
-                serviced[time1 - time2  +24].append(dialog.UID)
+                serviced[time1 - time2 + 24].append(dialog.UID)
             else:
                 serviced[time1 - time2].append(dialog.UID)
     for i in range(0, 24):

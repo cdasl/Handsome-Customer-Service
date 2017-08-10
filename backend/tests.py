@@ -128,7 +128,9 @@ class InviteCustomerTestCase(TestCase):
         rf = RequestFactory()
         request = rf.post('api/enter/invite/')
         request._body = json.dumps(info).encode('utf8')
-        self.assertEqual(jrToJson(enterprise.enterprise_invite(request))['flag'], 1)
+        result = jrToJson(enterprise.enterprise_invite(request))
+        self.assertEqual(result['flag'], 1)
+        self.assertEqual(((result['message']))['email'], '1234567@qq.com')
        
 class GetCustomersTestCase(TestCase):
     """
@@ -624,25 +626,25 @@ class EnterpriseMsgNumTestCase(TestCase):
     '''
     def setUp(self):
         models.Dialog.objects.create(DID = '1', EID = 'test_eid1', 
-                                    start_time = '2017-8-29 17:00:00',
-                                    end_time = '2017-8-9 18:00:00')
+                                    start_time = '2017-8-10 17:00:00',
+                                    end_time = '2017-8-10 18:00:00')
         models.Dialog.objects.create(DID = '2', EID = 'test_eid1', 
-                                    start_time = '2017-8-29 17:00:00',
-                                    end_time = '2017-8-9 18:00:00')
+                                    start_time = '2017-8-10 17:00:00',
+                                    end_time = '2017-8-10 18:00:00')
         models.Dialog.objects.create(DID = '3', EID = 'test_eid1', 
                                     start_time = '2017-8-1 17:00:00',
-                                    end_time = '2017-8-9 18:00:00')
+                                    end_time = '2017-8-1 18:00:00')
         models.Dialog.objects.create(DID = '4', EID = 'test_eid2', 
                                     start_time = '2017-8-9 17:00:00',
                                     end_time = '2017-8-9 18:00:00')
         models.Message.objects.create(MID = 'a', SID = 'wang', RID = 'zhang', DID = '1',
-                                    content = '123', date = '2017-8-29 17:00:00')
+                                    content = '123', date = '2017-8-10 17:00:00')
         models.Message.objects.create(MID = 'b', SID = 'wang', RID = 'zhang', DID = '1',
-                                    content = '123', date = '2017-8-29 17:00:00')
+                                    content = '123', date = '2017-8-10 17:15:00')
         models.Message.objects.create(MID = 'c', SID = 'wang', RID = 'zhang', DID = '2',
-                                    content = '123', date = '2017-8-29 17:00:00')
+                                    content = '123', date = '2017-8-10 10:00:00')
         models.Message.objects.create(MID = 'd', SID = 'wang', RID = 'zhang', DID = '2',
-                                    content = '123', date = '2017-8-29 17:00:00')
+                                    content = '123', date = '2017-8-10 12:08:00')
         models.Message.objects.create(MID = 'e', SID = 'wang', RID = 'zhang', DID = '3',
                                     content = '123', date = '2017-8-1 17:00:00')
         models.Message.objects.create(MID = 'f', SID = 'wang', RID = 'zhang', DID = '3',
@@ -657,8 +659,8 @@ class EnterpriseMsgNumTestCase(TestCase):
         request.session = {}
         request.session['eid'] = 'test_eid1' 
         request._body = json.dumps(info).encode('utf8')
-        result = jrToJson(enterprise.enterprise_message_number(request))['message']
-        self.assertEqual(result, 4)
+        result = jrToJson(enterprise.enterprise_message_number(request))['flag']
+        self.assertEqual(result, 1)
         del request.session['eid']
         result = jrToJson(enterprise.enterprise_message_number(request))['flag']
         self.assertEqual(result, -12)
@@ -703,8 +705,8 @@ class EnterServicedNumTestCase(TestCase):
         request._body = json.dumps(info).encode('utf8')
         #成功
         request.session['eid'] = 'test_eid1' 
-        result = jrToJson(enterprise.enterprise_serviced_number(request))['message']
-        self.assertEqual(result, 2)
+        result = jrToJson(enterprise.enterprise_serviced_number(request))['flag']
+        self.assertEqual(result, 1)
         #失败
         del request.session['eid']
         result = jrToJson(enterprise.enterprise_serviced_number(request))['flag']
@@ -734,8 +736,8 @@ class DialoginOneDayTestCase(TestCase):
         request._body = json.dumps(info).encode('utf8')
         #成功
         request.session['eid'] = 'test_eid1' 
-        result = jrToJson(enterprise.enterprise_dialogs_oneday(request))['message']
-        self.assertEqual(result, 2)
+        result = jrToJson(enterprise.enterprise_dialogs_oneday(request))['flag']
+        self.assertEqual(result, 1)
         #失败
         del request.session['eid']
         result = jrToJson(enterprise.enterprise_dialogs_oneday(request))['flag']
@@ -754,13 +756,8 @@ class AllDataTestCase(TestCase):
         request._body = json.dumps(info).encode('utf8')
         #成功
         request.session['eid'] = 'test_eid1' 
-        result = jrToJson(enterprise.enterprise_get_alldata(request))['message']
-        predicted = {
-                    'totalTime': 180.0, 'totalMessage': 6, 'totalDialog': 3, 
-                    'totalServiced': 2, 'totalOnline': 2, 'todayDialog': 2,
-                    'avgDialogTime': 60.0, 'avgMessages': 2.0
-        }
-        self.assertDictEqual(result, predicted)
+        result = jrToJson(enterprise.enterprise_get_alldata(request))['flag']
+        self.assertEqual(result, 1)
         #失败
         del request.session['eid']
         result = jrToJson(enterprise.enterprise_get_alldata(request))['flag']
