@@ -1,0 +1,24 @@
+h1 {
+  font-family: "Microsoft Yahei";
+  font-weight: lighter;
+  text-align: center;
+  margin-top: 100px;
+}
+p {
+  font-family: "Microsoft Yahei";
+  font-weight: lighter;
+  text-align: center;
+}
+div {
+  padding-top: 50px;
+  text-align: center;
+}
+a {
+  text-decoration: none;
+}
+#eu {
+  margin-right: 20px;
+}
+#cu {
+  margin-left: 20px;
+}
