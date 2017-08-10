@@ -6,10 +6,13 @@
       <h4 class="title">1.修改密码</h4>
       <Form v-model="password" :label-width="80">
         <Form-item label="原密码">
-          <Input v-model="password.old" class="my-input"></Input>
+          <Input v-model="password.old" class="my-input" type="password"></Input>
         </Form-item>
         <Form-item label="新密码">
-          <Input v-model="password.new" class="my-input"></Input>
+          <Input v-model="password.new" class="my-input" type="password"></Input>
+        </Form-item>
+        <Form-item label="确认新密码">
+          <Input v-model="password.newConfirm" class="my-input" type="password"></Input>
         </Form-item>
           <Button @click="resetPassword" type="primary" class="btn">修改</Button>
         <Form-item>
@@ -19,7 +22,7 @@
     <div class="pop-up">
       <h4 class="title">2.接入代码</h4>
       <p class="legend">请将以下代码添加到你网站的 HTML 源代码中，放在&lt;/body&gt;标签之前 </p><br>
-      <Select v-model="model" style="width:200px" @on-change="changeTypePop">
+      <Select v-model="popType" style="width:200px" @on-change="changeTypePop">
         <Option v-for="item in types" :value="item.value" :key="item.value">{{ item.label }}</Option>
       </Select><br>
       <textarea cols="60" rows="5" v-model="innerCode" readonly class="text-area"></textarea>
@@ -30,10 +33,6 @@
         <Form-item label="机器人昵称">
           <Input v-model="robotName" class="my-input"></Input>
         </Form-item>
-        <a href="javascript:;" class="a-upload">
-          <input type="file" id="file">选择图片
-        </a>
-        <Button size="large" @click="uploadImg">上传图片</Button><br><br>
         <Button type="primary" @click="submit" class="btn">确认</Button>
       </Form>
       <div class="right">
@@ -46,58 +45,30 @@
   export default {
     data () {
       return {
-        imgSrc: 'http://123.206.94.77:3980/rkJfLkwPZ.jpg',
+        imgSrc: '/static/img/robot_icon/1.jpg',
         robotName: '小机',
         robotIcon: '',
         innerCode: '内嵌',
-        model: '',
+        popType: '',
         types: [
           {
             value: 1,
             label: '内嵌'
-          },
-          {
+          }, {
             value: 2,
             label: '弹出新窗口'
           }
         ],
         password: {
           old: '',
-          new: ''
+          new: '',
+          newConfirm: ''
         }
       }
     },
     methods: {
-      submit () {
-        fetch('', {
-          method: 'post'
-        })
-      },
-      uploadImg () {
-        let input = document.querySelector('#file')
-        /* global FormData: true */
-        let data = new FormData()
-        data.append('file', input.files[0])
-        fetch('http://123.206.94.77:3980/picture', {
-          method: 'post',
-          body: data
-        })
-        .then((res) => res.json())
-        .then((res) => {
-          let data = res.data
-          this.imgSrc = data[0]
-        })
-      },
-      resetPassword () {
-        if (this.password.old.trim() === '' || this.password.new.trim() === '') {
-          this.$Message.warning('密码不能为空')
-          this.password.old = ''
-          this.password.new = ''
-          return
-        }
-      },
-      changeTypePop () {
-        fetch('/api/enter/chattype/', {
+      fetchBase (url, body) {
+        return fetch(url, {
           method: 'post',
           credentials: 'same-origin',
           headers: {
@@ -105,20 +76,44 @@
             'Accept': 'application/json',
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify({
-            'chatbox_type': this.model,
-            'eid': 'c56b178639436b776adc1235a29512ca'
-          })
+          body: JSON.stringify(body)
         })
         .then((res) => res.json())
-        .then((res) => {
-          console.log(res['message'])
-          if (this.model === 1) {
-            this.innerCode = '内嵌'
+      },
+      reset () {
+        this.password.old = ''
+        this.password.new = ''
+        this.password.newConfirm = ''
+      },
+      async resetPassword () {
+        if (this.password.new !== this.password.newConfirm) {
+          this.$Message.warning('两次输入的新密码不一致')
+          this.reset()
+        } else {
+          let res = await this.fetchBase('/api/enter/reset_password/', {
+            'old': this.password.old,
+            'new': this.password.new
+          })
+          if (res['flag'] === -1) {
+            this.$Message.error('旧密码错误')
+          } else if (res['flag'] === -2) {
+            this.$Message.warning('修改失败')
           } else {
-            this.innerCode = '新窗口'
+            this.$Message.success('修改成功')
           }
+          this.reset()
+        }
+      },
+      async changeTypePop () {
+        let res = await this.fetchBase('/api/enter/chattype/', {
+          'chatbox_type': this.popType
         })
+        if (res['flag'] === -12) {
+          this.$Message.error('发生错误')
+        } else {
+          this.innerCode = res['message']
+          this.$Message.success('修改成功')
+        }
       },
       getCookie (cName) {
         if (document.cookie.length > 0) {

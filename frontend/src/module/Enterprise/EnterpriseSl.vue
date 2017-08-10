@@ -1,53 +1,50 @@
 <template>
-  <div id="app">
-    <div class="menu">
-      <Menu mode="horizontal" theme="light" active-name="enterprise-signup" @on-select="select" class="nav">
-        <Menu-item name="enterprise-signup">注册</Menu-item>
-        <Menu-item name="enterprise-login">登录</Menu-item>
-      </Menu>
+  <div class="app">
+    <div class="wrap">
+      <img src="/static/img/logo.jpg" alt="logo.jpg" class="image">
+      <div :is="type" @transfer="transfer"></div>
     </div>
-    <div :is="type" class="content"></div>
   </div>
 </template>
 <script>
-  import EnterpriseLogin from '../../components/EnterpriseLogin'
   import EnterpriseSignup from '../../components/EnterpriseSignup'
+  import EnterpriseLogin from '../../components/EnterpriseLogin'
   export default {
-    components: {
-      EnterpriseSignup,
-      EnterpriseLogin
-    },
+    components: {EnterpriseLogin, EnterpriseSignup},
     data () {
       return {
-        type: 'enterprise-signup'
+        type: 'enterprise-login'
       }
     },
     methods: {
-      select (name) {
-        this.type = name
+      transfer (newType) {
+        this.type = newType
       }
     }
   }
 </script>
-<style scoped>
-.menu {
+<style lang="">
+.app {
   display: block;
-  width: 100%;
-  margin-left: auto;
-  margin-right: auto;
-  background-color: #CEF6F5;
+  width: 100vw;
+  height: 100vh;
+  background: linear-gradient(to bottom, white, blue);
 }
-.content {
+.wrap {
   display: block;
-  width: 20%;
+  width: 40vw;
   margin-left: auto;
   margin-right: auto;
+  margin-top: 20vh;
+  background-color: white;
+  border: 1px solid black;
 }
-.nav {
+.image {
   display: block;
-  width: 20%;
-  margin-left: auto;
-  margin-right: auto;
-  background-color: #CEF6F5;
+  margin-left: 5vw;
+  margin-bottom: 2vh;
+  margin-top: 2vh;
+  width: 7vw;
+  height: 5vh;
 }
 </style>

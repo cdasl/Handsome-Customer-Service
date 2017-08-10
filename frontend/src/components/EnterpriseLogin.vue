@@ -1,25 +1,16 @@
 <template>
   <div id="app">
-    <Alert v-show="warn">
-        <template slot="desc">{{ warnMes }}</template>
-    </Alert>
-    <Form :model="formItem" :label-width="80" label-position="left">
-      <Form-item label="邮箱">
-          <Input v-model="formItem.email" placeholder="邮箱" type="text"></Input>
-      </Form-item>
-      <Form-item label="密码">
-          <Input v-model="formItem.password" placeholder="密码" type="password" ></Input>
-      </Form-item>
-      <Form-item style="margin-top:30px;">
-          <Button type="primary" @click="submit">登录</Button>
-          <Button size="small" @click="findEmail">找回密码</Button>
-      </Form-item>
-    </Form>
+    <h3 class="title">登陆</h3>
+    <Input v-model="formItem.email" placeholder="邮箱" type="text" class="my-input"></Input>
+    <Input v-model="formItem.password" placeholder="密码" type="password" class="my-input"></Input>
+    <Button type="primary" @click="submit" class="my-input">登录</Button><br>
+    <p class="signup">没有账户?<a @click="trans">创建一个!</a></p>
+    <p class="find-password"><a @click="findEmail">找回密码</a></p>
     <Modal
-        v-model="findback.modal"
-        title="找回密码"
-        @on-ok="ok"
-        @on-cancel="cancel">
+      v-model="findback.modal"
+      title="找回密码"
+      @on-ok="ok"
+      @on-cancel="cancel">
       <p>请输入企业邮箱</p>
       <Input v-model="findback.email"></Input>
     </Modal>
@@ -29,8 +20,6 @@
   export default {
     data () {
       return {
-        warn: false,
-        warnMes: '',
         formItem: {
           email: '',
           password: ''
@@ -42,11 +31,8 @@
       }
     },
     methods: {
-      findEmail () {
-        this.findback.modal = !this.findback.modal
-      },
-      ok () {
-        fetch('/api/reset_password/', {
+      fetchBase (url, body) {
+        return fetch(url, {
           method: 'post',
           credentials: 'same-origin',
           headers: {
@@ -54,16 +40,26 @@
             'Accept': 'application/json',
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify({'email': this.findback.email})
-        }).then((res) => res.json())
-        .then((res) => {
-          this.findback.email = ''
-          if (res['message'] === 'enterprise_reset') {
-            this.warning('已发送一封邮件给您，请注意查看')
-          } else {
-            this.warning('发生错误')
-          }
+          body: JSON.stringify(body)
         })
+        .then((res) => res.json())
+      },
+      trans () {
+        this.$emit('transfer', 'enterprise-signup')
+      },
+      findEmail () {
+        this.findback.modal = !this.findback.modal
+      },
+      async ok () {
+        let res = await this.fetchBase('/api/reset_password/', {
+          'email': this.findback.email
+        })
+        this.findback.email = ''
+        if (res['message'] === 'enterprise_reset') {
+          this.$Message.warning('已发送一封邮件给您，请注意查看')
+        } else {
+          this.$Message.warning('发生错误')
+        }
       },
       cancel () {},
       getCookie (cName) {
@@ -86,50 +82,63 @@
         this.formItem.password2 = ''
         this.formItem.name = ''
       },
-      warning (s) {
-        this.warnMes = s
-        this.warn = true
-        setTimeout(() => { this.warn = false }, 2000)
-        this.reset()
-      },
-      submit () {
+      async submit () {
         // 检查是否为空
         if (this.formItem.email === '' || this.formItem.password === '') {
-          this.warning('不能有内容为空')
+          this.$Message.warning('不能有内容为空')
           return
         }
-        fetch('/api/enter/login/', {
-          method: 'post',
-          credentials: 'same-origin',
-          headers: {
-            'X-CSRFToken': this.getCookie('csrftoken'),
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            'email': this.formItem.email,
-            'password': this.formItem.password
-          })
+        let res = await this.fetchBase('/api/enter/login/', {
+          'email': this.formItem.email,
+          'password': this.formItem.password
         })
-        .then((res) => res.json())
-        .then((res) => {
-          this.warning(res['message'])
-          this.reset()
-        })
+        this.reset()
+        if (res['flag'] > 0) {
+          this.$Message.success('登陆成功')
+          window.location.href = '/enter_manage'
+        } else if (res['flag'] === -5) {
+          this.$Message.warning('账号未激活')
+        } else if (res['flag'] === -6) {
+          this.$Message.warning('账号已被注销')
+        } else if (res['flag'] === -1) {
+          this.$Message.error('密码错误')
+        } else if (res['flag'] === -7) {
+          this.$Message.error('账号不存在')
+        }
       }
     }
   }
 </script>
 <style scoped>
-.form {
-   width: 200px;
-   margin-left: auto;
-   margin-right: auto;
-   margin-top:100px;
+.app {
+  width: 100%;
 }
 .title {
-  text-align: center;
-  margin-top: 100px;
-  margin-bottom: -100px;
+  margin-left: 5vw;
+  margin-bottom: 2vh;
+  font-size: 1.5em;
+}
+.my-input {
+  width: 75%;
+  height: 30%;
+  margin-left: 5vw;
+  margin-bottom: 2vh;
+}
+.signup {
+  display: inline;
+  width: 50%;
+  font-size: 1.4em;
+  padding-left: 5vw;
+  margin: 0;
+  margin-bottom: 2vh;
+}
+.find-password {
+  display: inline-block;
+  width: 50%;
+  font-size: 1.4em;
+  text-align: right;
+  padding-right: 3vw;
+  margin: 0;
+  margin-bottom: 2vh;
 }
 </style>
