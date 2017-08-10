@@ -544,7 +544,7 @@ def enterprise_message_number(request):
         EID = request.session['eid']
     else:
         return JsonResponse({'flag': -12, 'message': ''})
-    total = []
+    total = [0 for x in range(24)]
     nowtime = datetime.datetime.now()
     time1 = nowtime.hour
     dialogs = models.Dialog.objects.filter(EID = EID)
@@ -570,7 +570,7 @@ def enterprise_serviced_number(request):
         return JsonResponse({'flag': -12, 'message': ''})
     nowtime = datetime.datetime.now()
     time1 = nowtime.hour
-    serviced = []
+    serviced = [0 for x in range(24)]
     dialogs = models.Dialog.objects.filter(EID = EID)
     for dialog in dialogs:
         if time.mktime(nowtime.timetuple()) - time.mktime(dialog.start_time.timetuple()) < 60 * 60 * 24:
@@ -596,7 +596,7 @@ def enterprise_dialogs_oneday(request):
     #     EID = info['eid']
     else:
         return JsonResponse({'flag': -12, 'message': ''})
-    total = []
+    total = [0 for x in range(24)]
     nowtime = datetime.datetime.now()
     time1 = nowtime.hour
     dialogs = models.Dialog.objects.filter(EID = EID)
