@@ -22,7 +22,7 @@ def signup_init(info):
     password = md5.hexdigest()
     return {'ri': 'http://www.jb51.net/images/logo.gif',
             'rn': u'小机',
-            'eid': md5.hexdi est(),
+            'eid': md5.hexdigest(),
             'salt': salt,
             'email': info['email'],
             'name': info['name'],
