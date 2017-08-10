@@ -215,3 +215,17 @@ def customer_dialogs(request):
         dialogs_list.append({'cid': dialog.CID, 'uid': dialog.UID, 'start_time': dialog.start_time, 
             'end_time': dialog.end_time,})
     return JsonResponse({'flag': 1, 'message': dialogs_list})
+
+@ensure_csrf_cookie
+def customer_dialog_messages(request):
+    """获取客服某个会话内容"""
+    info = json.loads(request.body.decode('utf8'))
+    DID = info['did']
+    dialog = models.Message.objects.filter(DID = DID)
+    if len(dialog) == 0:
+        return JsonResponse({'flag': -16, 'message': ''})
+    messages_list = []    
+    messages = models.Message.objects.filter(DID = DID)
+    for message in messages:
+        messages_list.append({'mid': message.MID, 'sid': message.SID, 'content': message.content, 'rid': message.RID, 'date': message.date})
+    return JsonResponse({'flag': 1, 'message': messages_list})
