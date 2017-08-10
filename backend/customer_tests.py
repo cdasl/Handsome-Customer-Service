@@ -205,18 +205,106 @@ class CustomerTotalServicedTimeTestCase(TestCase):
         #失败
         del request.session['cid']
         self.assertEqual(tests.jrToJson(customer.customer_total_servicedtime(request))['flag'], -12)
-    
 
+class CustomerTotalDialogTestCase(TestCase):
+    '''测试客服总会话数'''
+    def setUp(self):
+        models.Dialog.objects.create(DID = '1', CID = 'test_cid1', 
+                                    start_time = '2017-8-9 17:00:00',
+                                    end_time = '2017-8-9 18:00:00')
+        models.Dialog.objects.create(DID = '2', CID = 'test_cid1', 
+                                    start_time = '2017-8-9 17:00:00',
+                                    end_time = '2017-8-9 17:30:05')
+        models.Dialog.objects.create(DID = '3', CID = 'test_cid1', 
+                                    start_time = '2017-8-9 17:05:32',
+                                    end_time = '2017-8-9 17:27:01')
+        models.Dialog.objects.create(DID = '4', CID = 'test_cid2', 
+                                    start_time = '2017-8-9 17:00:00',
+                                    end_time = '2017-8-9 18:00:00')
 
+    def test_total_dialog(self):
+        rf = RequestFactory()
+        request = rf.post('api/customer/total_dialog/')
+        request.session =  {}
+        info = {}
+        #成功
+        request.session['cid'] = 'test_cid1'
+        request._body = json.dumps(info).encode('utf8')
+        self.assertEqual(tests.jrToJson(customer.customer_total_dialogs(request))['message'], 3)
+        #失败
+        del request.session['cid']
+        self.assertEqual(tests.jrToJson(customer.customer_total_dialogs(request))['flag'], -12)
 
-       
+class CustomerAvgTimeTestCase(TestCase):
+    '''测试客服会话平均时间'''
+    def setUp(self):
+        models.Dialog.objects.create(DID = '1', CID = 'test_cid1', 
+                                    start_time = '2017-8-9 17:00:00',
+                                    end_time = '2017-8-9 18:00:00')
+        models.Dialog.objects.create(DID = '2', CID = 'test_cid1', 
+                                    start_time = '2017-8-9 17:00:00',
+                                    end_time = '2017-8-9 17:30:05')
+        models.Dialog.objects.create(DID = '3', CID = 'test_cid1', 
+                                    start_time = '2017-8-9 17:05:32',
+                                    end_time = '2017-8-9 17:27:01')
+        models.Dialog.objects.create(DID = '4', CID = 'test_cid2', 
+                                    start_time = '2017-8-9 17:00:00',
+                                    end_time = '2017-8-9 18:00:00')
 
+    def test_customer_avg_time(self):
+        rf = RequestFactory()
+        request = rf.post('api/customer/avg_time/')
+        request.session =  {}
+        info = {}
+        #成功
+        request.session['cid'] = 'test_cid1'
+        request._body = json.dumps(info).encode('utf8')
+        self.assertAlmostEqual(tests.jrToJson(customer.customer_avgtime_dialogs(request))['message'], 37, delta = 0.8)
+        #失败
+        del request.session['cid']
+        self.assertEqual(tests.jrToJson(customer.customer_avgtime_dialogs(request))['flag'], -12)
 
+class CustomerAvgMegTestCase(TestCase):
+    '''测试客服平均消息数'''
+    def setUp(self):
+        models.Dialog.objects.create(DID = '1', CID = 'test_cid1', 
+                                    start_time = '2017-8-29 17:00:00',
+                                    end_time = '2017-8-9 18:00:00')
+        models.Dialog.objects.create(DID = '2', CID = 'test_cid1', 
+                                    start_time = '2017-8-29 17:00:00',
+                                    end_time = '2017-8-9 18:00:00')
+        models.Dialog.objects.create(DID = '3', CID = 'test_cid1', 
+                                    start_time = '2017-8-1 17:00:00',
+                                    end_time = '2017-8-9 18:00:00')
+        models.Dialog.objects.create(DID = '4', CID = 'test_cid2', 
+                                    start_time = '2017-8-9 17:00:00',
+                                    end_time = '2017-8-9 18:00:00')
+        models.Message.objects.create(MID = 'a', SID = 'wang', RID = 'zhang', DID = '1',
+                                    content = '123', date = '2017-8-29 17:00:00')
+        models.Message.objects.create(MID = 'b', SID = 'wang', RID = 'lee', DID = '1',
+                                    content = '123', date = '2017-8-29 17:00:00')
+        models.Message.objects.create(MID = 'c', SID = 'wang', RID = 'zhao', DID = '2',
+                                    content = '123', date = '2017-8-29 17:00:00')
+        models.Message.objects.create(MID = 'd', SID = 'wang', RID = 'zhang', DID = '2',
+                                    content = '123', date = '2017-8-29 17:00:00')
+        models.Message.objects.create(MID = 'e', SID = 'wang', RID = 'zhang', DID = '3',
+                                    content = '123', date = '2017-8-1 17:00:00')
+        models.Message.objects.create(MID = 'f', SID = 'wang', RID = 'zhang', DID = '3',
+                                    content = '123', date = '2017-8-1 17:00:00')
+        models.Message.objects.create(MID = 'g', SID = 'wang', RID = 'zhang', DID = '4',
+                                    content = '123', date = '2017-8-9 17:00:00')
 
-
-
-
-
-
+    def test_avg_msg(self):
+        rf = RequestFactory()
+        request = rf.post('api/customer/avg_msg/')
+        request.session =  {}
+        info = {}
+        #成功
+        request.session['cid'] = 'test_cid1'
+        request._body = json.dumps(info).encode('utf8')
+        self.assertAlmostEqual(tests.jrToJson(customer.customer_avgmes_dialogs(request))['message'], 2, delta = 0.8)
+        #失败
+        del request.session['cid']
+        self.assertEqual(tests.jrToJson(customer.customer_avgmes_dialogs(request))['flag'], -12)
 
 
