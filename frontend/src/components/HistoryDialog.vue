@@ -7,7 +7,6 @@
     <br>
     <Button type="primary" size="large" @click="exportData(1)"><Icon type="ios-download-outline"></Icon> 导出原始数据</Button>
     <Button type="primary" size="large" @click="exportData(2)"><Icon type="ios-download-outline"></Icon> 导出排序和过滤后的数据</Button>
-    <Button @click="add">添加数据</Button>
     <Modal
         v-model="show"
         title="对话框"
@@ -17,7 +16,7 @@
         <div class="record" v-if="show">
           <div class="main">
             <message :content="content"></message>
-            <Button @click="showCustomerInfo" class="btn" type="primary">查看客服信息</Button>
+            <h4 class="customer-info">客服信息</h4>
             <Table border :columns="customerForm" :data="customerData" ref="table"></Table>
           </div>
         </div>
@@ -37,11 +36,17 @@
           }, {
             title: '邮箱',
             key: 'email'
+          }, {
+            title: '服务过的人数',
+            key: 'serviced_number'
+          }, {
+            title: '最后一次登陆时间',
+            key: 'last_login'
           }
         ],
         customerData: [],
         show: false,
-        content: '',
+        content: [],
         dialogForm: [
           {
             title: '开始时间',
@@ -72,7 +77,7 @@
                   },
                   on: {
                     click: () => {
-                      this.showDialog(params.index)
+                      this.showCustomerInfo(params.index)
                     }
                   }
                 }, '点击查看')
@@ -81,95 +86,75 @@
           }
         ],
         dialogData: [],
-        dialogDataShow: [{
-          startTime: new Date(),
-          endTime: new Date(),
-          uid: 'uid1',
-          cid: 'cid',
-          did: 'did1'
-        }],
+        dialogDataShow: [],
         current: 1,
         pageSize: 10
       }
     },
     methods: {
-      showCustomerInfo () {
-        this.customerData = [
-          {
-            name: '张二狗',
-            email: 'ergou@jj.com'
-          }
-        ]
+      fetchBase (url, body) {
+        return fetch(url, {
+          method: 'post',
+          credentials: 'same-origin',
+          headers: {
+            'X-CSRFToken': this.getCookie('csrftoken'),
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(body)
+        })
+        .then((res) => res.json())
       },
-      showDialog (index) {
-        this.$Message.success('fuck you')
-        this.content = [
-          {
-            word: '你好',
-            time: new Date(),
-            self: true
-          }, {
-            word: '你好呀',
-            time: new Date(),
-            self: false
-          }, {
-            word: '请问能帮您吗',
-            time: new Date(),
-            self: true
-          }, {
-            word: '没有，快滚',
-            time: new Date(),
-            self: false
-          }, {
-            word: '你好',
-            time: new Date(),
-            self: true
-          }, {
-            word: '你好呀',
-            time: new Date(),
-            self: false
-          }, {
-            word: '请问能帮您吗',
-            time: new Date(),
-            self: true
-          }, {
-            word: '没有，快滚',
-            time: new Date(),
-            self: false
-          }, {
-            word: '你好',
-            time: new Date(),
-            self: true
-          }, {
-            word: '你好呀',
-            time: new Date(),
-            self: false
-          }, {
-            word: '请问能帮您吗',
-            time: new Date(),
-            self: true
-          }, {
-            word: '没有，快滚',
-            time: new Date(),
-            self: false
-          }, {
-            word: '你好',
-            time: new Date(),
-            self: true
-          }, {
-            word: '你好呀',
-            time: new Date(),
-            self: false
-          }, {
-            word: '请问能帮您吗',
-            time: new Date(),
-            self: true
-          }, {
-            word: '没有，快滚',
-            time: new Date(),
-            self: false
+      async test2 () {
+        let x = await this.test1('/api/enter/dialogs/', {})
+        console.log('2')
+        console.log(x)
+      },
+      async showCustomerInfo (index) {
+        let res = await this.fetchBase('/api/enter/customer_info/', {
+          'cid': this.dialogDataShow[index].cid
+        })
+        if (res['flag'] > 0) {
+          this.customerData = [{
+            name: res['message']['name'],
+            email: res['message']['email'],
+            serviced_number: res['message']['serviced_number'],
+            last_login: res['message']['last_login'],
+            icon: res['message']['icon']
+          }]
+          this.showDialog(index)
+        } else {
+          this.$Message.error('信息获取失败')
+        }
+      },
+      async showDialog (index) {
+        let res = await this.fetchBase('/api/enter/dialog_message/', {
+          'did': this.dialogDataShow[index].did
+        })
+        if (res['flag'] === -16) {
+          this.$Message.warning('会话不存在')
+        } else if (res['flag'] > 0) {
+          this.content = []
+          for (let i = 0; i < res['message'].length; ++i) {
+            if (res['message'][i]['sid'] === this.dialogDataShow[index].cid) {
+              console.log(res['message'][i]['icon'])
+              this.content.push({
+                'word': res['message'][i]['content'],
+                'time': res['message'][i]['date'],
+                'self': true,
+                'src': this.customerData[0].icon
+              })
+            } else {
+              this.content.push({
+                'word': res['message'][i]['content'],
+                'time': res['message'][i]['date'],
+                'self': false,
+                'src': '/static/img/logo.jpg'
+              })
+            }
           }
-        ]
+        }
+        this.customerID = this.dialogDataShow[index].cid
         this.show = true
       },
       ok () {
@@ -194,17 +179,38 @@
           })
         }
       },
-      add () {
-        let x = {
-          startTime: String(Math.random()),
-          endTime: new Date(),
-          uid: 'uid' + Math.round(Math.random() * 100),
-          cid: 'cid' + Math.round(Math.random() * 100),
-          did: 'did' + Math.round(Math.random() * 100)
+      getCookie (cName) {
+        if (document.cookie.length > 0) {
+          let cStart = document.cookie.indexOf(cName + '=')
+          if (cStart !== -1) {
+            cStart = cStart + cName.length + 1
+            let cEnd = document.cookie.indexOf(';', cStart)
+            if (cEnd === -1) {
+              cEnd = document.cookie.length
+            }
+            return unescape(document.cookie.substring(cStart, cEnd))
+          }
         }
-        console.log(x)
-        this.dialogData.push(x)
+        return ''
+      }
+    },
+    async mounted () {
+      let res = await this.fetchBase('/api/enter/dialogs/', {})
+      if (res['flag'] > 0) {
+        for (let i = 0; i < res['message'].length; ++i) {
+          this.dialogData.push({
+            startTime: res['message'][i]['start_time'],
+            endTime: res['message'][i]['end_time'],
+            uid: 'test_uid',
+            cid: 'test_cid',
+            did: res['message'][i]['did']
+          })
+        }
+        this.current = 1
+        this.pageSize = 10
         this.dialogDataShow = this.dialogData.slice((this.current - 1) * this.pageSize, Math.min((this.current - 1) * this.pageSize + this.pageSize, this.dialogData.length))
+      } else if (res['flag'] === -12) {
+        this.$Message.error('历史会话获取失败')
       }
     }
   }
@@ -220,6 +226,9 @@
 .modal {
   width: 65vw;
   height: 50vh;
+}
+.customer-info {
+  margin: 3vh auto 1vh auto;
 }
 .record {
   margin: 20px auto;

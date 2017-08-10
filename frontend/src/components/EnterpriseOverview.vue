@@ -5,7 +5,7 @@
         <p>总服务时间</p>
       </div><hr>
       <div class="data">
-        <span>89min</span>
+        <span>{{ statics['totalTime'] }}min</span>
       </div>
     </div>
     <div class="item" @click="getChart(1)">
@@ -13,7 +13,7 @@
         <p>总消息数</p>
       </div><hr>
       <div class="data">
-        <span>{{ messages }}条</span>
+        <span>{{ statics['totalMessage'] }}条</span>
       </div>
     </div>
     <div class="item" @click="getChart(2)">
@@ -21,7 +21,7 @@
         <p>总会话数</p>
       </div><hr>
       <div class="data">
-        <span>{{ dialogs }}次</span>
+        <span>{{ statics['totalDialog'] }}次</span>
       </div>
     </div>
     <div class="item" @click="getChart(3)">
@@ -29,7 +29,7 @@
         <p>总服务人数</p>
       </div><hr>
       <div class="data">
-        <span>{{ servicedPeople }}人</span>
+        <span>{{ statics['totalServiced'] }}人</span>
       </div>
     </div>
     <div class="item">
@@ -37,7 +37,7 @@
         <p>在线客服人数</p>
       </div><hr>
       <div class="data">
-        <span>{{ onlineCustomers }}人</span>
+        <span>{{ statics['totalOnline'] }}人</span>
       </div>
     </div>
     <div class="item">
@@ -45,7 +45,7 @@
         <p>今日会话数</p>
       </div><hr>
       <div class="data">
-        <span>{{ todayDialogs }}次</span>
+        <span>{{ statics['todayDialog'] }}次</span>
       </div>
     </div>
     <div class="item">
@@ -53,7 +53,7 @@
         <p>平均会话时长</p>
       </div><hr>
       <div class="data">
-        <span>{{ timePerDialog }}min/次</span>
+        <span>{{ statics['avgDialogTime'] }}min/次</span>
       </div>
     </div>
     <div class="item">
@@ -61,7 +61,7 @@
         <p>会话平均消息数</p>
       </div><hr>
       <div class="data">
-        <span>{{ messagesPerDialog }}条/次</span>
+        <span>{{ statics['avgMessages'] }}条/次</span>
       </div>
     </div>
     <h3>选择统计图形状<h3>
@@ -86,14 +86,16 @@
     components: {Schart},
     data () {
       return {
-        servicedTime: 45,
-        messages: 998,
-        dialogs: 56,
-        servicedPeople: 34,
-        onlineCustomers: 7,
-        todayDialogs: 5,
-        timePerDialog: 6,
-        messagesPerDialog: 9,
+        statics: {
+          'totalTime': 45,
+          'totalMessage': 998,
+          'totalDialog': 56,
+          'totalServiced': 34,
+          'totalOnline': 7,
+          'todayDialog': 5,
+          'avgDialogTime': 6,
+          'avgMessages': 9
+        },
         chartType: 'bar',
         canvasId: 'myCanvas',
         type: 'bar',
@@ -115,7 +117,21 @@
       }
     },
     methods: {
-      getChart (num) {
+      fetchBase (url, body) {
+        return fetch(url, {
+          method: 'post',
+          credentials: 'same-origin',
+          headers: {
+            'X-CSRFToken': this.getCookie('csrftoken'),
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(body)
+        })
+        .then((res) => res.json())
+      },
+      async getChart (num) {
+        // let res = await this.fetchBase()
         this.data = []
         let currentHour = (new Date()).getHours()
         for (let i = 24; i > 0; --i) {
@@ -139,7 +155,29 @@
         } else {
           this.type = 'line'
         }
+      },
+      getCookie (cName) {
+        if (document.cookie.length > 0) {
+          let cStart = document.cookie.indexOf(cName + '=')
+          if (cStart !== -1) {
+            cStart = cStart + cName.length + 1
+            let cEnd = document.cookie.indexOf(';', cStart)
+            if (cEnd === -1) {
+              cEnd = document.cookie.length
+            }
+            return unescape(document.cookie.substring(cStart, cEnd))
+          }
+        }
+        return ''
       }
+    },
+    async mounted () {
+      let res = await this.fetchBase('/api/enter/get_alldata/', {})
+      if (res['flag'] === -12) {
+        this.$Message.error('数据获取失败')
+        return
+      }
+      this.statics = res['message']
     }
   }
 </script>
