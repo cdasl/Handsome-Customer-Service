@@ -766,9 +766,29 @@ class AllDataTestCase(TestCase):
         result = jrToJson(enterprise.enterprise_get_alldata(request))['flag']
         self.assertEqual(result, -12)
 
-
+class EnterpriseActiveTestCase(TestCase):
+    '''测试企业激活'''
+    def setUp(self):
+        models.Enterprise.objects.create(EID = 'eid1', email = '654321@qq.com', password = 'password1',
+             name = 'name1', robot_icon = 'ri1', robot_name = 'rn1', salt = 'salt1', state = 0)
     
-
-
-
-        
+    def test_active(self):
+        info = {
+            'active_code': 'pdmdndkdldidjeihihhckgggegfhldjdidadecjdbdecjdid'
+        }
+        rf = RequestFactory()
+        request = rf.post('api/active/')
+        request._body = json.dumps(info).encode('utf8')
+        #成功
+        self.assertEqual(jrToJson(enterprise.enterprise_active(request))['flag'], 1)
+        self.assertEqual(models.Enterprise.objects.get(EID = 'eid1').state, 1)
+        #已激活
+        self.assertEqual(jrToJson(enterprise.enterprise_active(request))['flag'], -12)
+        #过期
+        info['active_code'] = 'pdmdndkdldidjeihihhckgggegfhldjdidjdecjdbdecjdid'
+        request._body = json.dumps(info).encode('utf8')
+        self.assertEqual(jrToJson(enterprise.enterprise_active(request))['flag'], -9)
+        #无效
+        info['active_code'] = 'pdmdcidsjicohdsiohcoidshciodhscoidjdecjdbdecjdid'
+        request._body = json.dumps(info).encode('utf8')
+        self.assertEqual(jrToJson(enterprise.enterprise_active(request))['flag'], -8)

@@ -42,16 +42,16 @@ def decrypt(key, string):
     length = length // 2
     bytearr = bytearray(length)
     j = 0
-    for i in range(0, length):
-        c1 = c[j]
-        c2 = c[j + 1]
-        j = j + 2
-        c1 = c1 - 65
-        c2 = c2 - 65
-        b2 = c2 * 16 + c1
-        b1 = b2 ^ key
-        bytearr[i] = b1
     try:
+        for i in range(0, length):
+            c1 = c[j]
+            c2 = c[j + 1]
+            j = j + 2
+            c1 = c1 - 65
+            c2 = c2 - 65
+            b2 = c2 * 16 + c1
+            b1 = b2 ^ key
+            bytearr[i] = b1
         return bytearr.decode('utf-8')
     except:
         return ""
