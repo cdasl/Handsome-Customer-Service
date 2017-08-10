@@ -30,8 +30,10 @@ def signup_init(info):
             'password': password
             }
 
-def enterprise_changepassword(info):
+@ensure_csrf_cookie
+def enterprise_changepassword(request):
     """修改密码"""
+    info = json.loads(request.body.decode('utf8'))
     email = info['email']
     old_password = info['old']
     new_password = info['new']
