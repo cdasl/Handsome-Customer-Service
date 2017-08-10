@@ -1,22 +1,26 @@
 <template>
-  <div class="layout" :class="{'layout-hide-text': spanLeft < 4}">
+  <div class="layout" :class="{'layout-hide-text': spanLeft < 5}">
     <Row type="flex" class="row">
       <i-col :span="spanLeft" class="layout-menu-left">
-        <Menu active-name="customer-talk" theme="dark" width="auto" @on-select="select">
+        <Menu active-name="customer-talk" theme="dark" width="auto" @on-select="select" :class="leftClass">
           <div class="layout-logo-left"></div>
           <Menu-item name="customer-talk">
-            <Icon type="ios-keypad" :size="iconSize"></Icon>
+            <Icon type="chatbubble" :size="iconSize"></Icon>
             <span class="layout-text">当前会话</span>
           </Menu-item>
-          <Menu-item name="3">
+          <Menu-item name="customer-history">
             <Icon type="ios-analytics" :size="iconSize"></Icon>
             <span class="layout-text">历史会话</span>
+          </Menu-item>
+          <Menu-item name="customer-overview">
+            <Icon type="document-text" :size="iconSize"></Icon>
+            <span class="layout-text">信息统计</span>
           </Menu-item>
           <Menu-item name="4">
             <Icon type="cube" :size="iconSize"></Icon>
             <span class="layout-text">知识库</span>
           </Menu-item>
-          <Menu-item name="CustomerSetting">
+          <Menu-item name="customer-setting">
             <Icon type="settings" :size="iconSize"></Icon>
             <span class="layout-text">设置</span>
           </Menu-item>
@@ -33,7 +37,7 @@
           </i-select>
         </div>
         <div class="layout-content">
-          <div class="layout-content-main" :is="type" @send="send" @swit="swit" :content="currentcontent" :lists="lists"></div>
+          <div class="layout-content-main" :is="type" @send="send" @swit="swit" @close="close" :content="currentcontent" :lists="lists"></div>
         </div>
       </i-col>
     </Row>
@@ -42,17 +46,22 @@
 <script>
   import CustomerTalk from '../../components/CustomerTalk'
   import CustomerSetting from '../../components/CustomerSetting'
+  import CustomerHistory from '../../components/CustomerHistory'
+  import CustomerOverview from '../../components/CustomerOverview'
   export default {
     components: {
       CustomerTalk,
-      CustomerSetting
+      CustomerSetting,
+      CustomerHistory,
+      CustomerOverview
     },
     data () {
       return {
+        leftClass: 'my-fixed',
         type: 'customer-talk',
-        spanLeft: 4,
-        spanRight: 20,
-        content: [],
+        spanLeft: 5,
+        spanRight: 19,
+        content: {},
         socket: null,
         lists: [],
         currentcontent: [],
@@ -62,17 +71,19 @@
     },
     computed: {
       iconSize () {
-        return this.spanLeft === 4 ? 10 : 24
+        return this.spanLeft === 5 ? 14 : 24
       }
     },
     methods: {
       toggleClick () {
-        if (this.spanLeft === 4) {
+        if (this.spanLeft === 5) {
           this.spanLeft = 2
           this.spanRight = 22
+          this.leftClass = 'my-fixed-shrink'
         } else {
-          this.spanLeft = 4
-          this.spanRight = 20
+          this.spanLeft = 5
+          this.spanRight = 19
+          this.leftClass = 'my-fixed'
         }
       },
       swit (item) {
@@ -110,6 +121,18 @@
       },
       select (name) {
         this.type = name
+      },
+      close () {
+        this.socket.emit('disconnect a user', {sid: this.sid})
+        for (let i = 0; i < this.lists.length; ++i) {
+          if (this.sid === this.lists[i]['sid']) {
+            this.lists.splice(i, 1)
+            break
+          }
+        }
+        delete this.content[this.sid]
+        this.sid = this.lists[0]['sid']
+        this.currentcontent = this.content[this.sid]
       },
       getCookie (cName) {
         if (document.cookie.length > 0) {
@@ -162,7 +185,6 @@
           data['self'] = false
           data['src'] = decodeURI(msg['src'])
           this.content[msg['sid']].push(data)
-          console.log(this.lists.length)
           if (this.sid !== msg['sid']) {
             let i = 0
             for (i = 0; i < this.lists.length; ++i) {
@@ -189,15 +211,15 @@
   position: relative;
   border-radius: 4px;
   overflow: hidden;
-  height: 100%;
+  min-height: 100%;
 }
 .layout-breadcrumb {
   padding: 10px 15px 0;
 }
 .layout-content {
-  min-height: 600px;
+  min-height: 1080px;
   margin: 15px;
-  overflow: hidden;
+  overflow: auto;
   background: #fff;
   border-radius: 4px;
 }
@@ -208,6 +230,17 @@
 }
 .layout-menu-left {
   background: #464c5b;
+  position: relative;
+}
+.my-fixed {
+  position: fixed;
+  width: 20.88%!important;
+  left: 0;
+}
+.my-fixed-shrink {
+  position: fixed;
+  width: 8.33%!important;
+  left: 0;
 }
 .layout-header {
   height: 60px;

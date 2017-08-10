@@ -4,7 +4,13 @@
       <div class="text">
         <textarea placeholder="按 Ctrl + Enter 发送" v-model="content" @keyup="onKeyup"></textarea>
       </div>
-      <Button type="ghost" icon="social-octocat" class="icon" @click="toggle"></Button>
+      <div class="icon">
+        <Button type="ghost" icon="social-octocat" @click="toggle"></Button>
+        <Button type="ghost" icon="cube" @click="screenshot"></Button>
+        <Upload :before-upload="handleUpload" action="#" class="upload">
+            <Button type="ghost" icon="image"></Button>
+        </Upload>
+      </div>
   </div>
 </template>
 <script>
@@ -25,6 +31,75 @@
       },
       toggle () {
         this.emoji = !this.emoji
+      },
+      screenshot () {
+        /* global html2canvas: true */
+        html2canvas(document.body, {
+          allowTaint: true,
+          taintTest: false,
+          onrendered: (canvas) => {
+            // document.body.appendChild(canvas);
+            // 生成base64图片数据
+            let file = this.dataURLtoFile(canvas.toDataURL(), 'aa.png')
+            /* global FormData: true */
+            let image = new FormData()
+            image.append('image', file)
+            fetch('/storeimage/', {
+              method: 'post',
+              credentials: 'same-origin',
+              headers: {
+                'X-CSRFToken': this.getCookie('csrftoken'),
+                'Accept': 'application/json'
+              },
+              body: image
+            }).then((res) => res.json()).then((res) => {
+              console.log(res)
+              this.$emit('onKeyup', res['url'])
+            })
+          }
+        })
+      },
+      dataURLtoFile (dataurl, filename) {
+        /* global File, atob: true */
+        let arr = dataurl.split(',')
+        let mime = arr[0].match(/:(.*?);/)[1]
+        let bstr = atob(arr[1])
+        let n = bstr.length
+        let u8arr = new Uint8Array(n)
+        while (n--) {
+          u8arr[n] = bstr.charCodeAt(n)
+        }
+        return new File([u8arr], filename, {type: mime})
+      },
+      getCookie (cName) {
+        if (document.cookie.length > 0) {
+          let cStart = document.cookie.indexOf(cName + '=')
+          if (cStart !== -1) {
+            cStart = cStart + cName.length + 1
+            let cEnd = document.cookie.indexOf(';', cStart)
+            if (cEnd === -1) {
+              cEnd = document.cookie.length
+            }
+            return unescape(document.cookie.substring(cStart, cEnd))
+          }
+        }
+        return ''
+      },
+      handleUpload (file) {
+        let image = new FormData()
+        image.append('image', file)
+        fetch('/storeimage/', {
+          method: 'post',
+          credentials: 'same-origin',
+          headers: {
+            'X-CSRFToken': this.getCookie('csrftoken'),
+            'Accept': 'application/json'
+          },
+          body: image
+        }).then((res) => res.json()).then((res) => {
+          console.log(res)
+          this.$emit('onKeyup', res['url'])
+        })
       }
     },
     mounted: function () {
@@ -59,14 +134,17 @@
 }
 .wrapper {
   position: absolute;
-  bottom: 35%;
+  bottom: 33%;
   height: 200px;
   left: 0;
 }
 .icon {
   position: absolute;
-  bottom: 27%;
+  bottom: 25%;
   left: 0;
   z-index: 10;
+}
+.upload {
+  display: inline-block;
 }
 </style>

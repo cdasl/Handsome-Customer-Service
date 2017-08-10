@@ -14,7 +14,7 @@
       <user-info></user-info>
       <div class="buttongroup">
         <Button type="primary" class="button">转接</Button>
-        <Button type="primary" class="button">结束会话</Button>
+        <Button type="primary" class="button" @click="close">结束会话</Button>
       </div>
     </div>
   </div>
@@ -41,6 +41,9 @@
       },
       swit (item) {
         this.$emit('swit', item)
+      },
+      close () {
+        this.$emit('close', true)
       }
     }
   }

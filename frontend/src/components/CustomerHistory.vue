@@ -17,8 +17,6 @@
         <div class="record" v-if="show">
           <div class="main">
             <message :content="content"></message>
-            <Button @click="showCustomerInfo" class="btn" type="primary">查看客服信息</Button>
-            <Table border :columns="customerForm" :data="customerData" ref="table"></Table>
           </div>
         </div>
     </Modal>
@@ -30,16 +28,6 @@
     components: {Message},
     data () {
       return {
-        customerForm: [
-          {
-            title: '姓名',
-            key: 'name'
-          }, {
-            title: '邮箱',
-            key: 'email'
-          }
-        ],
-        customerData: [],
         show: false,
         content: '',
         dialogForm: [
@@ -53,12 +41,9 @@
             title: '用户ID',
             key: 'uid'
           }, {
-            title: '客服ID',
-            key: 'cid'
-          }, {
             title: '操作',
             key: 'action',
-            width: 150,
+            width: 200,
             align: 'center',
             render: (h, params) => {
               return h('div', [
@@ -93,14 +78,6 @@
       }
     },
     methods: {
-      showCustomerInfo () {
-        this.customerData = [
-          {
-            name: '张二狗',
-            email: 'ergou@jj.com'
-          }
-        ]
-      },
       showDialog (index) {
         this.$Message.success('fuck you')
         this.content = [
@@ -199,7 +176,6 @@
           startTime: String(Math.random()),
           endTime: new Date(),
           uid: 'uid' + Math.round(Math.random() * 100),
-          cid: 'cid' + Math.round(Math.random() * 100),
           did: 'did' + Math.round(Math.random() * 100)
         }
         console.log(x)
@@ -241,6 +217,6 @@
   left: 0;
 }
 .record .message {
-  height: calc(100% - 160px);
+  height: calc(100% - 20px);
 }
 </style>

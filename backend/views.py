@@ -4,7 +4,7 @@ from django.http import HttpResponse,JsonResponse
 from django.views.decorators.csrf import csrf_exempt,ensure_csrf_cookie
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
-import json
+import json, hashlib, time
 from django.conf import settings
 
 def getData(request):
@@ -18,13 +18,18 @@ def test(request):
 	return JsonResponse(data)
 
 @ensure_csrf_cookie
-def validate_customer(request):
+def store_image(request):
     file = request.FILES['image']
-    req = request.POST['user']
-    with open('image/aa.jpg', 'wb') as destination:
+    md5 = hashlib.md5()
+    md5.update(str(int(time.time())).encode('utf8'))
+    name = md5.hexdigest() + '.png'
+    with open('frontend/static/upload/' + name, 'wb') as destination:
         for chunk in file.chunks():
             destination.write(chunk)
-    return JsonResponse({'message': req})
+    with open('frontend/dist/static/upload/' + name, 'wb') as destination:
+        for chunk in file.chunks():
+            destination.write(chunk)
+    return JsonResponse({'url': '/static/upload/' + name})
 
 @ensure_csrf_cookie
 def customer_active(request):

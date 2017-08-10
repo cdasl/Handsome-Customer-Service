@@ -311,6 +311,10 @@
 
     //解释表情代码
     explain: function (str) {
+      let pattern = /\/static\/upload\/*/;
+      if (pattern.test(str)) {
+        return '<img src="' + str +'" style="width:75px;height:75px;cursor:pointer;" crossOrigin="anonymous" onclick=window.open(\'http://localhost:8000' + str +'\') />';
+      }
       var reg = /\[wem:(\w+):wem\]/g,
         _self = this;
 
