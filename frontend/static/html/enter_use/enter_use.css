@@ -1,0 +1,32 @@
+#left {
+  position: fixed;
+}
+h1 {
+  margin-left: 40px;
+}
+a {
+  color: #999;
+  text-decoration: none;
+}
+a:hover {
+  color: #5188a6;
+  text-decoration: none;
+}
+aside {
+  margin-right: 200px;
+  margin-left: 40px;
+  float: left;
+}
+#right {
+  padding-left: 10%;
+  margin-left: 15%;
+  margin-right: 15%;
+ }
+.rtitle {
+  padding-top: 40px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #ccc;
+}
+#sign_log {
+  padding-top: 0px;
+}
