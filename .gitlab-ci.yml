@@ -15,7 +15,7 @@ services:
 # http://docs.gitlab.com/ce/ci/yaml/README.html#cache
 cache:
   paths:
-  - node_modules/
+  - frontend/node_modules/
 
 test_async:
   script:
