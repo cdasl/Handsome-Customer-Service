@@ -229,3 +229,49 @@ def customer_dialog_messages(request):
     for message in messages:
         messages_list.append({'mid': message.MID, 'sid': message.SID, 'content': message.content, 'rid': message.RID, 'date': message.date})
     return JsonResponse({'flag': 1, 'message': messages_list})
+
+@ensure_csrf_cookie
+def reset_password_request(request):
+    """重置密码请求"""
+    info = json.loads(request.body.decode('utf8'))
+    email = info['email']
+    valid_enterprise = models.Enterprise.objects.filter(email = email)
+    vaild_customer = models.Customer.objects.filter(email = email)
+    if len(valid_enterprise) == 0 and len(vaild_customer) == 0:
+        return JsonResponse({'flag': -8, 'message': ''})
+    active_code = helper.get_active_code(email)
+    url = 'http://127.0.0.1:8000/password_reset/%s' % (active_code)
+    mySubject = u"重置密码"
+    myMessage = messages.reset_password_message(url)
+    try:
+        helper.send_active_email(email, mySubject, myMessage)
+        if len(valid_enterprise) > 0:
+            return JsonResponse({'flag': 1, 'message': 'enterprise_reset'})
+        return JsonResponse({'flag': 1, 'message': 'customer_reset'})
+    except Exception:
+        return JsonResponse({'flag': -12, 'message': ''})
+
+@ensure_csrf_cookie
+def reset_password(request):
+    """重置密码，前端发送激活码，新密码"""
+    info = json.loads(request.body.decode('utf8'))
+    tip = helper.active_code_check(info['active_code'])
+    if tip == -8:
+        return JsonResponse({'flag': -8, 'message': ''})
+    if tip == -9:
+        return JsonResponse({'flag': -9, 'message': ''})
+    decrypt_str = helper.decrypt(9, info['active_code'])
+    decrypt_data = decrypt_str.split('|')
+    email = decrypt_data[0]
+    password_salt = helper.password_add_salt(info['password'])
+    try:
+        enterprise = models.Enterprise.objects.filter(email = email)
+        if len(enterprise) > 0:
+            models.Enterprise.objects.filter(email = email).update(password = password_salt['password'], 
+                salt = password_salt['salt'])
+        else:
+            customer = models.Customer.objects.filter(email = email)
+            models.Customer.objects.filter(email = email).update(password = password, salt = salt)
+        return JsonResponse({'flag': 1, 'message': 'reset'})
+    except Exception:
+        return JsonResponse({'flag': -12, 'message': ''})
