@@ -792,13 +792,3 @@ class EnterpriseActiveTestCase(TestCase):
         info['active_code'] = 'pdmdcidsjicohdsiohcoidshciodhscoidjdecjdbdecjdid'
         request._body = json.dumps(info).encode('utf8')
         self.assertEqual(jrToJson(enterprise.enterprise_active(request))['flag'], -8)
-
-
-
-
-
-    
-
-
-
-        
