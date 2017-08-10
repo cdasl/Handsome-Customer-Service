@@ -128,7 +128,7 @@ def customer_dialogs_oneday(request):
     return JsonResponse({'flag': 1, 'message': total})
 
 @ensure_csrf_cookie
-def customer_tatol_servicedtime(request):
+def customer_total_servicedtime(request):
     """返回客服总的服务时间(分钟)"""
     CID = 'cid1'
     if 'cid' in request.session:
@@ -178,7 +178,7 @@ def customer_avgtime_dialogs(request):
         CID = request.session['cid']
     else:
         return JsonResponse({'flag': -12, 'message': ''})
-    totaltime = customer_tatol_servicedtime(request)['message']
+    totaltime = customer_total_servicedtime(request)['message']
     total = customer_total_dialogs(request)['message']
     avgtime = round(totaltime / total, 2)
     return JsonResponse({'flag': 1, 'message': avgtime})
