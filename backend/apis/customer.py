@@ -9,7 +9,7 @@ from .. import models, tests
 from chatterbot import ChatBot
 from . import helper, messages
 import django.utils.timezone as timezone
-
+import datetime, time
 @ensure_csrf_cookie
 def customer_chatted(request):
     """获取与某位客服聊过天的所有用户"""
@@ -118,7 +118,7 @@ def customer_dialogs_oneday(request):
     else:
         return JsonResponse({'flag': -12, 'message': ''})
     total = 0
-    nowtime = timezone.now()
+    nowtime = datetime.datetime.now()
     dialogs = models.Dialog.objects.filter(CID = CID)
     for dialog in dialogs:
         time1 = time.mktime(nowtime.timetuple())
@@ -200,3 +200,18 @@ def customer_avgmes_dialogs(request):
         totalmessage += len(messages)
     avgmes = round(totalmessage / totaldialog, 2)
     return JsonResponse({'flag': 1, 'message': avgmes})
+
+@ensure_csrf_cookie
+def customer_dialogs(request):
+    """获取客服所有会话列表"""
+    CID = 'cid1'
+    if 'cid' in request.session:
+        CID = request.session['cid']
+    else:
+        return JsonResponse({'flag': -12, 'message': ''})
+    dialogs_list = []
+    dialogs = models.Dialog.objects.filter(CID = CID)
+    for dialog in dialogs:
+        dialogs_list.append({'cid': dialog.CID, 'uid': dialog.UID, 'start_time': dialog.start_time, 
+            'end_time': dialog.end_time,})
+    return JsonResponse({'flag': 1, 'message': dialogs_list})
