@@ -118,6 +118,7 @@ def customer_dialogs_oneday(request):
     else:
         return JsonResponse({'flag': -12, 'message': ''})
     total = 0
+    nowtime = timezone.now()
     dialogs = models.Dialog.objects.filter(CID = CID)
     for dialog in dialogs:
         time1 = time.mktime(nowtime.timetuple())
@@ -168,3 +169,16 @@ def customer_total_dialogs(request):
     dialogs = models.Dialog.objects.filter(CID = CID)
     total = len(dialogs)
     return JsonResponse({'flag': 1, 'message': total})
+
+@ensure_csrf_cookie
+def customer_avgtime_dialogs(request):
+    """获取客服会话平均时间"""
+    CID = 'cid1'
+    if 'cid' in request.session:
+        CID = request.session['cid']
+    else:
+        return JsonResponse({'flag': -12, 'message': ''})
+    totaltime = customer_tatol_servicedtime(request)['message']
+    total = customer_total_dialogs(request)['message']
+    avgtime = round(totaltime / total, 2)
+    return JsonResponse({'flag': 1, 'message': avgtime})
