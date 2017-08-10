@@ -275,3 +275,19 @@ def reset_password(request):
         return JsonResponse({'flag': 1, 'message': 'reset'})
     except Exception:
         return JsonResponse({'flag': -12, 'message': ''})
+
+@ensure_csrf_cookie
+def customer_modify_icon(request):
+    """客服修改自己的头像,昵称"""
+    CID = 'cid1'
+    if hasattr(request, 'body'):
+        info = json.loads(request.body.decode('utf8'))
+    if hasattr(request, 'session') and 'cid' in request.session:
+        CID = request.session['cid']
+    else:
+        return JsonResponse({'flag': -12, 'message': ''})
+    try:
+        models.Customer.objects.filter(CID =CID).update(icon = info['icon'], name = info['name'])
+        return JsonResponse({'flag': 1, 'message': ''})
+    except Exception:
+        return JsonResponse({'flag': -12, 'message': ''})
