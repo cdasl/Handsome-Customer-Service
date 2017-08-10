@@ -153,7 +153,7 @@ class GetCustomersTestCase(TestCase):
         self.assertEqual(result[0]['cid'], 'test_cid1')
         self.assertEqual(result[1]['cid'], 'test_cid2')
         del request.session['eid']
-        result = jrToJson(enterprise.enterprise_dialogs_oneday(request))['flag']
+        result = jrToJson(enterprise.enterprise_get_customers(request))['flag']
         self.assertEqual(result, -12)
 
 class InquireCustomerInfoTestCase(TestCase):
@@ -190,13 +190,13 @@ class OnlineCustomersTestCase(TestCase):
         测试获取在线客服列表Api
     """
     def setUp(self):
-        models.Customer.objects.create(CID = 'test_cid1', EID = 'test_eid', email = '1111@qq.com', salt = 'testsalt',
+        models.Customer.objects.create(CID = 'test_cid1', EID = 'test_eid1', email = '1111@qq.com', salt = 'testsalt',
             password = 'test_password1', icon = 'test_icon', name = 'test_name1', state = 3,
             service_number = 0, serviced_number = 100, last_login = datetime.datetime.now())
-        models.Customer.objects.create(CID = 'test_cid2', EID = 'test_eid', email = '2222@qq.com', salt = 'testsalt',
+        models.Customer.objects.create(CID = 'test_cid2', EID = 'test_eid1', email = '2222@qq.com', salt = 'testsalt',
             password = 'test_password2', icon = 'test_icon', name = 'test_name2', state = 2,
             service_number = 0, serviced_number = 10, last_login = datetime.datetime.now())
-        models.Customer.objects.create(CID = 'test_cid3', EID = 'test_eid', email = '3333@qq.com', salt = 'testsalt',
+        models.Customer.objects.create(CID = 'test_cid3', EID = 'test_eid1', email = '3333@qq.com', salt = 'testsalt',
             password = 'test_password3', icon = 'test_icon', name = 'test_name3', state = 2,
             service_number = 0, serviced_number = 109, last_login = datetime.datetime.now())
 
@@ -206,7 +206,7 @@ class OnlineCustomersTestCase(TestCase):
         request = rf.post('api/enter/test_online_customers/')
         request._body = json.dumps(info).encode('utf8')
         request.session = {}
-        request.session['eid'] = 'test_eid'
+        request.session['eid'] = 'test_eid1'
         result = jrToJson(enterprise.enterprise_online_customers(request))['message']
         self.assertEqual(len(result), 2)
         self.assertEqual(result[0]['cid'], 'test_cid2')
@@ -214,7 +214,7 @@ class OnlineCustomersTestCase(TestCase):
         self.assertEqual(result[1]['cid'], 'test_cid3')
         self.assertEqual(result[1]['name'], 'test_name3')
         del request.session['eid']
-        result = jrToJson(enterprise.enterprise_dialogs_oneday(request))['flag']
+        result = jrToJson(enterprise.enterprise_online_customers(request))['flag']
         self.assertEqual(result, -12)
 
 class GetTotalTimeTestCase(TestCase):
@@ -240,7 +240,7 @@ class GetTotalTimeTestCase(TestCase):
         result = jrToJson(enterprise.enterprise_total_servicetime(request))['message']
         self.assertEqual(result, 8.0)
         del request.session['eid']
-        result = jrToJson(enterprise.enterprise_dialogs_oneday(request))['flag']
+        result = jrToJson(enterprise.enterprise_total_servicetime(request))['flag']
         self.assertEqual(result, -12)
 
 class GetTotalMessagesTestCase(TestCase):
@@ -271,7 +271,7 @@ class GetTotalMessagesTestCase(TestCase):
         result = jrToJson(enterprise.enterprise_total_messages(request))['message']
         self.assertEqual(result, 3)
         del request.session['eid']
-        result = jrToJson(enterprise.enterprise_dialogs_oneday(request))['flag']
+        result = jrToJson(enterprise.enterprise_total_messages(request))['flag']
         self.assertEqual(result, -12)
 
 class GetCountOfDialogsTestCase(TestCase):
@@ -297,7 +297,7 @@ class GetCountOfDialogsTestCase(TestCase):
         result = jrToJson(enterprise.enterprise_total_dialogs(request))['message']
         self.assertEqual(result, 3)
         del request.session['eid']
-        result = jrToJson(enterprise.enterprise_dialogs_oneday(request))['flag']
+        result = jrToJson(enterprise.enterprise_total_dialogs(request))['flag']
         self.assertEqual(result, -12)
 
 class GetChattedTestCase(TestCase):
@@ -352,7 +352,7 @@ class DialogsListTestCase(TestCase):
         self.assertEqual(result[0]['did'], 'test_did1')
         self.assertEqual(result[1]['did'], 'test_did2')
         del request.session['eid']
-        result = jrToJson(enterprise.enterprise_dialogs_oneday(request))['flag']
+        result = jrToJson(enterprise.enterprise_dialogs(request))['flag']
         self.assertEqual(result, -12)
 
 class ResetPasswordTestCase(TestCase):
@@ -480,7 +480,7 @@ class SetRobotMessageTestCase(TestCase):
         test_case2 = models.Enterprise.objects.get(EID = 'eid1').robot_icon
         self.assertEqual('test2', test_case2)
         del request.session['eid']
-        result = jrToJson(enterprise.enterprise_dialogs_oneday(request))['flag']
+        result = jrToJson(enterprise.enterprise_set_robot_message(request))['flag']
         self.assertEqual(result, -12)
 
 class MessagesBetweenChattersTestCase(TestCase):
@@ -548,7 +548,7 @@ class AvgmesDialogsTestCase(TestCase):
         result = jrToJson(enterprise.enterprise_avgmes_dialogs(request))['message']
         self.assertEqual(result, 1.5)
         del request.session['eid']
-        result = jrToJson(enterprise.enterprise_dialogs_oneday(request))['flag']
+        result = jrToJson(enterprise.enterprise_avgmes_dialogs(request))['flag']
         self.assertEqual(result, -12)
 
 class AvgtimeDialogsTestCase(TestCase):
@@ -573,7 +573,7 @@ class AvgtimeDialogsTestCase(TestCase):
         result_number = (((self.time3 - self.time1) / 2).seconds) / 60
         self.assertEqual(result, result_number)
         del request.session['eid']
-        result = jrToJson(enterprise.enterprise_dialogs_oneday(request))['flag']
+        result = jrToJson(enterprise.enterprise_avgtime_dialogs(request))['flag']
         self.assertEqual(result, -12)
 
 class SetChatboxTypeTestCase(TestCase):
@@ -596,7 +596,7 @@ class SetChatboxTypeTestCase(TestCase):
         result = jrToJson(enterprise.enterprise_set_chatbox_type(request))['flag']
         self.assertEqual(result, 1)
         del request.session['eid']
-        result = jrToJson(enterprise.enterprise_dialogs_oneday(request))['flag']
+        result = jrToJson(enterprise.enterprise_set_chatbox_type(request))['flag']
         self.assertEqual(result, -12)
 
 class SetUserMsgTestCase(TestCase):
@@ -615,7 +615,7 @@ class SetUserMsgTestCase(TestCase):
         result = jrToJson(enterprise.enterprise_setuser_message(request))['flag']
         self.assertEqual(result, 1)
         del request.session['eid']
-        result = jrToJson(enterprise.enterprise_dialogs_oneday(request))['flag']
+        result = jrToJson(enterprise.enterprise_setuser_message(request))['flag']
         self.assertEqual(result, -12)
 
 class EnterpriseMsgNumTestCase(TestCase):
@@ -660,7 +660,7 @@ class EnterpriseMsgNumTestCase(TestCase):
         result = jrToJson(enterprise.enterprise_message_number(request))['message']
         self.assertEqual(result, 4)
         del request.session['eid']
-        result = jrToJson(enterprise.enterprise_dialogs_oneday(request))['flag']
+        result = jrToJson(enterprise.enterprise_message_number(request))['flag']
         self.assertEqual(result, -12)
 
 class EnterServicedNumTestCase(TestCase):
@@ -670,13 +670,13 @@ class EnterServicedNumTestCase(TestCase):
     def setUp(self):
         models.Dialog.objects.create(DID = '1', EID = 'test_eid1', 
                                     start_time = '2017-8-29 17:00:00',
-                                    end_time = '2017-8-9 18:00:00')
+                                    end_time = '2017-8-29 18:00:00', UID = 7)
         models.Dialog.objects.create(DID = '2', EID = 'test_eid1', 
                                     start_time = '2017-8-29 17:00:00',
-                                    end_time = '2017-8-9 18:00:00')
+                                    end_time = '2017-8-29 18:00:00', UID = 77)
         models.Dialog.objects.create(DID = '3', EID = 'test_eid1', 
                                     start_time = '2017-8-1 17:00:00',
-                                    end_time = '2017-8-9 18:00:00')
+                                    end_time = '2017-8-9 18:00:00', UID = 7)
         models.Dialog.objects.create(DID = '4', EID = 'test_eid2', 
                                     start_time = '2017-8-9 17:00:00',
                                     end_time = '2017-8-9 18:00:00')
@@ -704,7 +704,7 @@ class EnterServicedNumTestCase(TestCase):
         #成功
         request.session['eid'] = 'test_eid1' 
         result = jrToJson(enterprise.enterprise_serviced_number(request))['message']
-        self.assertEqual(result, 3)
+        self.assertEqual(result, 2)
         #失败
         del request.session['eid']
         result = jrToJson(enterprise.enterprise_serviced_number(request))['flag']
@@ -740,3 +740,35 @@ class DialoginOneDayTestCase(TestCase):
         del request.session['eid']
         result = jrToJson(enterprise.enterprise_dialogs_oneday(request))['flag']
         self.assertEqual(result, -12)
+
+class AllDataTestCase(TestCase):
+    '''测试返回企业所有信息'''
+    def setUp(self):
+        EnterServicedNumTestCase.setUp(self)
+        OnlineCustomersTestCase.setUp(self)
+    def test_all_data(self):
+        rf = RequestFactory()
+        request = rf.post('api/enter/get_alldata/')
+        info = {}
+        request.session = {}
+        request._body = json.dumps(info).encode('utf8')
+        #成功
+        request.session['eid'] = 'test_eid1' 
+        result = jrToJson(enterprise.enterprise_get_alldata(request))['message']
+        predicted = {
+                    'totalTime': 180.0, 'totalMessage': 6, 'totalDialog': 3, 
+                    'totalServiced': 2, 'totalOnline': 2, 'todayDialog': 2,
+                    'avgDialogTime': 60.0, 'avgMessages': 2.0
+        }
+        self.assertDictEqual(result, predicted)
+        #失败
+        del request.session['eid']
+        result = jrToJson(enterprise.enterprise_get_alldata(request))['flag']
+        self.assertEqual(result, -12)
+
+
+    
+
+
+
+        

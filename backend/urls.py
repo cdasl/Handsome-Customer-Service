@@ -54,4 +54,5 @@ urlpatterns = [
     url(r'api/customer/total_dialog/$', customer.customer_total_dialogs),
     url(r'^api/customer/avg_time/$', customer.customer_avgtime_dialogs),
     url(r'^api/customer/avg_msg/$', customer.customer_avgmes_dialogs),
+    url(r'^api/enter/get_alldata/$', enterprise.enterprise_get_alldata),
 ]
