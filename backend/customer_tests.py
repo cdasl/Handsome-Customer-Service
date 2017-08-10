@@ -101,6 +101,116 @@ class ServicedNumTestCase(TestCase):
         request.session['cid'] = 'test_cid'
         request._body = json.dumps(info).encode('utf8')
         self.assertEqual(tests.jrToJson(customer.customer_serviced_number(request))['message'], 100)
+        #失败
+        del request.session['cid']
+        self.assertEqual(tests.jrToJson(customer.customer_serviced_number(request))['flag'], -12)     
+
+class CustomerOnedayTestCase(TestCase):
+    '''测试客服24h的会话数'''
+    def setUp(self):
+        models.Dialog.objects.create(DID = '1', CID = 'test_cid1', 
+                                    start_time = '2017-8-29 17:00:00',
+                                    end_time = '2017-8-9 18:00:00')
+        models.Dialog.objects.create(DID = '2', CID = 'test_cid1', 
+                                    start_time = '2017-8-29 17:00:00',
+                                    end_time = '2017-8-9 18:00:00')
+        models.Dialog.objects.create(DID = '3', CID = 'test_cid1', 
+                                    start_time = '2017-8-1 17:00:00',
+                                    end_time = '2017-8-9 18:00:00')
+        models.Dialog.objects.create(DID = '4', CID = 'test_cid2', 
+                                    start_time = '2017-8-9 17:00:00',
+                                    end_time = '2017-8-9 18:00:00')
+    
+    def test_customer_oneday(self):
+        rf = RequestFactory()
+        request = rf.post('api/customer/get_oneday/')
+        request.session =  {}
+        info = {}
+        #成功
+        request.session['cid'] = 'test_cid1'
+        request._body = json.dumps(info).encode('utf8')
+        self.assertEqual(tests.jrToJson(customer.customer_dialogs_oneday(request))['message'], 2)
+        #失败
+        del request.session['cid']
+        self.assertEqual(tests.jrToJson(customer.customer_dialogs_oneday(request))['flag'], -12)
+
+class CustomerTotalMsgTestCase(TestCase):
+    '''测试客服总消息数'''
+    def setUp(self):
+        models.Dialog.objects.create(DID = '1', CID = 'test_cid1', 
+                                    start_time = '2017-8-29 17:00:00',
+                                    end_time = '2017-8-9 18:00:00')
+        models.Dialog.objects.create(DID = '2', CID = 'test_cid1', 
+                                    start_time = '2017-8-29 17:00:00',
+                                    end_time = '2017-8-9 18:00:00')
+        models.Dialog.objects.create(DID = '3', CID = 'test_cid1', 
+                                    start_time = '2017-8-1 17:00:00',
+                                    end_time = '2017-8-9 18:00:00')
+        models.Dialog.objects.create(DID = '4', CID = 'test_cid2', 
+                                    start_time = '2017-8-9 17:00:00',
+                                    end_time = '2017-8-9 18:00:00')
+        models.Message.objects.create(MID = 'a', SID = 'wang', RID = 'zhang', DID = '1',
+                                    content = '123', date = '2017-8-29 17:00:00')
+        models.Message.objects.create(MID = 'b', SID = 'wang', RID = 'lee', DID = '1',
+                                    content = '123', date = '2017-8-29 17:00:00')
+        models.Message.objects.create(MID = 'c', SID = 'wang', RID = 'zhao', DID = '2',
+                                    content = '123', date = '2017-8-29 17:00:00')
+        models.Message.objects.create(MID = 'd', SID = 'wang', RID = 'zhang', DID = '2',
+                                    content = '123', date = '2017-8-29 17:00:00')
+        models.Message.objects.create(MID = 'e', SID = 'wang', RID = 'zhang', DID = '3',
+                                    content = '123', date = '2017-8-1 17:00:00')
+        models.Message.objects.create(MID = 'f', SID = 'wang', RID = 'zhang', DID = '3',
+                                    content = '123', date = '2017-8-1 17:00:00')
+        models.Message.objects.create(MID = 'g', SID = 'wang', RID = 'zhang', DID = '4',
+                                    content = '123', date = '2017-8-9 17:00:00')
+
+    def test_customer_total_msg(self):
+        rf = RequestFactory()
+        request = rf.post('api/customer/total_msg/')
+        request.session =  {}
+        info = {}
+        #成功
+        request.session['cid'] = 'test_cid1'
+        request._body = json.dumps(info).encode('utf8')
+        self.assertEqual(tests.jrToJson(customer.customer_total_messages(request))['message'], 6)
+        #失败
+        del request.session['cid']
+        self.assertEqual(tests.jrToJson(customer.customer_total_messages(request))['flag'], -12)
+
+class CustomerTotalServicedTimeTestCase(TestCase):
+    '''测试客服服务的总分钟'''
+    def setUp(self):
+        models.Dialog.objects.create(DID = '1', CID = 'test_cid1', 
+                                    start_time = '2017-8-9 17:00:00',
+                                    end_time = '2017-8-9 18:00:00')
+        models.Dialog.objects.create(DID = '2', CID = 'test_cid1', 
+                                    start_time = '2017-8-9 17:00:00',
+                                    end_time = '2017-8-9 17:30:05')
+        models.Dialog.objects.create(DID = '3', CID = 'test_cid1', 
+                                    start_time = '2017-8-9 17:05:32',
+                                    end_time = '2017-8-9 17:27:01')
+        models.Dialog.objects.create(DID = '4', CID = 'test_cid2', 
+                                    start_time = '2017-8-9 17:00:00',
+                                    end_time = '2017-8-9 18:00:00')
+
+    def test_customer_total_minute(self):
+        rf = RequestFactory()
+        request = rf.post('api/customer/total_minute/')
+        request.session =  {}
+        info = {}
+        #成功
+        request.session['cid'] = 'test_cid1'
+        request._body = json.dumps(info).encode('utf8')
+        self.assertAlmostEqual(tests.jrToJson(customer.customer_total_servicedtime(request))['message'], 112, delta = 1)
+        #失败
+        del request.session['cid']
+        self.assertEqual(tests.jrToJson(customer.customer_total_servicedtime(request))['flag'], -12)
+    
+
+
+
+       
+
 
 
 
