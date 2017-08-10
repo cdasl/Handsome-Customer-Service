@@ -22,7 +22,7 @@ def signup_init(info):
     password = md5.hexdigest()
     return {'ri': 'http://www.jb51.net/images/logo.gif',
             'rn': u'小机',
-            'eid': md5.hexdigest(),
+            'eid': md5.hexdi est(),
             'salt': salt,
             'email': info['email'],
             'name': info['name'],
@@ -370,7 +370,7 @@ def enterprise_dialogs(request):
     dialogs = models.Dialog.objects.filter(EID = EID)
     for dialog in dialogs:
         dialogs_list.append({'did': dialog.DID, 'start_time': dialog.start_time, 'end_time': dialog.end_time,
-            'uid': dialog.UID, 'cid': dialog.cid})
+            'uid': dialog.UID, 'cid': dialog.CID})
     return JsonResponse({'flag': 1, 'message': dialogs_list})
 
 @ensure_csrf_cookie
@@ -620,7 +620,7 @@ def enterprise_get_alldata(request):
         totalonline = len(tests.jrToJson(enterprise_online_customers(request))['message'])
         todaydialog = tests.jrToJson(enterprise_dialogs_oneday(request))['message']
         avgdialogtime = tests.jrToJson(enterprise_avgtime_dialogs(request))['message']
-        avgmessages = tests.jrTojson(enterprise_avgmes_dialogs(request))['message']
+        avgmessages = tests.jrToJson(enterprise_avgmes_dialogs(request))['message']
         alldata = {'totalTime': totaltime, 'totalMessage': totalmessage, 'totalDialog': totaldialog, 'totalServiced': totalserviced, 
         'totalOnline': totalonline, 'todayDialog': todaydialog, 'avgDialogTime': avgdialogtime, 'avgMessages': avgmessages}
         return JsonResponse({'flag': 1, 'message': alldata})
