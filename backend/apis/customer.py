@@ -291,3 +291,28 @@ def customer_modify_icon(request):
         return JsonResponse({'flag': 1, 'message': ''})
     except Exception:
         return JsonResponse({'flag': -12, 'message': ''})
+
+@ensure_csrf_cookie
+def customer_get_alldata(request):
+    """返回该客服所有数据：总服务时间，总消息数，总会话数，总服务人数，
+       平均会话时长，平均消息数
+    """
+    CID = 'cid1'
+    if hasattr(request, 'body'):
+        info = json.loads(request.body.decode('utf8'))
+    if hasattr(request, 'session') and 'cid' in request.session:
+        CID = request.session['cid']
+    else:
+        return JsonResponse({'flag': -12, 'message': ''})
+    try:
+        totaltime = tests.jrToJson(customer_total_servicedtime(request))['message']
+        totalmessage = tests.jrToJson(customer_total_messages(request))['message']
+        totaldialog = tests.jrToJson(customer_total_dialogs(request))['message']
+        totalserviced = tests.jrToJson(customer_serviced_number(request))['message']
+        avgdialogtime = tests.jrToJson(customer_avgtime_dialogs(request))['message']
+        avgmessages = tests.jrToJson(customer_avgmes_dialogs(request))['message']
+        allData = {'totalTime': totaltime, 'totalMessage': totalmessage, 'totalDialog': totaldialog, 
+        'totalServiced': totalserviced, 'avgDialogTime': avgdialogtime, 'avgMessages': avgmessages}
+        return JsonResponse({'flag': 1, 'message': allData})
+    except Exception:
+        return JsonResponse({'flag': -12, 'message': ''})

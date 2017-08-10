@@ -154,11 +154,12 @@ def enterprise_invite(request):
         myMessage = messages.customer_active_message(
             'http:/127.0.0.1:8000%s' % ('/customer_active/' + active_code))
         helper.send_active_email(email, mySubject, myMessage)
-        return JsonResponse({'flag': 1, 'message': customer_in})
+        return JsonResponse({'flag': 1, 'message': customer_info})
     except Exception:
         return JsonResponse({'flag': -11, 'message': ''})
 
 def set_customer_message(email, EID):
+    """ 设置客服默认信息"""
     md5 = hashlib.md5()
     md5.update(str(int(time.time())).encode('utf8'))
     CID = md5.hexdigest()
