@@ -182,3 +182,21 @@ def customer_avgtime_dialogs(request):
     total = customer_total_dialogs(request)['message']
     avgtime = round(totaltime / total, 2)
     return JsonResponse({'flag': 1, 'message': avgtime})
+
+@ensure_csrf_cookie
+def customer_avgmes_dialogs(request):
+    """获取客服平均消息数"""
+    CID = 'cid1'
+    if 'cid' in request.session:
+        CID = request.session['cid']
+    else:
+        return JsonResponse({'flag': -12, 'message': ''})
+    totalmessage = 0
+    totaldialog = 0
+    dialogs = models.Dialog.objects.filter(CID = CID)
+    totaldialog = len(dialogs)
+    for dialog in dialogs:
+        messages = models.Message.objects.filter(DID = dialog.DID)
+        totalmessage += len(messages)
+    avgmes = round(totalmessage / totaldialog, 2)
+    return JsonResponse({'flag': 1, 'message': avgmes})
