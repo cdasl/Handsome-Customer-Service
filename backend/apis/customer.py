@@ -139,7 +139,7 @@ def customer_total_servicedtime(request):
     dialogs = models.Dialog.objects.filter(CID = CID)
     for dialog in dialogs:
         totaltime += (dialog.end_time - dialog.start_time).seconds
-    totaltime /= 60
+    totaltime = round(totaltime / 60, 2)
     return JsonResponse({'flag': 1, 'message': totaltime})
 
 @ensure_csrf_cookie
