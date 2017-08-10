@@ -30,8 +30,10 @@ def signup_init(info):
             'password': password
             }
 
-def enterprise_changepassword(info):
+@ensure_csrf_cookie
+def enterprise_changepassword(request):
     """修改密码"""
+    info = json.loads(request.body.decode('utf8'))
     email = info['email']
     old_password = info['old']
     new_password = info['new']
@@ -154,11 +156,12 @@ def enterprise_invite(request):
         myMessage = messages.customer_active_message(
             'http:/127.0.0.1:8000%s' % ('/customer_active/' + active_code))
         helper.send_active_email(email, mySubject, myMessage)
-        return JsonResponse({'flag': 1, 'message': customer_in})
+        return JsonResponse({'flag': 1, 'message': customer_info})
     except Exception:
         return JsonResponse({'flag': -11, 'message': ''})
 
 def set_customer_message(email, EID):
+    """ 设置客服默认信息"""
     md5 = hashlib.md5()
     md5.update(str(int(time.time())).encode('utf8'))
     CID = md5.hexdigest()
@@ -541,7 +544,7 @@ def enterprise_message_number(request):
         EID = request.session['eid']
     else:
         return JsonResponse({'flag': -12, 'message': ''})
-    total = []
+    total = [0 for x in range(24)]
     nowtime = datetime.datetime.now()
     time1 = nowtime.hour
     dialogs = models.Dialog.objects.filter(EID = EID)
@@ -567,7 +570,7 @@ def enterprise_serviced_number(request):
         return JsonResponse({'flag': -12, 'message': ''})
     nowtime = datetime.datetime.now()
     time1 = nowtime.hour
-    serviced = []
+    serviced = [0 for x in range(24)]
     dialogs = models.Dialog.objects.filter(EID = EID)
     for dialog in dialogs:
         if time.mktime(nowtime.timetuple()) - time.mktime(dialog.start_time.timetuple()) < 60 * 60 * 24:
@@ -593,7 +596,7 @@ def enterprise_dialogs_oneday(request):
     #     EID = info['eid']
     else:
         return JsonResponse({'flag': -12, 'message': ''})
-    total = []
+    total = [0 for x in range(24)]
     nowtime = datetime.datetime.now()
     time1 = nowtime.hour
     dialogs = models.Dialog.objects.filter(EID = EID)
