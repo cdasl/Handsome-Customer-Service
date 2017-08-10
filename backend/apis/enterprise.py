@@ -10,6 +10,7 @@ from chatterbot import ChatBot
 from . import helper, messages
 import django.utils.timezone as timezone
 import datetime, time
+import random
 
 def signup_init(info):
     """初始化注册信息"""
@@ -147,13 +148,13 @@ def enterprise_invite(request):
     if len(models.Customer.objects.filter(email = email)) > 0:
         return JsonResponse({'flag': -10, 'message': ''})
     try:
-        set_customer_message(email, EID)
+        customer_info = tests.jrToJson(set_customer_message(email, EID))['message']
         active_code = helper.get_active_code(email)
         mySubject = messages.customer_active_subject()
         myMessage = messages.customer_active_message(
             'http:/127.0.0.1:8000%s' % ('/customer_active/' + active_code))
         helper.send_active_email(email, mySubject, myMessage)
-        return JsonResponse({'flag': 1, 'message': ''})
+        return JsonResponse({'flag': 1, 'message': customer_in})
     except Exception:
         return JsonResponse({'flag': -11, 'message': ''})
 
@@ -164,10 +165,13 @@ def set_customer_message(email, EID):
     salt = ''.join(random.sample(string.ascii_letters + string.digits, 8))
     password = '12345678'
     icon = 'demo.png'
-    name = '张三'
+    name_list = ['库', '里', '汤', '普', '森', '杜', '兰', '特', '格', '林', '科', '尔', '尼', '克', '杨', '麦', '基']
+    name = random.choice(name_list) + random.choice(name_list)
     last_login = datetime.datetime.now()
     models.Customer.objects.create(CID = CID, EID = EID, email = email, password = password, 
         icon = icon, name = name, last_login = last_login, salt = salt)
+    customer_info = {'cid': CID, 'name': name, 'email': email, 'state': 0, 'service_number': 0, 'serviced_number': 0}
+    return JsonResponse({'flag': 1, 'message': customer_info})
 
 @ensure_csrf_cookie
 def reset_password_request(request):
@@ -530,51 +534,51 @@ def enterprise_setuser_message(request):
 @ensure_csrf_cookie
 def enterprise_message_number(request):
     """获取企业近24小时的消息数"""
-    # info = {'eid': -1}
     EID = 'eid'
     if hasattr(request, 'body'):
         info = json.loads(request.body.decode('utf8'))
     if hasattr(request, 'session') and 'eid' in request.session:
         EID = request.session['eid']
-    # elif info['eid'] != -1:
-    #     EID = info['eid']
     else:
         return JsonResponse({'flag': -12, 'message': ''})
-    total = 0
+    total = []
     nowtime = datetime.datetime.now()
+    time1 = nowtime.hour
     dialogs = models.Dialog.objects.filter(EID = EID)
     for dialog in dialogs:
         for message in models.Message.objects.filter(DID = dialog.DID):
             #获取当前时间距离1970.1.1的秒数
-            time1 = time.mktime(nowtime.timetuple())
-            time2 = time.mktime(message.date.timetuple())
-            if time1 - time2 < 60 * 60 * 24:
-                total += 1
+            if time.mktime(nowtime.timetuple()) - time.mktime(message.date.timetuple()) < 60 * 60 * 24:
+                time2 = message.date.hour
+                if time2 > time1:
+                    total[time1 - time2 + 24] += 1
+                else:
+                    total[time1 - time2] += 1
     return JsonResponse({'flag': 1, 'message': total})
 
 @ensure_csrf_cookie
 def enterprise_serviced_number(request):
     """获取所有客服最近24小时服务的总人数"""
-    # info = {'eid': -1}
-    EID = 'eid'
     if hasattr(request, 'body'):
         info = json.loads(request.body.decode('utf8'))
     if hasattr(request, 'session') and 'eid' in request.session:
         EID = request.session['eid']
-    # elif info['eid'] != -1:
-    #     EID = info['eid']
     else:
         return JsonResponse({'flag': -12, 'message': ''})
     nowtime = datetime.datetime.now()
+    time1 = nowtime.hour
     serviced = []
     dialogs = models.Dialog.objects.filter(EID = EID)
     for dialog in dialogs:
-        #获取当前时间距离1970.1.1的秒数
-        time1 = time.mktime(nowtime.timetuple())
-        time2 = time.mktime(dialog.start_time.timetuple())
-        if time1 - time2 < 60 * 60 * 24:
-            serviced.append(dialog.UID)
-    return JsonResponse({'flag': 1, 'message': len(list(set(serviced)))})
+        if time.mktime(nowtime.timetuple()) - time.mktime(dialog.start_time.timetuple()) < 60 * 60 * 24:
+            time2 = dialog.start_time.hour
+            if time1 < time2:
+                serviced[time1 - time2  +24].append(dialog.UID)
+            else:
+                serviced[time1 - time2].append(dialog.UID)
+    for i in range(0, 24):
+        serviced[i] = len(list(set(serviced[i])))
+    return JsonResponse({'flag': 1, 'message': serviced})
 
 @ensure_csrf_cookie
 def enterprise_dialogs_oneday(request):
@@ -589,15 +593,17 @@ def enterprise_dialogs_oneday(request):
     #     EID = info['eid']
     else:
         return JsonResponse({'flag': -12, 'message': ''})
-    total = 0
+    total = []
     nowtime = datetime.datetime.now()
+    time1 = nowtime.hour
     dialogs = models.Dialog.objects.filter(EID = EID)
     for dialog in dialogs:
-        #获取当前时间距离1970.1.1的秒数
-        time1 = time.mktime(nowtime.timetuple())
-        time2 = time.mktime(dialog.start_time.timetuple())
-        if time1 - time2 < 60 * 60 * 24:
-            total += 1
+        if time.mktime(nowtime.timetuple()) - time.mktime(dialog.start_time.timetuple()) < 60 * 60 * 24:
+            time2 = dialog.start_time.hour
+            if time1 < time2:
+                total[time1 - time2 + 24] += 1
+            else:
+                total[time1 - time2] += 1
     return JsonResponse({'flag': 1, 'message': total})
 
 @ensure_csrf_cookie
