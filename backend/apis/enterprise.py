@@ -132,7 +132,7 @@ def enterprise_active(request):
     if enterprise[0].state == 1:
         #已经激活
         return JsonResponse({'flag': 1, 'message': ''})
-    models.Enterprise.objects.filter(email = email)[0].update(state = 1)
+    models.Enterprise.objects.filter(email = email).update(state = 1)
     #成功
     return JsonResponse({'flag': 1, 'message': ''})
 
