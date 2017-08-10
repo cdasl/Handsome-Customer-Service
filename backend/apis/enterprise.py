@@ -5,7 +5,7 @@ from django.http import HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
 from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie
 import json, hashlib, time, random, string
-from .. import models
+from .. import models, tests
 from chatterbot import ChatBot
 from . import helper, messages
 import django.utils.timezone as timezone
@@ -373,6 +373,22 @@ def enterprise_dialogs(request):
     return JsonResponse({'flag': 1, 'message': dialogs_list})
 
 @ensure_csrf_cookie
+def enterprise_total_service_number(request):
+    """获取企业服务过的总人数"""
+    ID = 'eid'
+    if hasattr(request, 'body'):
+        info = json.loads(request.body.decode('utf8'))
+    if hasattr(request, 'session') and 'eid' in request.session:
+        EID = request.session['eid']
+    else:
+        return JsonResponse({'flag': -12, 'message': ''})
+    totalserviced = []
+    dialogs = models.Dialog.objects.filter(EID = EID)
+    for dialog in dialogs:
+        totalserviced.append(dialog.UID)
+    return JsonResponse({'flag': 1, 'message': len(list(set(totalserviced)))})
+
+@ensure_csrf_cookie
 def enterprise_dialog_messages(request):
     """获取企业某个会话的内容"""
     info = json.loads(request.body.decode('utf8'))
@@ -552,12 +568,11 @@ def enterprise_serviced_number(request):
     serviced = []
     dialogs = models.Dialog.objects.filter(EID = EID)
     for dialog in dialogs:
-        for message in models.Message.objects.filter(DID = dialog.DID):
-            #获取当前时间距离1970.1.1的秒数
-            time1 = time.mktime(nowtime.timetuple())
-            time2 = time.mktime(message.date.timetuple())
-            if time1 - time2 < 60 * 60 * 24:
-                serviced.append(message.RID)
+        #获取当前时间距离1970.1.1的秒数
+        time1 = time.mktime(nowtime.timetuple())
+        time2 = time.mktime(dialog.start_time.timetuple())
+        if time1 - time2 < 60 * 60 * 24:
+            serviced.append(dialog.UID)
     return JsonResponse({'flag': 1, 'message': len(list(set(serviced)))})
 
 @ensure_csrf_cookie
@@ -583,3 +598,30 @@ def enterprise_dialogs_oneday(request):
         if time1 - time2 < 60 * 60 * 24:
             total += 1
     return JsonResponse({'flag': 1, 'message': total})
+
+@ensure_csrf_cookie
+def enterprise_get_alldata(request):
+    """
+        企业获取所有数据：总服务时间，总消息数，总会话数，总服务人数，
+        在线客服人数，今日会话数，平均会话时长，平均消息数
+    """
+    if hasattr(request, 'body'):
+        info = json.loads(request.body.decode('utf8'))
+    if hasattr(request, 'session') and 'eid' in request.session:
+        EID = request.session['eid']
+    else:
+        return JsonResponse({'flag': -12, 'message': ''})
+    try:
+        totaltime = tests.jrToJson(enterprise_total_servicetime(request))['message']
+        totalmessage = tests.jrToJson(enterprise_total_messages(request))['message']
+        totaldialog = tests.jrToJson(enterprise_total_dialogs(request))['message']
+        totalserviced = tests.jrToJson(enterprise_total_service_number(request))['message']
+        totalonline = len(tests.jrToJson(enterprise_online_customers(request))['message'])
+        todaydialog = tests.jrToJson(enterprise_dialogs_oneday(request))['message']
+        avgdialogtime = tests.jrToJson(enterprise_avgtime_dialogs(request))['message']
+        avgmessages = tests.jrTojson(enterprise_avgmes_dialogs(request))['message']
+        alldata = {'totalTime': totaltime, 'totalMessage': totalmessage, 'totalDialog': totaldialog, 'totalServiced': totalserviced, 
+        'totalOnline': totalonline, 'todayDialog': todaydialog, 'avgDialogTime': avgdialogtime, 'avgMessages': avgmessages}
+        return JsonResponse({'flag': 1, 'message': alldata})
+    except Exception:
+        return JsonResponse({'flag': -12, 'message': ''})

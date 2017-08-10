@@ -5,7 +5,7 @@ from django.http import HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
 from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie
 import json, hashlib, time, random, string
-from .. import models
+from .. import models, tests
 from chatterbot import ChatBot
 from . import helper, messages
 import django.utils.timezone as timezone
@@ -139,7 +139,7 @@ def customer_total_servicedtime(request):
     dialogs = models.Dialog.objects.filter(CID = CID)
     for dialog in dialogs:
         totaltime += (dialog.end_time - dialog.start_time).seconds
-    totaltime /= 60
+    totaltime = round(totaltime / 60, 2)
     return JsonResponse({'flag': 1, 'message': totaltime})
 
 @ensure_csrf_cookie
@@ -178,8 +178,8 @@ def customer_avgtime_dialogs(request):
         CID = request.session['cid']
     else:
         return JsonResponse({'flag': -12, 'message': ''})
-    totaltime = customer_total_servicedtime(request)['message']
-    total = customer_total_dialogs(request)['message']
+    totaltime = tests.jrToJson(customer_total_servicedtime(request))['message']
+    total = tests.jrToJson(customer_total_dialogs(request))['message']
     avgtime = round(totaltime / total, 2)
     return JsonResponse({'flag': 1, 'message': avgtime})
 
