@@ -287,7 +287,7 @@ def customer_modify_icon(request):
     else:
         return JsonResponse({'flag': -12, 'message': ''})
     try:
-        models.Customer.objects.filter(CID =CID).update(icon = info['icon'], name = info['name'])
+        models.Customer.objects.filter(CID = CID).update(icon = info['icon'], name = info['name'])
         return JsonResponse({'flag': 1, 'message': ''})
     except Exception:
         return JsonResponse({'flag': -12, 'message': ''})
