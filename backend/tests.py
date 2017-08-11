@@ -4,6 +4,7 @@ from .apis import enterprise, helper, messages, customer
 from . import models
 import json, hashlib, time, random, string, datetime
 import django.utils.timezone as timezone
+from django.http import HttpResponseRedirect
 # Create your tests here.
 
 def jrToJson(jr):
@@ -862,3 +863,23 @@ class EnterpriseGetAllQuestionTestCase(TestCase):
         del request.session['eid']
         result = jrToJson(enterprise.enterprise_get_all_question(request))['flag']
         self.assertEqual(result, -12)
+
+class UrlValidateTestCase(TestCase):
+    '''测试访问是否含有session'''
+    def setUp(self):
+        EnterSignupTestCase.setUp(self)
+
+    def test_url_valid(self):
+        rf = RequestFactory()
+        request = rf.post('api/url_validate/')
+        info = {}
+        request.session = {}
+        request._body = json.dumps(info).encode('utf8')
+        #没有eid
+        result = enterprise.UrlValidateJudge(request)
+        self.assertIsInstance(result, HttpResponseRedirect)
+        #eid错误
+        request.session['eid'] = 'hahaha'
+        self.assertIsInstance(result, HttpResponseRedirect)
+
+
