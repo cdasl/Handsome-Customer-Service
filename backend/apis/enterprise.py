@@ -336,7 +336,7 @@ def enterprise_total_servicetime(EID):
     times = models.Dialog.objects.filter(EID = EID)
     for t in times:
         total += (t.end_time - t.start_time).seconds
-    total /= 60
+    total = round(total /= 60, 2)
     return JsonResponse({'flag': 1, 'message': total})
 
 def enterprise_total_messages(EID):
