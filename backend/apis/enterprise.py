@@ -254,6 +254,7 @@ def reset_customer_state(request):
     if len(customer) == 0:
         return JsonResponse({'flag': -13, 'message': ''})
     customer_name = customer[0].name
+    return JsonResponse({'flag': 1, 'message': 'shabi'})
     try:
         if customer[0].state > 0:
             models.Customer.objects.filter(CID = CID).update(state = -1)
@@ -370,8 +371,6 @@ def enterprise_total_dialogs(EID):
 def enterprise_dialogs(request):
     """获取企业全部会话列表"""
     EID = 'eid'
-    if hasattr(request, 'body'):
-        info = json.loads(request.body.decode('utf8'))
     if hasattr(request, 'session') and 'eid' in request.session:
         EID = request.session['eid']
     else:

@@ -15,7 +15,7 @@
   export default {
     data () {
       return {
-        customerEmail: '',
+        customerEmail: '', // 邀请客服输入的邮箱
         customerForm: [
           {
             title: '姓名',
@@ -56,15 +56,16 @@
               ])
             }
           }
-        ],
-        customerData: [],
-        customerDataShow: [],
-        current: 1,
-        pageSize: 10
+        ], // 客服表格格式
+        customerData: [], // 所有客服数据
+        customerDataShow: [], // 当前页的客服数据
+        current: 1, // 当前页码
+        pageSize: 10 // 煤业数据条数
       }
     },
     methods: {
       init (iWantToChangePage) {
+        // 根据传入参数将customerData中数据传给customerDataShow
         if (iWantToChangePage) {
           this.current = 1
         }
@@ -88,12 +89,14 @@
         return ePattern.test(email)
       },
       async invite () {
+        // 检查邮箱格式并提交邀请
         if (this.checkEmail(this.customerEmail) === false) {
           this.$Message.warning('邮箱错误')
         } else {
           let res = await this.fetchBase('/api/enter/invite/', {
             'email': this.customerEmail
           })
+          this.customerEmail = ''
           if (res['flag'] === -10) {
             this.$Message.warning('改邮箱已被注册')
           } else if (res['flag'] === -11) {
@@ -117,12 +120,17 @@
         this.init(false)
       },
       async logoff (index) {
+        // 注销或者重新激活客服
+        if (this.customerDataShow[index]['state'] === 0) {
+          this.$Message.error('操作失败')
+          return
+        }
         let res = await this.fetchBase('/api/enter/reset/', {
           'cid': this.customerDataShow[index]['cid']
         })
         if (res['flag'] === -13) {
           this.$Message.warning('该客服不在数据库中')
-        } else if (res['flag'] === 4) {
+        } else if (res['flag'] === -14) {
           this.$Message.error('操作失败')
         } else {
           let i = 0
@@ -163,6 +171,7 @@
       }
     },
     async mounted () {
+      // 先获取所有客服列表
       let res = await this.fetchBase('/api/get_customers/', {})
       if (res['flag'] === -12) {
         this.$Message.error('客服人员获取失败')
