@@ -43,7 +43,7 @@ class CustomerLoginTestCase(TestCase):
 class CustomerLogoutTestCase(TestCase):
     """测试客服退出Api"""
     def setUp(self):
-        models.Customer.objects.create(CID = 'test_cid', EID = 'test_eid', email = '2222@qq.com', salt = 'salt',
+        models.Customer.objects.create(CID = 'test_cid1', EID = 'test_eid', email = '2222@qq.com', salt = 'salt',
             password = 'password', icon = 'test_icon', name = 'test_name', state = 2,
             service_number = 0, serviced_number = 100, last_login = datetime.datetime.now()
         )
@@ -57,7 +57,7 @@ class CustomerLogoutTestCase(TestCase):
         request._body = json.dumps(info).encode('utf8')
         self.assertEqual(tests.jrToJson(customer.customer_logout(request))['flag'], -12)
         #登出成功
-        request.session['cid'] = 'test_cid'
+        request.session['cid'] = 'test_cid1'
         request._body = json.dumps(info).encode('utf8')
         self.assertEqual(tests.jrToJson(customer.customer_logout(request))['flag'], 1)
 
@@ -191,7 +191,7 @@ class CustomerTotalServicedTimeTestCase(TestCase):
                                     end_time = '2017-8-9 17:27:01')
         models.Dialog.objects.create(DID = '4', CID = 'test_cid2', 
                                     start_time = '2017-8-9 17:00:00',
-                                    end_time = '2017-8-9 18:00:00')
+                                    end_time = '2017-8-10 18:00:00')
 
     def test_customer_total_minute(self):
         rf = RequestFactory()
@@ -269,12 +269,12 @@ class CustomerAvgMegTestCase(TestCase):
     def setUp(self):
         models.Dialog.objects.create(DID = '1', CID = 'test_cid1', 
                                     start_time = '2017-8-29 17:00:00',
-                                    end_time = '2017-8-9 18:00:00')
+                                    end_time = '2017-8-29 19:00:00')
         models.Dialog.objects.create(DID = '2', CID = 'test_cid1', 
                                     start_time = '2017-8-29 17:00:00',
-                                    end_time = '2017-8-9 18:00:00')
+                                    end_time = '2017-8-29 18:00:00')
         models.Dialog.objects.create(DID = '3', CID = 'test_cid1', 
-                                    start_time = '2017-8-1 17:00:00',
+                                    start_time = '2017-8-2 18:00:00',
                                     end_time = '2017-8-9 18:00:00')
         models.Dialog.objects.create(DID = '4', CID = 'test_cid2', 
                                     start_time = '2017-8-9 17:00:00',
@@ -362,11 +362,70 @@ class CustomerModifyTestCase(TestCase):
             'name': 'Takahashi'
         }
         #成功
-        request.session['cid'] = 'test_cid'
+        request.session['cid'] = 'test_cid1'
         request._body = json.dumps(info).encode('utf8')
         self.assertEqual(tests.jrToJson(customer.customer_modify_icon(request))['flag'], 1)
-        self.assertEqual(models.Customer.objects.get(CID = 'test_cid').name, 'Takahashi')
-        self.assertEqual(models.Customer.objects.get(CID = 'test_cid').icon, 'umaru')
+        self.assertEqual(models.Customer.objects.get(CID = 'test_cid1').name, 'Takahashi')
+        self.assertEqual(models.Customer.objects.get(CID = 'test_cid1').icon, 'umaru')
         #失败
         del request.session['cid']
         self.assertEqual(tests.jrToJson(customer.customer_modify_icon(request))['flag'], -12)
+
+class allDataTestCase(TestCase):
+    '''测试返回客服所有数据'''
+    def setUp(self):
+        CustomerAvgMegTestCase.setUp(self)
+        CustomerLogoutTestCase.setUp(self)
+
+    def test_all_data(self):
+        rf = RequestFactory()
+        request = rf.post('api/customer/get_alldata/')
+        request.session =  {}
+        info = {}
+        #成功
+        request.session['cid'] = 'test_cid1'
+        request._body = json.dumps(info).encode('utf8')
+        self.assertEqual(tests.jrToJson(customer.customer_get_alldata(request))['flag'], 1)
+        #失败
+        del request.session['cid']
+        self.assertEqual(tests.jrToJson(customer.customer_get_alldata(request))['flag'], -12)
+
+class CustomerGetInfoTestCase(TestCase):
+    '''测试客服获取个人信息'''
+    def setUp(self):
+        CustomerLogoutTestCase.setUp(self)
+
+    def test_get_info(self):
+        rf = RequestFactory()
+        request = rf.post('api/customer/get_info/')
+        request.session =  {}
+        info = {}
+        #成功
+        request.session['cid'] = 'test_cid1'
+        request._body = json.dumps(info).encode('utf8')
+        result = tests.jrToJson(customer.customer_get_info(request))['message']
+        self.assertEqual(result['eid'], 'test_eid')
+        self.assertEqual(result['name'], 'test_name')
+        #失败
+        del request.session['cid']
+        self.assertEqual(tests.jrToJson(customer.customer_get_info(request))['flag'], -12)
+
+class CustomerGetIDTestCase(TestCase):
+    '''测试客服获取id'''
+    def setUp(self):
+        CustomerLogoutTestCase.setUp(self)
+
+    def test_get_id(self):
+        rf = RequestFactory()
+        request = rf.post('api/customer/get_id/')
+        request.session =  {}
+        info = {}
+        #成功
+        request.session['cid'] = 'test_cid1'
+        request._body = json.dumps(info).encode('utf8')
+        result = tests.jrToJson(customer.customer_get_info(request))['message']
+        self.assertEqual(result['eid'], 'test_eid')
+        self.assertEqual(result['cid'], 'test_cid1')
+        #失败
+        del request.session['cid']
+        self.assertEqual(tests.jrToJson(customer.customer_get_info(request))['flag'], -12)
