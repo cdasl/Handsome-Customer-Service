@@ -672,3 +672,24 @@ def enterprise_get_alldata(request):
         return JsonResponse({'flag': 1, 'message': alldata})
     except Exception:
         return JsonResponse({'flag': -12, 'message': ''})
+
+@ensure_csrf_cookie
+def enterprise_set_robot_question(request):
+    """企业设置机器人问题，答案，类别"""
+    EID = 'eid'
+    if hasattr(request, 'body'):
+        info = json.loads(request.body.decode('utf8'))
+    if hasattr(request, 'session') and 'eid' in request.session:
+        EID = request.session['eid']
+    else:
+        return JsonResponse({'flag': -12, 'message': ''})
+    QID = info['qid']
+    question = info['question']
+    answer = info['answer']
+    category = info['category']
+    try:
+        models.Question.objects.create(QID = QID, EID = EID, question = question, 
+            answer = answer, category = category)
+        return JsonResponse({'flag': 1, 'message': ''})
+    except Exception:
+        return JsonResponse({'flag': -12, 'message': ''})
