@@ -39,8 +39,7 @@
         return this.we.explain(content)
       }
     },
-    mounted: function () {
-      // 由于在created和data中dom尚未渲染，所以无法在created和data中进行初始化
+    created: function () {
       if (this.we === null) {
         this.we = new wantEmoji({
           wrapper: '.wrapper1',

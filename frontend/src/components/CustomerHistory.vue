@@ -7,7 +7,6 @@
     <br>
     <Button type="primary" size="large" @click="exportData(1)"><Icon type="ios-download-outline"></Icon> 导出原始数据</Button>
     <Button type="primary" size="large" @click="exportData(2)"><Icon type="ios-download-outline"></Icon> 导出排序和过滤后的数据</Button>
-    <Button @click="add">添加数据</Button>
     <Modal
         v-model="show"
         title="对话框"
@@ -29,14 +28,14 @@
     data () {
       return {
         show: false,
-        content: '',
+        content: [],
         dialogForm: [
           {
             title: '开始时间',
-            key: 'startTime'
+            key: 'start_time'
           }, {
             title: '结束时间',
-            key: 'endTime'
+            key: 'end_time'
           }, {
             title: '用户ID',
             key: 'uid'
@@ -66,88 +65,48 @@
           }
         ],
         dialogData: [],
-        dialogDataShow: [{
-          startTime: new Date(),
-          endTime: new Date(),
-          uid: 'uid1',
-          cid: 'cid',
-          did: 'did1'
-        }],
+        dialogDataShow: [],
         current: 1,
         pageSize: 10
       }
     },
     methods: {
       showDialog (index) {
-        this.$Message.success('fuck you')
-        this.content = [
-          {
-            word: '你好',
-            time: new Date(),
-            self: true
-          }, {
-            word: '你好呀',
-            time: new Date(),
-            self: false
-          }, {
-            word: '请问能帮您吗',
-            time: new Date(),
-            self: true
-          }, {
-            word: '没有，快滚',
-            time: new Date(),
-            self: false
-          }, {
-            word: '你好',
-            time: new Date(),
-            self: true
-          }, {
-            word: '你好呀',
-            time: new Date(),
-            self: false
-          }, {
-            word: '请问能帮您吗',
-            time: new Date(),
-            self: true
-          }, {
-            word: '没有，快滚',
-            time: new Date(),
-            self: false
-          }, {
-            word: '你好',
-            time: new Date(),
-            self: true
-          }, {
-            word: '你好呀',
-            time: new Date(),
-            self: false
-          }, {
-            word: '请问能帮您吗',
-            time: new Date(),
-            self: true
-          }, {
-            word: '没有，快滚',
-            time: new Date(),
-            self: false
-          }, {
-            word: '你好',
-            time: new Date(),
-            self: true
-          }, {
-            word: '你好呀',
-            time: new Date(),
-            self: false
-          }, {
-            word: '请问能帮您吗',
-            time: new Date(),
-            self: true
-          }, {
-            word: '没有，快滚',
-            time: new Date(),
-            self: false
+        fetch('/api/customer/dialog_msg/', {
+          method: 'post',
+          credentials: 'same-origin',
+          headers: {
+            'X-CSRFToken': this.getCookie('csrftoken'),
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({did: this.dialogDataShow[index]['did']})
+        }).then((res) => res.json()).then((res) => {
+          this.content.splice(0, this.content.length)
+          for (let i = 0; i < res['message'].length; ++i) {
+            let data = {}
+            data['word'] = decodeURI(res['message'][i]['content'])
+            data['self'] = res['message'][i]['sid'] === 'ccid'
+            data['time'] = res['message'][i]['date']
+            data['src'] = '/static/js/emojiSources/huaji/1.jpg'
+            this.content.push(data)
           }
-        ]
-        this.show = true
+          this.show = true
+        })
+      },
+      getCookie (cName) {
+        if (document.cookie.length > 0) {
+          let cStart = document.cookie.indexOf(cName + '=')
+          if (cStart !== -1) {
+            cStart = cStart + cName.length + 1
+            let cEnd = document.cookie.indexOf(';', cStart)
+            if (cEnd === -1) {
+              cEnd = document.cookie.length
+            }
+            return unescape(document.cookie.substring(cStart, cEnd))
+          }
+        }
+        return ''
       },
       ok () {
         this.$Message.success('ok')
@@ -170,18 +129,22 @@
             original: false
           })
         }
-      },
-      add () {
-        let x = {
-          startTime: String(Math.random()),
-          endTime: new Date(),
-          uid: 'uid' + Math.round(Math.random() * 100),
-          did: 'did' + Math.round(Math.random() * 100)
-        }
-        console.log(x)
-        this.dialogData.push(x)
-        this.dialogDataShow = this.dialogData.slice((this.current - 1) * this.pageSize, Math.min((this.current - 1) * this.pageSize + this.pageSize, this.dialogData.length))
       }
+    },
+    mounted: function () {
+      console.log('是否执行')
+      fetch('/api/customer/dialog_list/', {
+        method: 'post',
+        credentials: 'same-origin',
+        headers: {
+          'X-CSRFToken': this.getCookie('csrftoken'),
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        }
+      }).then((res) => res.json()).then((res) => {
+        this.dialogData = res['message']
+        this.dialogDataShow = this.dialogData.slice(0, Math.min(this.pageSize, this.dialogData.length))
+      })
     }
   }
 </script>
