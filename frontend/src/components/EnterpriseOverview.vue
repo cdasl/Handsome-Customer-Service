@@ -173,9 +173,6 @@
       } else {
         this.statics = res['message']
       }
-    },
-    async mounted () {
-      let res = await this.fetchBase
     }
   }
 </script>
