@@ -66,7 +66,9 @@
         lists: [],
         currentcontent: [],
         status: '2',
-        sid: ''
+        sid: '',
+        cid: 'ccid',
+        eid: 'eeid'
       }
     },
     computed: {
@@ -87,6 +89,7 @@
         }
       },
       swit (item) {
+        // 由于switch是js关键字 无法使用
         this.sid = item
         this.currentcontent = this.content[item]
         for (let i = 0; i < this.lists.length; ++i) {
@@ -97,7 +100,7 @@
         }
       },
       dateformat (date) {
-        let seperator1 = '/'
+        let seperator1 = '-'
         let seperator2 = ':'
         let month = date.getMonth() + 1
         let strDate = date.getDate()
@@ -122,8 +125,8 @@
       select (name) {
         this.type = name
       },
-      close () {
-        this.socket.emit('disconnect a user', {sid: this.sid})
+      close (flag) {
+        this.socket.emit('disconnect a user', {sid: this.sid, eid: this.eid})
         for (let i = 0; i < this.lists.length; ++i) {
           if (this.sid === this.lists[i]['sid']) {
             this.lists.splice(i, 1)
@@ -131,8 +134,13 @@
           }
         }
         delete this.content[this.sid]
-        this.sid = this.lists[0]['sid']
-        this.currentcontent = this.content[this.sid]
+        if (this.lists.length !== 0) {
+          this.sid = this.lists[0]['sid']
+          this.currentcontent = this.content[this.sid]
+        } else {
+          this.sid = ''
+          this.currentcontent = []
+        }
       },
       getCookie (cName) {
         if (document.cookie.length > 0) {
@@ -149,8 +157,7 @@
         return ''
       },
       getCid () {
-        let cid = ''
-        fetch('api/get_cid/', {
+        fetch('api/customer_get_id/', {
           method: 'post',
           credentials: 'same-origin',
           headers: {
@@ -159,20 +166,21 @@
             'Content-Type': 'application/json'
           }
         }).then((res) => res.json()).then((res) => {
-          cid = res['cid']
+          this.cid = res['message']['cid']
+          this.eid = res['message']['eid']
         })
-        return cid
       }
     },
     mounted: function () {
       if (this.socket === null) {
           /* global location io: true */
         this.socket = io.connect('http://' + document.domain + ':' + location.port + '/test')
-        this.socket.emit('a customer connected', {cid: 'a customer connected'})
+        this.socket.emit('a customer connected', {cid: this.cid})
         this.socket.on('customer connected', (msg) => {
           console.log(msg['data'])
         })
         this.socket.on('new user', (msg) => {
+          // 将新加入的用户放在列表中的第一位
           this.lists.unshift({'sid': msg['sid'], 'num': 0})
           this.sid = msg['sid']
           this.content[msg['sid']] = []
@@ -185,6 +193,7 @@
           data['self'] = false
           data['src'] = decodeURI(msg['src'])
           this.content[msg['sid']].push(data)
+          // 生成未读消息数
           if (this.sid !== msg['sid']) {
             let i = 0
             for (i = 0; i < this.lists.length; ++i) {

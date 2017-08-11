@@ -40,17 +40,26 @@ def customer_message(sid, message):
 
 @sio.on('disconnect a user', namespace = '/test')
 def write_message(sid,message):
+    global start_time, conversation, talker_list
     endtime = time2str()
     msglist = []
     md5 = hashlib.md5()
     md5.update((sid + message['sid'] + str(int(time.time()))).encode('utf8'))
-    did = me5.hexdigest()
+    did = md5.hexdigest()
     for i in conversation[message['sid']]:
         mid = get_mid(i)
         msg = Message(MID = mid, SID = i['send'], RID = i['receive'], DID = did, content = i['data'], date = i['time'])
         msglist.append(msg)
     Message.objects.bulk_create(msglist)
+    Dialog.objects.create(DID = did, EID = message['eid'], start_time = starttime[message['sid']], end_time = endtime, UID = talker_list[message['sid']], CID = talker_list[sid])
     del conversation[message['sid']]
+    sio.emit('user disconnected', {'did': did}, room = message['sid'], namespace = '/test')
+
+@sio.on('rate', namespace = '/test')
+def rate(sid, message):
+    dialog = Dialog.objects.get(DID = message['did'])
+    dialog.feedback = message['rate']
+    dialog.save()
 
 @sio.on('a user connected', namespace = '/test')
 def user_connect(sid, message):

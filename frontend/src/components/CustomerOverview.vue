@@ -5,7 +5,7 @@
         <p>总服务时间</p>
       </div><hr>
       <div class="data">
-        <span>89min</span>
+        <span>{{ servicedTime }}min</span>
       </div>
     </div>
     <div class="item" @click="getChart(1)">
@@ -124,6 +124,9 @@
           this.options.title = '过去24小时服务人数统计'
         }
       }
+    },
+    mounted: function () {
+      // fetch()
     }
   }
 </script>

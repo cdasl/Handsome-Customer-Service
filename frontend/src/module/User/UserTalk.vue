@@ -8,6 +8,9 @@
       <message :content="content"></message>
       <text-input @onKeyup="send"></text-input>
     </div>
+    <Modal v-model="modal" title="本次会话结束，请对客服进行评分" @on-ok="ok" @on-cancel="cancel">
+      <Rate v-model="value"></Rate>
+    </Modal>
   </div>
 </template>
 <script>
@@ -21,10 +24,22 @@
       return {
         socket: null,
         content: [],
-        sid: ''
+        sid: '',
+        timeout: null,
+        modal: false,
+        value: 0,
+        did: ''
       }
     },
     methods: {
+      ok () {
+        this.socket.emit('rate', {rate: this.value, did: this.did})
+        this.socket.emit('disconnect request')
+      },
+      cancel () {
+        this.socket.emit('rate', {rate: 0})
+        this.socket.emit('disconnect request')
+      },
       send (message) {
         let data = {}
         data['word'] = message
@@ -33,9 +48,13 @@
         data['src'] = '/static/js/emojiSources/huaji/10.jpg'
         this.content.push(data)
         this.socket.emit('user message', {data: encodeURI(message), time: data['time'], sid: this.sid, src: encodeURI(data['src'])})
+        clearTimeout(this.timeout)
+        this.timeout = setTimeout(() => {
+          alert('您已超过5分钟未发送消息')
+        }, 300000)
       },
       dateformat: function (date) {
-        let seperator1 = '/'
+        let seperator1 = '-'
         let seperator2 = ':'
         let month = date.getMonth() + 1
         let strDate = date.getDate()
@@ -59,6 +78,12 @@
           this.sid = msg['sid']
           /* global alert: true */
           alert('connect to customer')
+          this.timeout = setTimeout(() => {
+            alert('您已超过5分钟未发送消息')
+          }, 300000)
+        })
+        this.socket.on('no customer online', (msg) => {
+          alert('都下班还来干嘛！！')
         })
         this.socket.on('my response', (msg) => {
           let data = {}
@@ -67,6 +92,10 @@
           data['self'] = false
           data['src'] = decodeURI(msg['src'])
           this.content.push(data)
+        })
+        this.socket.on('user disconnected', (msg) => {
+          this.did = msg['did']
+          this.modal = true
         })
       }
     }
