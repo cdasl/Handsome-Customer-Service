@@ -295,7 +295,7 @@ def customer_modify_icon(request):
 @ensure_csrf_cookie
 def customer_get_alldata(request):
     """返回该客服所有数据：总服务时间，总消息数，总会话数，总服务人数，
-       平均会话时长，平均消息数
+       今日会话数，平均会话时长，平均消息数
     """
     CID = 'cid1'
     if hasattr(request, 'body'):
@@ -309,10 +309,11 @@ def customer_get_alldata(request):
         totalmessage = tests.jrToJson(customer_total_messages(request))['message']
         totaldialog = tests.jrToJson(customer_total_dialogs(request))['message']
         totalserviced = tests.jrToJson(customer_serviced_number(request))['message']
+        todaydialog = tests.jrToJson(customer_dialogs_oneday(request))['message']
         avgdialogtime = tests.jrToJson(customer_avgtime_dialogs(request))['message']
         avgmessages = tests.jrToJson(customer_avgmes_dialogs(request))['message']
         allData = {'totalTime': totaltime, 'totalMessage': totalmessage, 'totalDialog': totaldialog, 
-        'totalServiced': totalserviced, 'avgDialogTime': avgdialogtime, 'avgMessages': avgmessages}
+        'totalServiced': totalserviced, 'todayDialog': todaydialog, 'avgDialogTime': avgdialogtime, 'avgMessages': avgmessages}
         return JsonResponse({'flag': 1, 'message': allData})
     except Exception:
         return JsonResponse({'flag': -12, 'message': ''})
