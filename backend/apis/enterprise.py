@@ -728,3 +728,20 @@ def UrlValidateJudge(request):
     except Exception:
         return redirect('http://127.0.0.1:8000/enterprise/')
 
+@ensure_csrf_cookie
+def enterprise_delete_question(request):
+    """企业删除问题"""
+    EID = 'eid'
+    if hasattr(request, 'body'):
+        info = json.loads(request.body.decode('utf8'))
+    if hasattr(request, 'session') and 'eid' in request.session:
+        EID = request.session['eid']
+    else:
+        return JsonResponse({'flag': -12, 'message': ''})
+    try:
+        QID = info['qid']
+        questions = models.Question.objects.filter(QID = QID)
+        questions.delete()
+        return JsonResponse({'flag': 1, 'message': ''})
+    except Exception:
+        return JsonResponse({'flag': -12, 'message': ''})

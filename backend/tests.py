@@ -859,6 +859,7 @@ class EnterpriseGetAllQuestionTestCase(TestCase):
         response = enterprise.enterprise_get_all_question(request)
         result = jrToJson(enterprise.enterprise_get_all_question(request))['message']
         self.assertEqual((result[1])['question'], 'k')
+        self.assertEqual(response.status_code, 200)
         #失败
         del request.session['eid']
         result = jrToJson(enterprise.enterprise_get_all_question(request))['flag']
@@ -882,4 +883,25 @@ class UrlValidateTestCase(TestCase):
         request.session['eid'] = 'hahaha'
         self.assertIsInstance(result, HttpResponseRedirect)
 
+class DeleteQuestionTestCase(TestCase):
+    '''测试企业删除问题'''
+    def setUp(self):
+        EnterpriseGetAllQuestionTestCase.setUp(self)
 
+    def test_delete_question(self):
+        rf = RequestFactory()
+        request = rf.post('api/enter/delete_question/')
+        info = {
+            'qid': '2'
+        }
+        request.session = {}
+        request._body = json.dumps(info).encode('utf8')
+        #成功
+        request.session['eid'] = 'test_eid1'
+        response = enterprise.enterprise_delete_question(request)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(models.Question.objects.filter(QID = '2')), 0)
+        #失败
+        del request.session['eid']
+        result = jrToJson(enterprise.enterprise_delete_question(request))['flag']
+        self.assertEqual(result, -12)
