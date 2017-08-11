@@ -16,7 +16,6 @@ def jrToJson(jr):
     """将JsonResponse对象转为Json对象"""
     return json.loads(jr.content.decode('utf8'))
 
-@ensure_csrf_cookie
 def signup_init(info):
     """初始化注册信息"""
     md5 = hashlib.md5()
@@ -28,7 +27,7 @@ def signup_init(info):
     password = md5.hexdigest()
     name_list = ['库', '里', '汤', '普', '森', '杜', '兰', '特', '格', '林', '科', '尔', '尼', '克', '杨', '麦', '基']
     return {'ri': 'http://www.jb51.net/images/logo.gif',
-            'rn': u(random.choice(name_list) + random.choice(name_list)),
+            'rn': (random.choice(name_list) + random.choice(name_list)),
             'rs': 1,
             'eid': md5.hexdigest(),
             'salt': salt,
