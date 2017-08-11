@@ -65,12 +65,12 @@
       </div>
     </div>
     <h3>选择统计图形状<h3>
-    <Select v-model="chartType" style="width:200px" @on-change="changeType">
+    <Select v-model="chartType" style="width:200px">
       <Option v-for="item in typeList" :value="item.value" :key="item.value">{{ item.label }}</Option>
     </Select>
     <div>
       <schart :canvasId="canvasId"
-        :type="type"
+        :type="chartType"
         :width="width"
         :height="height"
         :data="data"
@@ -87,24 +87,23 @@
     data () {
       return {
         statics: {
-          'totalTime': 45,
-          'totalMessage': 998,
-          'totalDialog': 56,
-          'totalServiced': 34,
-          'totalOnline': 7,
-          'todayDialog': 5,
-          'avgDialogTime': 6,
-          'avgMessages': 9
-        },
-        chartType: 'bar',
-        canvasId: 'myCanvas',
-        type: 'bar',
-        width: 800,
-        height: 400,
-        data: [],
+          'totalTime': 0,
+          'totalMessage': 0,
+          'totalDialog': 0,
+          'totalServiced': 0,
+          'totalOnline': 0,
+          'todayDialog': 0,
+          'avgDialogTime': 0,
+          'avgMessages': 0
+        }, // 统计信息
+        chartType: 'bar', // 统计图类型
+        canvasId: 'myCanvas', // 画图的id
+        width: 800, // 统计图宽
+        height: 400, // 统计图高
+        data: [], // 统计图数据
         options: {
           title: ''
-        },
+        }, // 统计图标题
         typeList: [
           {
             label: '柱状图',
@@ -131,29 +130,24 @@
         .then((res) => res.json())
       },
       async getChart (num) {
-        // let res = await this.fetchBase()
+        // 从后端获取统计图所需要的数据（欠一个）
+        let urls = ['/api/enter/message_oneday/', '/api/enter/dialog_oneday/', '/api/enter/serviced_oneday/']
+        let titles = ['过去24小时消息数统计', '过去24小时会话数统计', '过去24小时服务人数统计']
+        let res = await this.fetchBase(urls[num - 1], {})
+        if (res['flag'] === -12) {
+          this.$Message.error('获取失败')
+          return
+        }
         this.data = []
+        this.options.title = titles[num - 1]
         let currentHour = (new Date()).getHours()
         for (let i = 24; i > 0; --i) {
           let tmp = currentHour - i
           this.data.push({
             name: tmp > 0 ? tmp : tmp + 24,
-            value: Math.round(Math.random() * 100)
+            value: res['message'][23 - i]
           })
-        }
-        if (num === 1) {
-          this.options.title = '过去24小时消息数统计'
-        } else if (num === 2) {
-          this.options.title = '过去24小时会话数统计'
-        } else if (num === 3) {
-          this.options.title = '过去24小时服务人数统计'
-        }
-      },
-      changeType () {
-        if (this.chartType === 'bar') {
-          this.type = 'bar'
-        } else {
-          this.type = 'line'
+          console.log(res['message'][23 - i])
         }
       },
       getCookie (cName) {
@@ -172,16 +166,20 @@
       }
     },
     async mounted () {
+      // 先从后端获取需要的统计信息
       let res = await this.fetchBase('/api/enter/get_alldata/', {})
       if (res['flag'] === -12) {
         this.$Message.error('数据获取失败')
-        return
+      } else {
+        this.statics = res['message']
       }
-      this.statics = res['message']
+    },
+    async mounted () {
+      let res = await this.fetchBase
     }
   }
 </script>
-<style lang="">
+<style scoped>
 .app {
   width: 100%;
   overflow: auto;

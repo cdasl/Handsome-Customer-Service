@@ -19,7 +19,7 @@
           password: '',
           password2: '',
           name: ''
-        }
+        } // 注册信息
       }
     },
     methods: {
@@ -37,6 +37,7 @@
         .then((res) => res.json())
       },
       trans () {
+        // 向父组件发送切换到登陆界面消息
         this.$emit('transfer', 'enterprise-login')
       },
       getCookie (cName) {
@@ -64,19 +65,21 @@
         this.formItem.name = ''
       },
       async submit () {
-        // 检查是否为空
+        // 检查数据格式，并提交注册信息
         if (this.formItem.email === '' || this.formItem.password === '' || this.formItem.password2 === '' || this.formItem.name === '') {
           this.$Message.warning('邮箱不能为空')
           return
         }
-        // 检查邮箱格式
         if (this.checkEmail(this.formItem.email) === false) {
           this.$Message.warning('邮箱格式错误')
           return
         }
-        // 检查两次密码输入是否一致
         if (this.formItem.password !== this.formItem.password2) {
           this.$Message.warning('两次密码不同')
+          return
+        }
+        if (this.formItem.password.length < 8) {
+          this.$Message.warning('密码长度至少为8位')
           return
         }
         let res = await this.fetchBase('/api/enter/signup/', {

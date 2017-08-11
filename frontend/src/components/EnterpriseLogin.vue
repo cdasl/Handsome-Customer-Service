@@ -23,11 +23,11 @@
         formItem: {
           email: '',
           password: ''
-        },
+        }, // 登陆用输入账号密码
         findback: {
           modal: false,
           email: ''
-        }
+        } // 找回密码
       }
     },
     methods: {
@@ -45,12 +45,14 @@
         .then((res) => res.json())
       },
       trans () {
+        // 向父组件发送切换到注册界面消息
         this.$emit('transfer', 'enterprise-signup')
       },
       findEmail () {
         this.findback.modal = !this.findback.modal
       },
       async ok () {
+        // 提交找回密码
         let res = await this.fetchBase('/api/reset_password/', {
           'email': this.findback.email
         })
@@ -83,7 +85,7 @@
         this.formItem.name = ''
       },
       async submit () {
-        // 检查是否为空
+        // 提交登陆信息
         if (this.formItem.email === '' || this.formItem.password === '') {
           this.$Message.warning('不能有内容为空')
           return
