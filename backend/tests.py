@@ -7,16 +7,16 @@ import django.utils.timezone as timezone
 # Create your tests here.
 
 def jrToJson(jr):
-    """
+    '''
         将JsonResponse对象转为Json对象
-    """
+    '''
     return json.loads(jr.content.decode('utf8'))
 
 
 class EnterSignupTestCase(TestCase):
-    """
+    '''
         测试企业注册Api：enterprise_signup
-    """
+    '''
     def setUp(self):
         models.Enterprise.objects.create(EID = 'eid1', email = '654321@qq.com', password = 'password1',
              name = 'name1', robot_icon = 'ri1', robot_name = 'rn1', salt = 'salt1')
@@ -37,9 +37,9 @@ class EnterSignupTestCase(TestCase):
         self.assertEqual(jrToJson(enterprise.enterprise_signup(request))['flag'], 1)
 
 class EnterLoginTestCase(TestCase):
-    """
+    '''
         测试企业登录Api：enterprise_login
-    """
+    '''
     def setUp(self):
         md5 = hashlib.md5()
         salt = 'testsalt'
@@ -68,17 +68,17 @@ class EnterLoginTestCase(TestCase):
         self.assertEqual(jrToJson(enterprise.enterprise_login(request))['flag'], -7)
 
 class SendEmailTestCase(TestCase):
-    """
+    '''
         发送邮件Api
-    """
+    '''
     def test_sendEmail(self):
         #该功能的测试与企业邀请客服的重合
         pass
 
 class ResetCustomerStateTestCase(TestCase):
-    """
+    '''
         测试改变客服激活与否的状态Api
-    """
+    '''
     def setUp(self):
         models.Customer.objects.create(CID = 'test_cid', EID = 'test_eid', email = 'test_email', salt = 'testsalt',
             password = 'test_password', icon = 'test_icon', name = 'test_name', state = 1,
@@ -100,9 +100,9 @@ class ResetCustomerStateTestCase(TestCase):
         self.assertEqual(jrToJson(enterprise.reset_customer_state(request))['message'], 'activate success')
 
 class InviteCustomerTestCase(TestCase):
-    """
+    '''
         测试邀请客服Api
-    """
+    '''
     def setUp(self):
         models.Customer.objects.create(CID = 'test_cid', EID = 'test_eid', email = '123456@qq.com', salt = 'testsalt',
             password = 'test_password', icon = 'test_icon', name = 'test_name', state = 1,
@@ -133,9 +133,9 @@ class InviteCustomerTestCase(TestCase):
         self.assertEqual(((result['message']))['email'], '1234567@qq.com')
        
 class GetCustomersTestCase(TestCase):
-    """
+    '''
         测试获取客服列表Api
-    """
+    '''
     def setUp(self):
         models.Customer.objects.create(CID = 'test_cid1', EID = 'test_eid', email = '1111@qq.com', salt = 'testsalt',
             password = 'test_password1', icon = 'test_icon', name = 'test_name1', state = 1,
@@ -159,9 +159,9 @@ class GetCustomersTestCase(TestCase):
         self.assertEqual(result, -12)
 
 class InquireCustomerInfoTestCase(TestCase):
-    """
+    '''
         测试根据客服ID查询某个客服信息
-    """
+    '''
     def setUp(self):
         models.Customer.objects.create(CID = 'test_cid', EID = 'test_eid', email = '1234@qq.com', salt = 'testsalt',
             password = 'test_password', icon = 'test_icon', name = 'test_name', state = 1,
@@ -188,9 +188,9 @@ class InquireCustomerInfoTestCase(TestCase):
         self.assertEqual(result['serviced_number'], 100)
 
 class OnlineCustomersTestCase(TestCase):
-    """
+    '''
         测试获取在线客服列表Api
-    """
+    '''
     def setUp(self):
         models.Customer.objects.create(CID = 'test_cid1', EID = 'test_eid1', email = '1111@qq.com', salt = 'testsalt',
             password = 'test_password1', icon = 'test_icon', name = 'test_name1', state = 3,
@@ -220,9 +220,9 @@ class OnlineCustomersTestCase(TestCase):
         self.assertEqual(result, -12)
 
 class GetTotalTimeTestCase(TestCase):
-    """
+    '''
         测试获取企业服务总时间Api
-    """
+    '''
     def setUp(self):
         time1 = timezone.now()
         time2 = time1 + datetime.timedelta(minutes = 5)
@@ -238,9 +238,9 @@ class GetTotalTimeTestCase(TestCase):
         self.assertEqual(result, 8.0)
 
 class GetTotalMessagesTestCase(TestCase):
-    """
+    '''
         测试获取企业总消息数Api
-    """
+    '''
     def setUp(self):
         time1 = timezone.now()
         models.Dialog.objects.create(DID = 'test_did1', EID = 'test_eid1', start_time = time1, end_time = time1)
@@ -261,9 +261,9 @@ class GetTotalMessagesTestCase(TestCase):
         self.assertEqual(result, 3)
 
 class GetCountOfDialogsTestCase(TestCase):
-    """
+    '''
         测试获取企业总会话数Api
-    """
+    '''
     def setUp(self):
         time1 = timezone.now()
         models.Dialog.objects.create(DID = 'test_did1', EID = 'test_eid1', start_time = time1, end_time = time1)
@@ -279,9 +279,9 @@ class GetCountOfDialogsTestCase(TestCase):
         self.assertEqual(result, 3)
 
 class GetChattedTestCase(TestCase):
-    """
+    '''
         测试获取与某位客服聊过天的所有用户Api
-    """
+    '''
     def setUp(self):
         time1 = timezone.now()
         models.Message.objects.create(MID = 'test_mid1', SID = 'test_sid1', RID = 'test_rid1', DID = 'test_did1',
@@ -304,9 +304,9 @@ class GetChattedTestCase(TestCase):
         self.assertEqual(set(result), set(['test_rid1', 'test_rid3', 'test_sid2']))
 
 class DialogsListTestCase(TestCase):
-    """
+    '''
         测试获取企业全部会话列表Api
-    """
+    '''
     def setUp(self):
         self.stime1 = timezone.now()
         self.stime2 = timezone.now()
@@ -404,9 +404,9 @@ class ResetPasswordTestCase(TestCase):
         self.assertEqual(result, -9)
 
 class DialogMessagesTestCase(TestCase):
-    """
+    '''
         测试获取会话内容Api
-    """
+    '''
     def setUp(self):
         time1 = timezone.now()
         time2 = timezone.now()
@@ -462,9 +462,9 @@ class SetRobotMessageTestCase(TestCase):
         self.assertEqual(result, -12)
 
 class MessagesBetweenChattersTestCase(TestCase):
-    """
+    '''
         测试根据聊天者ID获取聊天内容Api
-    """
+    '''
     def setUp(self):
         time1 = timezone.now()
         time2 = timezone.now()
@@ -497,9 +497,9 @@ class MessagesBetweenChattersTestCase(TestCase):
         self.assertEqual(result[1]['rid'], 'test_rid2')
 
 class AvgmesDialogsTestCase(TestCase):
-    """
+    '''
         测试获取企业会话平均消息数Api
-    """
+    '''
     def setUp(self):
         time1 = timezone.now()
         time2 = timezone.now()
@@ -522,9 +522,9 @@ class AvgmesDialogsTestCase(TestCase):
         self.assertEqual(result, 1.5)
 
 class AvgtimeDialogsTestCase(TestCase):
-    """
+    '''
         测试获取企业会话平均时间Api
-    """
+    '''
     def setUp(self):
         self.time1 = timezone.now()
         self.time2 = timezone.now()
@@ -562,9 +562,9 @@ class SetChatboxTypeTestCase(TestCase):
         self.assertEqual(result, -12)
 
 class SetUserMsgTestCase(TestCase):
-    """
+    '''
         测试设置企业发送用户信息
-    """
+    '''
     def test_setuser_message(self):
         rf = RequestFactory()
         info = {
@@ -813,5 +813,52 @@ class GetRobotInfoTestCase(TestCase):
         result = jrToJson(enterprise.enterprise_get_robot_info(request))['flag']
         self.assertEqual(result, -12)
 
+class SetRobotQuestionTestCase(TestCase):
+    '''测试设置机器人'''
+    def test_set_robot_question(self):
+        rf = RequestFactory()
+        request = rf.post('api/enter/set_robot_question/')
+        info = {
+            'question': 'Why should you die?',
+            'answer': "I don't know.",
+            'category': 'Life'
+        }
+        request.session = {}
+        request._body = json.dumps(info).encode('utf8')
+        #成功
+        request.session['eid'] = 'eid1' 
+        result = jrToJson(enterprise.enterprise_set_robot_question(request))
+        self.assertEqual(result['flag'], 1)
+        test = models.Question.objects.get(category = 'Life')
+        self.assertEqual(test.question, 'Why should you die?')
+        #失败
+        del request.session['eid']
+        result = jrToJson(enterprise.enterprise_set_robot_question(request))['flag']
+        self.assertEqual(result, -12)
 
-
+class EnterpriseGetAllQuestionTestCase(TestCase):
+    '''测试返回企业所有问题'''
+    def setUp(self):
+        models.Question.objects.create(QID = 1, EID = 'test_eid1', question = 'f', 
+            answer = 'u', category = 'n')
+        models.Question.objects.create(QID = 2, EID = 'test_eid1', question = 'k', 
+            answer = 'k', category = 'k')
+        models.Question.objects.create(QID = 3, EID = 'test_eid1', question = 'l', 
+            answer = 'a', category = 'o')
+        models.Question.objects.create(QID = 4, EID = 'test_eid2', question = 't', 
+            answer = 't', category = 't')
+    def test_get_all_question(self):
+        rf = RequestFactory()
+        request = rf.post('api/enter/get_all_question/')
+        info = {}
+        request.session = {}
+        request._body = json.dumps(info).encode('utf8')
+        #成功
+        request.session['eid'] = 'test_eid1'
+        response = enterprise.enterprise_get_all_question(request)
+        result = jrToJson(enterprise.enterprise_get_all_question(request))['message']
+        self.assertEqual((result[1])['question'], 'k')
+        #失败
+        del request.session['eid']
+        result = jrToJson(enterprise.enterprise_get_all_question(request))['flag']
+        self.assertEqual(result, -12)

@@ -232,7 +232,7 @@ def customer_dialogs(request):
     dialogs = models.Dialog.objects.filter(CID = CID)
     for dialog in dialogs:
         dialogs_list.append({'cid': dialog.CID, 'uid': dialog.UID, 'start_time': dialog.start_time, 
-            'end_time': dialog.end_time,})
+            'end_time': dialog.end_time, 'did': dialog.DID})
     return JsonResponse({'flag': 1, 'message': dialogs_list})
 
 @ensure_csrf_cookie

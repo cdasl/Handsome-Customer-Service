@@ -681,13 +681,35 @@ def enterprise_set_robot_question(request):
         EID = request.session['eid']
     else:
         return JsonResponse({'flag': -12, 'message': ''})
-    QID = info['qid']
     question = info['question']
     answer = info['answer']
     category = info['category']
+    QID = ''.join(random.sample(string.ascii_letters + string.digits, 8))
     try:
         models.Question.objects.create(QID = QID, EID = EID, question = question, 
             answer = answer, category = category)
-        return JsonResponse({'flag': 1, 'message': ''})
+        return JsonResponse({'flag': 1, 'message': QID})
+    except Exception:
+        return JsonResponse({'flag': -12, 'message': ''})
+
+@ensure_csrf_cookie
+def enterprise_get_all_question(request):
+    """返回企业所有问题"""
+    EID = 'eid'
+    if hasattr(request, 'body'):
+        info = json.loads(request.body.decode('utf8'))
+    if hasattr(request, 'session') and 'eid' in request.session:
+        EID = request.session['eid']
+    else:
+        return JsonResponse({'flag': -12, 'message': ''})
+    try:
+        question_list = []
+        questions = models.Question.objects.filter(EID = EID)
+        for question in questions:
+            question_list.append({
+                'qid': question.QID, 'question': question.question, 
+                'answer': question.answer, 'category': question.category
+            })
+        return JsonResponse({'flag': 1, 'message': question_list})
     except Exception:
         return JsonResponse({'flag': -12, 'message': ''})
