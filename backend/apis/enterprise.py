@@ -713,3 +713,18 @@ def enterprise_get_all_question(request):
         return JsonResponse({'flag': 1, 'message': question_list})
     except Exception:
         return JsonResponse({'flag': -12, 'message': ''})
+
+def UrlValidateJudge(request):
+    """判断访问是否含有session"""
+    EID = 'eid'
+    if hasattr(request, 'body'):
+        info = json.loads(request.body.decode('utf8'))
+    if hasattr(request, 'session') and 'eid' in request.session:
+        EID = request.session['eid']
+    else:
+        return redirect('http://127.0.0.1:8000/enterprise/')
+    try:
+        enterprise = models.Enterprise.objects.get(EID = EID)
+    except Exception:
+        return redirect('http://127.0.0.1:8000/enterprise/')
+

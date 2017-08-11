@@ -65,4 +65,5 @@ urlpatterns = [
     url(r'^api/enter/get_robot_info/$', enterprise.enterprise_get_robot_info),
     url(r'^api/enter/set_robot_question/$', enterprise.enterprise_set_robot_question),
     url(r'^api/enter/get_all_question/$', enterprise.enterprise_get_all_question),
+    url(r'^api/url_validate/$', enterprise.UrlValidateJudge),
 ]
