@@ -11,6 +11,10 @@ from . import helper, messages
 import django.utils.timezone as timezone
 import datetime, time
 
+def jrToJson(jr):
+    """将JsonResponse对象转为Json对象"""
+    return json.loads(jr.content.decode('utf8'))
+
 @ensure_csrf_cookie
 def customer_chatted(request):
     """获取与某位客服聊过天的所有用户"""
@@ -125,25 +129,23 @@ def customer_change_onlinestate(request):
         return JsonResponse({'flag': -12, 'message': ''})
     return JsonResponse({'flag': 1, 'message': ''})
 
-@ensure_csrf_cookie
-def customer_serviced_number(request):
+def customer_serviced_number(CID):
     """获取客服服务过的人数"""
-    CID = 'cid1'
+    """CID = 'cid1'
     if 'cid' in request.session:
         CID = request.session['cid']
     else:
-        return JsonResponse({'flag': -12, 'message': ''})
+        return JsonResponse({'flag': -12, 'message': ''})"""
     customer = models.Customer.objects.filter(CID = CID)
     return JsonResponse({'flag': 1, 'message': customer[0].serviced_number})
 
-@ensure_csrf_cookie
-def customer_dialogs_oneday(request):
+def customer_dialogs_oneday(CID):
     """获取客服最近24小时会话数"""
-    CID = 'cid1'
+    """CID = 'cid1'
     if 'cid' in request.session:
         CID = request.session['cid']
     else:
-        return JsonResponse({'flag': -12, 'message': ''})
+        return JsonResponse({'flag': -12, 'message': ''})"""
     total = 0
     nowtime = datetime.datetime.now()
     dialogs = models.Dialog.objects.filter(CID = CID)
@@ -154,14 +156,13 @@ def customer_dialogs_oneday(request):
             total += 1
     return JsonResponse({'flag': 1, 'message': total})
 
-@ensure_csrf_cookie
-def customer_total_servicedtime(request):
+def customer_total_servicedtime(CID):
     """返回客服总的服务时间(分钟)"""
-    CID = 'cid1'
+    """CID = 'cid1'
     if 'cid' in request.session:
         CID = request.session['cid']
     else:
-        return JsonResponse({'flag': -12, 'message': ''})
+        return JsonResponse({'flag': -12, 'message': ''})"""
     totaltime = 0
     dialogs = models.Dialog.objects.filter(CID = CID)
     for dialog in dialogs:
@@ -169,14 +170,13 @@ def customer_total_servicedtime(request):
     totaltime = round(totaltime / 60, 2)
     return JsonResponse({'flag': 1, 'message': totaltime})
 
-@ensure_csrf_cookie
-def customer_total_messages(request):
+def customer_total_messages(CID):
     """返回客服发送总的消息数"""
-    CID = 'cid1'
+    """CID = 'cid1'
     if 'cid' in request.session:
         CID = request.session['cid']
     else:
-        return JsonResponse({'flag': -12, 'message': ''})
+        return JsonResponse({'flag': -12, 'message': ''})"""
     total = 0
     dialogs = models.Dialog.objects.filter(CID = CID)
     for dialog in dialogs:
@@ -184,40 +184,32 @@ def customer_total_messages(request):
             total += 1
     return JsonResponse({'flag': 1, 'message': total})
 
-@ensure_csrf_cookie
-def customer_total_dialogs(request):
+def customer_total_dialogs(CID):
     """获取客服总会话数"""
-    CID = 'cid1'
-    if 'cid' in request.session:
-        CID = request.session['cid']
-    else:
-        return JsonResponse({'flag': -12, 'message': ''})
     total = 0
     dialogs = models.Dialog.objects.filter(CID = CID)
     total = len(dialogs)
     return JsonResponse({'flag': 1, 'message': total})
 
-@ensure_csrf_cookie
-def customer_avgtime_dialogs(request):
+def customer_avgtime_dialogs(CID):
     """获取客服会话平均时间"""
-    CID = 'cid1'
+    """CID = 'cid1'
     if 'cid' in request.session:
         CID = request.session['cid']
     else:
-        return JsonResponse({'flag': -12, 'message': ''})
-    totaltime = tests.jrToJson(customer_total_servicedtime(request))['message']
-    total = tests.jrToJson(customer_total_dialogs(request))['message']
+        return JsonResponse({'flag': -12, 'message': ''})"""
+    totaltime = jrToJson(customer_total_servicedtime(CID))['message']
+    total = jrToJson(customer_total_dialogs(CID))['message']
     avgtime = round(totaltime / total, 2)
     return JsonResponse({'flag': 1, 'message': avgtime})
 
-@ensure_csrf_cookie
-def customer_avgmes_dialogs(request):
+def customer_avgmes_dialogs(CID):
     """获取客服平均消息数"""
-    CID = 'cid1'
+    """CID = 'cid1'
     if 'cid' in request.session:
         CID = request.session['cid']
     else:
-        return JsonResponse({'flag': -12, 'message': ''})
+        return JsonResponse({'flag': -12, 'message': ''})"""
     totalmessage = 0
     totaldialog = 0
     dialogs = models.Dialog.objects.filter(CID = CID)
@@ -332,13 +324,13 @@ def customer_get_alldata(request):
     else:
         return JsonResponse({'flag': -12, 'message': ''})
     try:
-        totaltime = tests.jrToJson(customer_total_servicedtime(request))['message']
-        totalmessage = tests.jrToJson(customer_total_messages(request))['message']
-        totaldialog = tests.jrToJson(customer_total_dialogs(request))['message']
-        totalserviced = tests.jrToJson(customer_serviced_number(request))['message']
-        todaydialog = tests.jrToJson(customer_dialogs_oneday(request))['message']
-        avgdialogtime = tests.jrToJson(customer_avgtime_dialogs(request))['message']
-        avgmessages = tests.jrToJson(customer_avgmes_dialogs(request))['message']
+        totaltime = jrToJson(customer_total_servicedtime(CID))['message']
+        totalmessage = jrToJson(customer_total_messages(CID))['message']
+        totaldialog = jrToJson(customer_total_dialogs(CID))['message']
+        totalserviced = jrToJson(customer_serviced_number(CID))['message']
+        todaydialog = jrToJson(customer_dialogs_oneday(CID))['message']
+        avgdialogtime = jrToJson(customer_avgtime_dialogs(CID))['message']
+        avgmessages = jrToJson(customer_avgmes_dialogs(CID))['message']
         allData = {'totalTime': totaltime, 'totalMessage': totalmessage, 'totalDialog': totaldialog, 
         'totalServiced': totalserviced, 'todayDialog': todaydialog, 'avgDialogTime': avgdialogtime, 'avgMessages': avgmessages}
         return JsonResponse({'flag': 1, 'message': allData})

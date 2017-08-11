@@ -261,6 +261,8 @@ def reset_customer_state(request):
         elif customer[0].state == -1:
             models.Customer.objects.filter(CID = CID).update(state = 1)
             return JsonResponse({'flag': 1, 'message': 'activate success'})
+        elif customer[0].state == 0:
+            return JsonResponse({'flag': 1, 'message': 'not activate'})
     except Exception:
         return JsonResponse({'flag': -14, 'message': ''})
 
