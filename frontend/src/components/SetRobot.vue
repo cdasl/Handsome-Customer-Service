@@ -54,15 +54,15 @@
   export default {
     data () {
       return {
-        myCategory: '全部问题',
-        myQuestoin: '',
-        myAnswer: '',
-        currentCategory: '',
-        selfCategory: '',
-        categoryList: ['常见', '不常见', '变态问题', '搞笑问题'],
-        categoryList2: ['全部问题', '常见', '不常见', '变态问题', '搞笑问题'],
-        show: false,
-        show2: false,
+        myCategory: '全部问题', // 当前问题类别
+        myQuestoin: '', // 添加问题的问题
+        myAnswer: '', // 添加问题的答案
+        currentCategory: '', // 添加问题的类别(select)
+        selfCategory: '', // 添加问题的类别(自定义)
+        categoryList: [], // 添加问题的类别列表
+        categoryList2: ['全部问题'], // 问题列表
+        show: false, // 显示添加问题
+        show2: false, // 显示修改问题
         questionForm: [
           {
             title: '问题',
@@ -108,19 +108,33 @@
               ])
             }
           }
-        ],
-        questionDataAll: [],
-        questionData: [],
+        ], // 问题表格格式
+        questionDataAll: [], // 所有问题
+        questionData: [], // 当前类别所有问题
         questionDataShow: [{
           question: '为什么我有了奥特曼变僧器还是不能变僧？',
           answer: '你可能买了假货',
           category: '类别'
-        }],
-        current: 1,
-        pageSize: 10
+        }], // 当前显示的所有问题
+        current: 1, // 页码
+        pageSize: 10 // 每页的数据条数
       }
     },
     methods: {
+      fetchBase (url, body) {
+        return fetch(url, {
+          method: 'post',
+          credentials: 'same-origin',
+          headers: {
+            'X-CSRFToken': this.getCookie('csrftoken'),
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(body)
+        })
+        .then((res) => res.json())
+      },
+      // 根据当前情况将questionDataAll中的数据传给questionData和questionDataShow
       init (iWantToChangePage) {
         if (this.myCategory === '全部问题') {
           this.questionData = this.questionDataAll
@@ -140,7 +154,7 @@
         }
       },
       changeCategory () {
-        this.$Message.success(this.myCategory)
+        // 改变问题类别
         this.init(true)
       },
       add () {
@@ -152,6 +166,7 @@
         this.changeCategory()
       },
       submitQuestion () {
+        // 提交添加问题
         if (this.currentCategory.trim() === '' && this.selfCategory.trim() === '') {
           this.$Message.warning('类别不能为空')
           return
@@ -168,6 +183,7 @@
         this.init(true)
       },
       submitModify () {
+        // 提交修改问题
         for (let i = 0; i < this.questionDataAll.length; ++i) {
           if (this.questionDataAll[i].question === this.myQuestoin) {
             this.questionDataAll[i].answer = this.myAnswer
@@ -179,7 +195,7 @@
         this.cancel()
       },
       addQuestion () {
-        // pass
+        // 弹出添加问题模态框
         this.$Message.error('添加问题')
         this.show = true
         this.cancel()
@@ -191,6 +207,7 @@
         this.selfCategory = ''
       },
       modify (index) {
+        // 弹出修改问题模态框
         this.$Message.success('' + this.questionDataShow[index].question)
         this.myQuestoin = this.questionDataShow[index].question
         this.myAnswer = this.questionDataShow[index].answer
@@ -198,6 +215,7 @@
         this.show2 = true
       },
       remove (index) {
+        // 提交删除问题
         this.$Message.success('' + this.questionDataShow[index].question)
         let qid = this.questionDataShow[index]
         let i = 0
@@ -208,9 +226,10 @@
         }
         this.questionDataAll.splice(i, 1)
         this.init(false)
-        // 发送请求删除该问题
+        // 发送请求删除该问题（欠一个）
       },
       changePage (current) {
+        // 修改页码
         this.current = current
         this.init(false)
       },
@@ -240,6 +259,9 @@
         }
         return ''
       }
+    },
+    async mounted () {
+      let res = await this.
     }
   }
 </script>

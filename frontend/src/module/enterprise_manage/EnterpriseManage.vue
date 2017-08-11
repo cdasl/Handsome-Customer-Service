@@ -98,7 +98,7 @@
 .layout-content {
   min-height: 1080px;
   margin: 15px;
-  overflow: auto;
+  overflow: hidden;
   background: #fff;
   border-radius: 4px;
 }

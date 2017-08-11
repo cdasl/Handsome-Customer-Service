@@ -43,10 +43,10 @@
             title: '最后一次登陆时间',
             key: 'last_login'
           }
-        ],
-        customerData: [],
-        show: false,
-        content: [],
+        ], // 客服表格格式
+        customerData: [], // 客服数据
+        show: false, // 显示会话内容
+        content: [], // 会话内容
         dialogForm: [
           {
             title: '开始时间',
@@ -84,11 +84,11 @@
               ])
             }
           }
-        ],
-        dialogData: [],
-        dialogDataShow: [],
-        current: 1,
-        pageSize: 10
+        ], // 会话表格格式
+        dialogData: [], // 会话内容
+        dialogDataShow: [], // 当前页会话内容
+        current: 1, // 当前页码
+        pageSize: 10 // 每页展示数据条数
       }
     },
     methods: {
@@ -105,12 +105,8 @@
         })
         .then((res) => res.json())
       },
-      async test2 () {
-        let x = await this.test1('/api/enter/dialogs/', {})
-        console.log('2')
-        console.log(x)
-      },
       async showCustomerInfo (index) {
+        // 根据客服id获取客服信息
         let res = await this.fetchBase('/api/enter/customer_info/', {
           'cid': this.dialogDataShow[index].cid
         })
@@ -128,6 +124,7 @@
         }
       },
       async showDialog (index) {
+        // 根据会话id获取会话内容
         let res = await this.fetchBase('/api/enter/dialog_message/', {
           'did': this.dialogDataShow[index].did
         })
@@ -164,6 +161,7 @@
         this.show = false
       },
       changePage (current) {
+        // 改变页码和显示的数据
         this.current = current
         this.dialogDataShow = this.dialogData.slice((this.current - 1) * this.pageSize, Math.min((this.current - 1) * this.pageSize + this.pageSize, this.dialogData.length))
       },
@@ -195,6 +193,7 @@
       }
     },
     async mounted () {
+      // 组件装载完成之后获取历史会话列表
       let res = await this.fetchBase('/api/enter/dialogs/', {})
       if (res['flag'] > 0) {
         for (let i = 0; i < res['message'].length; ++i) {
