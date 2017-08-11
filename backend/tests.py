@@ -813,5 +813,52 @@ class GetRobotInfoTestCase(TestCase):
         result = jrToJson(enterprise.enterprise_get_robot_info(request))['flag']
         self.assertEqual(result, -12)
 
+class SetRobotQuestionTestCase(TestCase):
+    '''测试设置机器人'''
+    def test_set_robot_question(self):
+        rf = RequestFactory()
+        request = rf.post('api/enter/set_robot_question/')
+        info = {
+            'question': 'Why should you die?',
+            'answer': "I don't know.",
+            'category': 'Life'
+        }
+        request.session = {}
+        request._body = json.dumps(info).encode('utf8')
+        #成功
+        request.session['eid'] = 'eid1' 
+        result = jrToJson(enterprise.enterprise_set_robot_question(request))
+        self.assertEqual(result['flag'], 1)
+        test = models.Question.objects.get(category = 'Life')
+        self.assertEqual(test.question, 'Why should you die?')
+        #失败
+        del request.session['eid']
+        result = jrToJson(enterprise.enterprise_set_robot_question(request))['flag']
+        self.assertEqual(result, -12)
 
-
+class EnterpriseGetAllQuestionTestCase(TestCase):
+    '''测试返回企业所有问题'''
+    def setUp(self):
+        models.Question.objects.create(QID = 1, EID = 'test_eid1', question = 'f', 
+            answer = 'u', category = 'n')
+        models.Question.objects.create(QID = 2, EID = 'test_eid1', question = 'k', 
+            answer = 'k', category = 'k')
+        models.Question.objects.create(QID = 3, EID = 'test_eid1', question = 'l', 
+            answer = 'a', category = 'o')
+        models.Question.objects.create(QID = 4, EID = 'test_eid2', question = 't', 
+            answer = 't', category = 't')
+    def test_get_all_question(self):
+        rf = RequestFactory()
+        request = rf.post('api/enter/get_all_question/')
+        info = {}
+        request.session = {}
+        request._body = json.dumps(info).encode('utf8')
+        #成功
+        request.session['eid'] = 'test_eid1'
+        response = enterprise.enterprise_get_all_question(request)
+        result = jrToJson(enterprise.enterprise_get_all_question(request))['message']
+        self.assertEqual((result[1])['question'], 'k')
+        #失败
+        del request.session['eid']
+        result = jrToJson(enterprise.enterprise_get_all_question(request))['flag']
+        self.assertEqual(result, -12)

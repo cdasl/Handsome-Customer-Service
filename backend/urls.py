@@ -63,4 +63,6 @@ urlpatterns = [
     url(r'^api/customer/get_id/$', customer.customer_get_id),
     url(r'^api/enter/set_robot_state/$', enterprise.enterprise_set_robot_state),
     url(r'^api/enter/get_robot_info/$', enterprise.enterprise_get_robot_info),
+    url(r'^api/enter/set_robot_question/$', enterprise.enterprise_set_robot_question),
+    url(r'^api/enter/get_all_question/$', enterprise.enterprise_get_all_question),
 ]
