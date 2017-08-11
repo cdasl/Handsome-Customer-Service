@@ -17,7 +17,7 @@ from django.conf.urls import url
 from django.contrib import admin
 from django.views.generic.base import TemplateView
 from django.conf.urls import include
-from . import views, api,socket
+from . import views, api, socket
 from .apis import enterprise, customer
 
 urlpatterns = [
@@ -46,7 +46,19 @@ urlpatterns = [
     url(r'^api/enter/get_enterprise_msgnum/$', enterprise.enterprise_message_number_oneday),
     url(r'^api/customer/change_ol/$', customer.customer_change_onlinestate),
     url(r'^api/customer/get_serviced_num/$', customer.customer_serviced_number),
-    url(r'^api/enter/dialogs/$', enterprise.enterprise_dialogs),
-    url(r'^api/enter/dialog_message/$', enterprise.enterprise_dialog_messages),
-    url(r'^api/enter/customer_info/$', enterprise.inquire_customer_info),
+    url(r'^api/enter/get_enter_serviced_num/$', enterprise.enterprise_serviced_number_oneday),
+    url(r'^api/enter/get_oneday/$', enterprise.enterprise_dialogs_oneday),
+    url(r'^api/customer/get_oneday/$', customer.customer_dialogs_oneday),
+    url(r'^api/customer/total_msg/$', customer.customer_total_messages),
+    url(r'^api/customer/total_minute/$', customer.customer_total_servicedtime),
+    url(r'^api/customer/total_dialog/$', customer.customer_total_dialogs),
+    url(r'^api/customer/avg_time/$', customer.customer_avgtime_dialogs),
+    url(r'^api/customer/avg_msg/$', customer.customer_avgmes_dialogs),
+    url(r'^api/enter/get_alldata/$', enterprise.enterprise_get_alldata),
+    url(r'^api/customer/dialog_list/$', customer.customer_dialogs),
+    url(r'^api/customer/dialog_msg/$', customer.customer_dialog_messages),
+    url(r'^api/customer/modify/$', customer.customer_modify_icon),
+    url(r'^api/customer/get_alldata/$', customer.customer_get_alldata),
+    url(r'^api/customer/get_info/$', customer.customer_get_info),
+    url(r'^api/customer/get_id/$', customer.customer_get_id),
 ]
