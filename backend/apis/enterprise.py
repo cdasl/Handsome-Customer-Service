@@ -12,6 +12,12 @@ import django.utils.timezone as timezone
 import datetime, time
 import random
 
+@ensure_csrf_cookie
+def jrToJson(jr):
+    """将JsonResponse对象转为Json对象"""
+    return json.loads(jr.content.decode('utf8'))
+
+@ensure_csrf_cookie
 def signup_init(info):
     """初始化注册信息"""
     md5 = hashlib.md5()
@@ -23,6 +29,7 @@ def signup_init(info):
     password = md5.hexdigest()
     return {'ri': 'http://www.jb51.net/images/logo.gif',
             'rn': u'小机',
+            'rs': 1,
             'eid': md5.hexdigest(),
             'salt': salt,
             'email': info['email'],
@@ -73,7 +80,8 @@ def enterprise_signup(request):
         helper.send_active_email(email, mySubject, myMessage)
         models.Enterprise.objects.create(EID = info_dict['eid'], email = email, password = info_dict['password'],
                                          name = info_dict['name'], robot_icon = info_dict['ri'],
-                                         robot_name = info_dict['rn'], salt = info_dict['salt'])
+                                         robot_name = info_dict['rn'], robot_state = info_dict['rs'], 
+                                         salt = info_dict['salt'])
         return JsonResponse({'flag': 1, 'message': ''})
     except Exception:
         return JsonResponse({'flag': -4, 'message': ''})
@@ -245,14 +253,11 @@ def reset_customer_state(request):
 @ensure_csrf_cookie
 def enterprise_get_customers(request):
     """获取客服人员列表"""
-    # info =  {'eid': -1}
     EID = 'eid'
     if hasattr(request, 'body'):
         info = json.loads(request.body.decode('utf8'))
     if hasattr(request, 'session') and 'eid' in request.session:
         EID = request.session['eid']
-    # elif info['eid'] != -1:
-    #     EID = info['eid']
     else:
         return JsonResponse({'flag': -12, 'message': ''})
     customer_list = []
@@ -290,14 +295,11 @@ def inquire_customer_info(request):
 @ensure_csrf_cookie
 def enterprise_online_customers(request):
     """获取在线客服人员列表"""
-    # info =  {'eid': -1}
     EID = 'eid'
     if hasattr(request, 'body'):
         info = json.loads(request.body.decode('utf8'))
     if hasattr(request, 'session') and 'eid' in request.session:
         EID = request.session['eid']
-    # elif info['eid'] != -1:
-    #     EID = info['eid']
     else:
         return JsonResponse({'flag': -12, 'message': ''})
     online_list = []
@@ -309,14 +311,11 @@ def enterprise_online_customers(request):
 @ensure_csrf_cookie
 def enterprise_total_servicetime(request):
     """获取企业总的服务时间，返回的是分钟"""
-    # info = {'eid': -1}
     EID = 'eid'
     if hasattr(request, 'body'):
         info = json.loads(request.body.decode('utf8'))
     if hasattr(request, 'session') and 'eid' in request.session:
         EID = request.session['eid']
-    # elif info['eid'] != -1:
-    #     EID = info['eid']
     else:
         return JsonResponse({'flag': -12, 'message': ''})
     total = 0
@@ -329,14 +328,11 @@ def enterprise_total_servicetime(request):
 @ensure_csrf_cookie
 def enterprise_total_messages(request):
     """获取企业发送的总消息数"""
-    # info = {'eid': -1}
     EID = 'eid'
     if hasattr(request, 'body'):
         info = json.loads(request.body.decode('utf8'))
     if hasattr(request, 'session') and 'eid' in request.session:
         EID = request.session['eid']
-    # elif info['eid'] != -1:
-    #     EID = info['eid']
     else:
         return JsonResponse({'flag': -12, 'message': ''})
     total = 0
@@ -348,14 +344,11 @@ def enterprise_total_messages(request):
 @ensure_csrf_cookie
 def enterprise_total_dialogs(request):
     """获取企业发送的总会话数"""
-    # info = {'eid': -1}
     EID = 'eid'
     if hasattr(request, 'body'):
         info = json.loads(request.body.decode('utf8'))
     if hasattr(request, 'session') and 'eid' in request.session:
         EID = request.session['eid']
-    # elif info['eid'] != -1:
-    #     EID = info['eid']
     else:
         return JsonResponse({'flag': -12, 'message': ''})
     return JsonResponse({'flag': 1, 'message': len(models.Dialog.objects.filter(EID = EID))})
@@ -363,14 +356,11 @@ def enterprise_total_dialogs(request):
 @ensure_csrf_cookie
 def enterprise_dialogs(request):
     """获取企业全部会话列表"""
-    # info =  {'eid': -1}
     EID = 'eid'
     if hasattr(request, 'body'):
         info = json.loads(request.body.decode('utf8'))
     if hasattr(request, 'session') and 'eid' in request.session:
         EID = request.session['eid']
-    # elif info['eid'] != -1:
-    #     EID = info['eid']
     else:
         return JsonResponse({'flag': -12, 'message': ''})
     dialogs_list = []
@@ -434,14 +424,11 @@ def messages_between_chatters(request):
 @ensure_csrf_cookie
 def enterprise_avgtime_dialogs(request):
     """获取客服会话平均时间"""
-    # info =  {'eid': -1}
     EID = 'eid'
     if hasattr(request, 'body'):
         info = json.loads(request.body.decode('utf8'))
     if hasattr(request, 'session') and 'eid' in request.session:
         EID = request.session['eid']
-    # elif info['eid'] != -1:
-    #     EID = info['eid']
     else:
         return JsonResponse({'flag': -12, 'message': ''})
     totaltime = 0
@@ -456,17 +443,13 @@ def enterprise_avgtime_dialogs(request):
 @ensure_csrf_cookie
 def enterprise_set_robot_message(request):
     """设置企业机器人名字，头像"""
-    # info =  {'eid': -1}
     EID = 'eid'
     if hasattr(request, 'body'):
         info = json.loads(request.body.decode('utf8'))
     if hasattr(request, 'session') and 'eid' in request.session:
         EID = request.session['eid']
-    # elif info['eid'] != -1:
-    #     EID = info['eid']
     else:
         return JsonResponse({'flag': -12, 'message': ''})
-    #enterprise = models.Enterprise.objects.filter(EID = EID, state = 1)
     try:
         models.Enterprise.objects.filter(EID = EID, state = 1).update(robot_name = info['robot_name'], 
             robot_icon = info['robot_icon'])
@@ -475,16 +458,46 @@ def enterprise_set_robot_message(request):
         return JsonResponse({'flag': -12, 'message': ''})
 
 @ensure_csrf_cookie
-def enterprise_avgmes_dialogs(request):
-    """获取企业会话的平均消息数"""
-    # info =  {'eid': -1}
+def enterprise_set_robot_state(request):
+    """企业设置机器人状态"""
     EID = 'eid'
     if hasattr(request, 'body'):
         info = json.loads(request.body.decode('utf8'))
     if hasattr(request, 'session') and 'eid' in request.session:
         EID = request.session['eid']
-    # elif info['eid'] != -1:
-    #     EID = info['eid']
+    else:
+        return JsonResponse({'flag': -12, 'message': ''})
+    robot_state = models.Enterprise.objects.get(EID = EID).robot_state
+    if robot_state == 0:
+        models.Enterprise.objects.filter(EID = EID).update(robot_state = 1)
+    else:
+        models.Enterprise.objects.filter(EID = EID).update(robot_state = 0)
+    return JsonResponse({'flag': 1, 'message': ''})
+
+@ensure_csrf_cookie
+def enterprise_get_robot_info(request):
+    """返回机器人信息"""
+    EID = 'eid'
+    if hasattr(request, 'body'):
+        info = json.loads(request.body.decode('utf8'))
+    if hasattr(request, 'session') and 'eid' in request.session:
+        EID = request.session['eid']
+    else:
+        return JsonResponse({'flag': -12, 'message': ''})
+    robot_name = models.Enterprise.objects.get(EID = EID).robot_name
+    robot_icon = models.Enterprise.objects.get(EID = EID).robot_icon
+    robot_state = models.Enterprise.objects.get(EID = EID).robot_state
+    robot_info = {'robot_name': robot_name, 'robot_icon': robot_icon, 'robot_state': robot_state}
+    return JsonResponse({'flag': 1, 'message': robot_info})
+
+@ensure_csrf_cookie
+def enterprise_avgmes_dialogs(request):
+    """获取企业会话的平均消息数"""
+    EID = 'eid'
+    if hasattr(request, 'body'):
+        info = json.loads(request.body.decode('utf8'))
+    if hasattr(request, 'session') and 'eid' in request.session:
+        EID = request.session['eid']
     else:
         return JsonResponse({'flag': -12, 'message': ''})
     total_messages = 0
@@ -498,14 +511,11 @@ def enterprise_avgmes_dialogs(request):
 @ensure_csrf_cookie
 def enterprise_set_chatbox_type(request):
     """设置聊天窗口弹出方式"""
-    # info =  {'eid': -1}
     EID = 'eid'
     if hasattr(request, 'body'):
         info = json.loads(request.body.decode('utf8'))
     if hasattr(request, 'session') and 'eid' in request.session:
         EID = request.session['eid']
-    # elif info['eid'] != -1:
-    #     EID = info['eid']
     else:
         return JsonResponse({'flag': -12, 'message': ''})
     #enterprise = models.Enterprise.objects.filter(EID = EID, state = 1)
@@ -535,8 +545,8 @@ def enterprise_setuser_message(request):
         return JsonResponse({'flag': -12, 'message': ''})
 
 @ensure_csrf_cookie
-def enterprise_message_number(request):
-    """获取企业近24小时的消息数"""
+def enterprise_message_number_oneday(request):
+    """获取企业近24小时各时间段的消息数"""
     EID = 'eid'
     if hasattr(request, 'body'):
         info = json.loads(request.body.decode('utf8'))
@@ -560,8 +570,8 @@ def enterprise_message_number(request):
     return JsonResponse({'flag': 1, 'message': total})
 
 @ensure_csrf_cookie
-def enterprise_serviced_number(request):
-    """获取所有客服最近24小时服务的总人数"""
+def enterprise_serviced_number_oneday(request):
+    """获取所有客服最近24小时各时间段服务的总人数"""
     if hasattr(request, 'body'):
         info = json.loads(request.body.decode('utf8'))
     if hasattr(request, 'session') and 'eid' in request.session:
@@ -585,15 +595,12 @@ def enterprise_serviced_number(request):
 
 @ensure_csrf_cookie
 def enterprise_dialogs_oneday(request):
-    """获取企业所有客服24小时内会话总数"""
-    # info = {'eid': -1}
+    """获取企业所有客服24小时内各时间段会话总数"""
     EID = 'eid'
     if hasattr(request, 'body'):
         info = json.loads(request.body.decode('utf8'))
     if hasattr(request, 'session') and 'eid' in request.session:
         EID = request.session['eid']
-    # elif info['eid'] != -1:
-    #     EID = info['eid']
     else:
         return JsonResponse({'flag': -12, 'message': ''})
     total = [0 for x in range(24)]
@@ -610,6 +617,26 @@ def enterprise_dialogs_oneday(request):
     return JsonResponse({'flag': 1, 'message': total})
 
 @ensure_csrf_cookie
+def enterprise_dialogs_total_oneday(request):
+    """获取企业最近24小时会话总数"""
+    EID = 'eid'
+    if hasattr(request, 'body'):
+        info = json.loads(request.body.decode('utf8'))
+    if hasattr(request, 'session') and 'eid' in request.session:
+        EID = request.session['eid']
+    else:
+        return JsonResponse({'flag': -12, 'message': ''})
+    total = 0
+    nowtime = datetime.datetime.now()
+    dialogs = models.Dialog.objects.filter(EID = EID)
+    time1 = time.mktime(nowtime.timetuple())
+    for dialog in dialogs:
+        time2 = time.mktime(dialog.start_time.timetuple())
+        if time1 - time2 < 60 * 60 * 24:
+            total += 1
+    return JsonResponse({'flag': 1, 'message': total})
+
+@ensure_csrf_cookie
 def enterprise_get_alldata(request):
     """
         企业获取所有数据：总服务时间，总消息数，总会话数，总服务人数，
@@ -622,14 +649,14 @@ def enterprise_get_alldata(request):
     else:
         return JsonResponse({'flag': -12, 'message': ''})
     try:
-        totaltime = tests.jrToJson(enterprise_total_servicetime(request))['message']
-        totalmessage = tests.jrToJson(enterprise_total_messages(request))['message']
-        totaldialog = tests.jrToJson(enterprise_total_dialogs(request))['message']
-        totalserviced = tests.jrToJson(enterprise_total_service_number(request))['message']
-        totalonline = len(tests.jrToJson(enterprise_online_customers(request))['message'])
-        todaydialog = tests.jrToJson(enterprise_dialogs_oneday(request))['message']
-        avgdialogtime = tests.jrToJson(enterprise_avgtime_dialogs(request))['message']
-        avgmessages = tests.jrToJson(enterprise_avgmes_dialogs(request))['message']
+        totaltime = jrToJson(enterprise_total_servicetime(request))['message']
+        totalmessage = jrToJson(enterprise_total_messages(request))['message']
+        totaldialog = jrToJson(enterprise_total_dialogs(request))['message']
+        totalserviced = jrToJson(enterprise_total_service_number(request))['message']
+        totalonline = len(jrToJson(enterprise_online_customers(request))['message'])
+        todaydialog = jrToJson(enterprise_dialogs_total_oneday(request))['message']
+        avgdialogtime = jrToJson(enterprise_avgtime_dialogs(request))['message']
+        avgmessages = jrToJson(enterprise_avgmes_dialogs(request))['message']
         alldata = {'totalTime': totaltime, 'totalMessage': totalmessage, 'totalDialog': totaldialog, 'totalServiced': totalserviced, 
         'totalOnline': totalonline, 'todayDialog': todaydialog, 'avgDialogTime': avgdialogtime, 'avgMessages': avgmessages}
         return JsonResponse({'flag': 1, 'message': alldata})
