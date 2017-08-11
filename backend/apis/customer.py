@@ -92,7 +92,7 @@ def customer_get_info(request):
         return JsonResponse({'flag': -12, 'message': ''})
     customer = models.Customer.objects.get(CID = CID)
     info = {'cid': customer.CID, 'eid': customer.EID, 'email': customer.email, 'state': customer.state, 
-    'name': customer.name, 'serviced_number': customer.serviced_number, 'service_number': service_number, 
+    'name': customer.name, 'serviced_number': customer.serviced_number, 'service_number': customer.service_number, 
     'last_login': customer.last_login}
     return JsonResponse({'flag': 1, 'message': info})
 
