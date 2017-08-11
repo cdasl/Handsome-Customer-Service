@@ -13,6 +13,7 @@ conversation = {}
 starttime = {}
 
 def get_mid(msg):
+    """获取消息的mid"""
     md5 = hashlib.md5()
     md5.update((msg['send'] + msg['receive'] + msg['time']).encode('utf8'))
     return md5.hexdigest()
