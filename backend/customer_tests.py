@@ -89,21 +89,12 @@ class ServicedNumTestCase(TestCase):
     def setUp(self):
         models.Customer.objects.create(CID = 'test_cid', EID = 'test_eid', email = '2222@qq.com', salt = 'salt',
             password = 'password', icon = 'test_icon', name = 'test_name', state = 2,
-            service_number = 0, serviced_number = 100, last_login = datetime.datetime.now()
-        )
+            service_number = 0, serviced_number = 100, last_login = datetime.datetime.now())
 
     def test_serviced_number(self):
-        rf = RequestFactory()
-        request = rf.post('api/customer/get_serviced_num/')
-        request.session =  {}
-        info = {}
-        #成功
-        request.session['cid'] = 'test_cid'
-        request._body = json.dumps(info).encode('utf8')
-        self.assertEqual(tests.jrToJson(customer.customer_serviced_number(request))['message'], 100)
-        #失败
-        del request.session['cid']
-        self.assertEqual(tests.jrToJson(customer.customer_serviced_number(request))['flag'], -12)     
+        CID = 'test_cid'
+        result = tests.jrToJson(customer.customer_serviced_number(CID))
+        self.assertEqual(result['message'], 100)
 
 class CustomerOnedayTestCase(TestCase):
     '''测试客服24h的会话数'''
@@ -122,17 +113,9 @@ class CustomerOnedayTestCase(TestCase):
                                     end_time = '2017-8-9 18:00:00')
     
     def test_customer_oneday(self):
-        rf = RequestFactory()
-        request = rf.post('api/customer/get_oneday/')
-        request.session =  {}
-        info = {}
-        #成功
-        request.session['cid'] = 'test_cid1'
-        request._body = json.dumps(info).encode('utf8')
-        self.assertEqual(tests.jrToJson(customer.customer_dialogs_oneday(request))['message'], 2)
-        #失败
-        del request.session['cid']
-        self.assertEqual(tests.jrToJson(customer.customer_dialogs_oneday(request))['flag'], -12)
+        CID = 'test_cid1'
+        result = tests.jrToJson(customer.customer_dialogs_oneday(CID))
+        self.assertEqual(result['message'], 2)
 
 class CustomerTotalMsgTestCase(TestCase):
     '''测试客服总消息数'''
@@ -165,17 +148,9 @@ class CustomerTotalMsgTestCase(TestCase):
                                     content = '123', date = '2017-8-9 17:00:00')
 
     def test_customer_total_msg(self):
-        rf = RequestFactory()
-        request = rf.post('api/customer/total_msg/')
-        request.session =  {}
-        info = {}
-        #成功
-        request.session['cid'] = 'test_cid1'
-        request._body = json.dumps(info).encode('utf8')
-        self.assertEqual(tests.jrToJson(customer.customer_total_messages(request))['message'], 6)
-        #失败
-        del request.session['cid']
-        self.assertEqual(tests.jrToJson(customer.customer_total_messages(request))['flag'], -12)
+        CID = 'test_cid1'
+        result = tests.jrToJson(customer.customer_total_messages(CID))
+        self.assertEqual(result['message'], 6)
 
 class CustomerTotalServicedTimeTestCase(TestCase):
     '''测试客服服务的总分钟'''
@@ -194,17 +169,9 @@ class CustomerTotalServicedTimeTestCase(TestCase):
                                     end_time = '2017-8-10 18:00:00')
 
     def test_customer_total_minute(self):
-        rf = RequestFactory()
-        request = rf.post('api/customer/total_minute/')
-        request.session =  {}
-        info = {}
-        #成功
-        request.session['cid'] = 'test_cid1'
-        request._body = json.dumps(info).encode('utf8')
-        self.assertAlmostEqual(tests.jrToJson(customer.customer_total_servicedtime(request))['message'], 112, delta = 1)
-        #失败
-        del request.session['cid']
-        self.assertEqual(tests.jrToJson(customer.customer_total_servicedtime(request))['flag'], -12)
+        CID = 'test_cid1'
+        result = tests.jrToJson(customer.customer_total_servicedtime(CID))
+        self.assertAlmostEqual(result['message'], 112, delta = 1)
 
 class CustomerTotalDialogTestCase(TestCase):
     '''测试客服总会话数'''
@@ -223,17 +190,9 @@ class CustomerTotalDialogTestCase(TestCase):
                                     end_time = '2017-8-9 18:00:00')
 
     def test_total_dialog(self):
-        rf = RequestFactory()
-        request = rf.post('api/customer/total_dialog/')
-        request.session =  {}
-        info = {}
-        #成功
-        request.session['cid'] = 'test_cid1'
-        request._body = json.dumps(info).encode('utf8')
-        self.assertEqual(tests.jrToJson(customer.customer_total_dialogs(request))['message'], 3)
-        #失败
-        del request.session['cid']
-        self.assertEqual(tests.jrToJson(customer.customer_total_dialogs(request))['flag'], -12)
+        CID = 'test_cid1'
+        result = tests.jrToJson(customer.customer_total_dialogs(CID))
+        self.assertEqual(result['message'], 3)
 
 class CustomerAvgTimeTestCase(TestCase):
     '''测试客服会话平均时间'''
@@ -252,17 +211,9 @@ class CustomerAvgTimeTestCase(TestCase):
                                     end_time = '2017-8-9 18:00:00')
 
     def test_customer_avg_time(self):
-        rf = RequestFactory()
-        request = rf.post('api/customer/avg_time/')
-        request.session =  {}
-        info = {}
-        #成功
-        request.session['cid'] = 'test_cid1'
-        request._body = json.dumps(info).encode('utf8')
-        self.assertAlmostEqual(tests.jrToJson(customer.customer_avgtime_dialogs(request))['message'], 37, delta = 0.8)
-        #失败
-        del request.session['cid']
-        self.assertEqual(tests.jrToJson(customer.customer_avgtime_dialogs(request))['flag'], -12)
+        CID = 'test_cid1'
+        result = tests.jrToJson(customer.customer_avgtime_dialogs(CID))
+        self.assertAlmostEqual(result['message'], 37, delta = 0.8)
 
 class CustomerAvgMegTestCase(TestCase):
     '''测试客服平均消息数'''
@@ -295,17 +246,9 @@ class CustomerAvgMegTestCase(TestCase):
                                     content = '123', date = '2017-8-9 17:00:00')
 
     def test_avg_msg(self):
-        rf = RequestFactory()
-        request = rf.post('api/customer/avg_msg/')
-        request.session =  {}
-        info = {}
-        #成功
-        request.session['cid'] = 'test_cid1'
-        request._body = json.dumps(info).encode('utf8')
-        self.assertAlmostEqual(tests.jrToJson(customer.customer_avgmes_dialogs(request))['message'], 2, delta = 0.8)
-        #失败
-        del request.session['cid']
-        self.assertEqual(tests.jrToJson(customer.customer_avgmes_dialogs(request))['flag'], -12)
+        CID = 'test_cid1'
+        result = tests.jrToJson(customer.customer_avgmes_dialogs(CID))
+        self.assertAlmostEqual(result['message'], 2, delta = 0.8)
 
 class CustomerDialogListTestCase(TestCase):
     '''测试获取客服所有会话列表'''
