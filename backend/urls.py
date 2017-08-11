@@ -46,31 +46,7 @@ urlpatterns = [
     url(r'^api/enter/get_enterprise_msgnum/$', enterprise.enterprise_message_number_oneday),
     url(r'^api/customer/change_ol/$', customer.customer_change_onlinestate),
     url(r'^api/customer/get_serviced_num/$', customer.customer_serviced_number),
-
-    url(r'^api/enter/get_enter_serviced_num/$', enterprise.enterprise_serviced_number_oneday),
-    url(r'^api/enter/get_oneday/$', enterprise.enterprise_dialogs_oneday),
-    url(r'^api/customer/get_oneday/$', customer.customer_dialogs_oneday),
-    url(r'^api/customer/total_msg/$', customer.customer_total_messages),
-    url(r'^api/customer/total_minute/$', customer.customer_total_servicedtime),
-    url(r'^api/customer/total_dialog/$', customer.customer_total_dialogs),
-    url(r'^api/customer/avg_time/$', customer.customer_avgtime_dialogs),
-    url(r'^api/customer/avg_msg/$', customer.customer_avgmes_dialogs),
-    url(r'^api/enter/get_alldata/$', enterprise.enterprise_get_alldata),
-    url(r'^api/customer/dialog_list/$', customer.customer_dialogs),
-    url(r'^api/customer/dialog_msg/$', customer.customer_dialog_messages),
-    url(r'^api/customer/modify/$', customer.customer_modify_icon),
-
-    url(r'^api/enter/robot_into/$', enterprise.enterprise_get_robot_info),
-    url(r'^api/enter/reset_password/$', enterprise.enterprise_changepassword),
-    url(r'^api/enter/message_oneday/$', enterprise.enterprise_message_number_oneday),
-    url(r'^api/enter/serviced_oneday/$', enterprise.enterprise_serviced_number_oneday),
-    url(r'^api/enter/dialog_oneday/$', enterprise.enterprise_dialogs_oneday),
-    url(r'^api/enter/robot_switch/$', enterprise.enterprise_set_robot_state),
-
     url(r'^api/enter/dialogs/$', enterprise.enterprise_dialogs),
     url(r'^api/enter/dialog_message/$', enterprise.enterprise_dialog_messages),
     url(r'^api/enter/customer_info/$', enterprise.inquire_customer_info),
-
-    url(r'^api/enter/chattype/$', enterprise.enterprise_set_chatbox_type),
-    url(r'^api/enter/invite/$', enterprise.enterprise_invite),
 ]

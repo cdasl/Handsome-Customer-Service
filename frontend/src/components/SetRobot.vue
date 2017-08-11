@@ -261,7 +261,7 @@
       }
     },
     async mounted () {
-      let res = await this.
+      let res = await this.fetchBase('')
     }
   }
 </script>
