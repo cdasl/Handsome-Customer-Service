@@ -1,16 +1,16 @@
-  <template>
-    <div>
-      <div class="wrapper" v-show="emoji"></div>
-      <div class="text">
-        <textarea placeholder="按 Ctrl + Enter 发送" v-model="content" @keyup="onKeyup"></textarea>
-      </div>
-      <div class="icon">
-        <Button type="ghost" icon="social-octocat" @click="toggle"></Button>
-        <Button type="ghost" icon="cube" @click="screenshot"></Button>
-        <Upload :before-upload="handleUpload" action="#" class="upload">
-            <Button type="ghost" icon="image"></Button>
-        </Upload>
-      </div>
+<template>
+  <div>
+    <div class="wrapper" v-show="emoji"></div>
+    <div class="text">
+      <textarea placeholder="按 Ctrl + Enter 发送" v-model="content" @keyup="onKeyup"></textarea>
+    </div>
+    <div class="icon">
+      <Button type="ghost" icon="social-octocat" @click="toggle"></Button>
+      <Button type="ghost" icon="cube" @click="screenshot"></Button>
+      <Upload :before-upload="handleUpload" action="/" class="upload">
+          <Button type="ghost" icon="image"></Button>
+      </Upload>
+    </div>
   </div>
 </template>
 <script>
@@ -38,8 +38,7 @@
           allowTaint: true,
           taintTest: false,
           onrendered: (canvas) => {
-            // document.body.appendChild(canvas);
-            // 生成base64图片数据
+            // 生成base64图片数据 然后将base64转换成图像文件
             let file = this.dataURLtoFile(canvas.toDataURL(), 'aa.png')
             /* global FormData: true */
             let image = new FormData()
