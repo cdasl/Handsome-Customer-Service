@@ -83,6 +83,32 @@ def customer_logout(request):
     return JsonResponse({'flag': 1, 'message': ''})
 
 @ensure_csrf_cookie
+def customer_get_info(request):
+    """客服获取自己的个人信息"""
+    CID = 'cid1'
+    if 'cid' in request.session:
+        CID = request.session['cid']
+    else:
+        return JsonResponse({'flag': -12, 'message': ''})
+    customer = models.Customer.objects.get(CID = CID)
+    info = {'cid': customer.CID, 'eid': customer.EID, 'email': customer.email, 'state': customer.state, 
+    'name': customer.name, 'serviced_number': customer.serviced_number, 'service_number': service_number, 
+    'last_login': customer.last_login}
+    return JsonResponse({'flag': 1, 'message': info})
+
+@ensure_csrf_cookie
+def customer_get_id(request):
+    """客服获取自己的CID和EID"""
+    CID = 'cid1'
+    if 'cid' in request.session:
+        CID = request.session['cid']
+    else:
+        return JsonResponse({'flag': -12, 'message': ''})
+    customer = models.Customer.objects.get(CID = CID)
+    id_list = {'cid': customer.CID, 'eid': customer.EID}
+    return JsonResponse({'flag': 1, 'message': id_list})
+
+@ensure_csrf_cookie
 def customer_change_onlinestate(request):
     """客服改变在线状态"""
     CID = 'cid1'

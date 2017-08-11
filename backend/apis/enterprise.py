@@ -27,8 +27,9 @@ def signup_init(info):
     md5 = hashlib.md5()
     md5.update(info['password'].encode('utf8'))
     password = md5.hexdigest()
+    name_list = ['库', '里', '汤', '普', '森', '杜', '兰', '特', '格', '林', '科', '尔', '尼', '克', '杨', '麦', '基']
     return {'ri': 'http://www.jb51.net/images/logo.gif',
-            'rn': u'小机',
+            'rn': u(random.choice(name_list) + random.choice(name_list)),
             'rs': 1,
             'eid': md5.hexdigest(),
             'salt': salt,
@@ -40,25 +41,27 @@ def signup_init(info):
 @ensure_csrf_cookie
 def enterprise_changepassword(request):
     """修改密码"""
-    info = json.loads(request.body.decode('utf8'))
-    email = info['email']
-    old_password = info['old']
-    new_password = info['new']
-    obj = models.Enterprise.objects.get(email = email)
+    if hasattr(request, 'body'):
+        info = json.loads(request.body.decode('utf8'))
+    if hasattr(request, 'session') and 'eid' in request.session:
+        EID = request.session['eid']
+    else:
+        return JsonResponse({'flag': -12, 'message': ''})
+    #old_password = info['old']
+    #new_password = info['new']
+    obj = models.Enterprise.objects.get(EID =EID)
     salt = obj.salt
-    md5 = hashlib.md5()
-    md5.update((old_password + salt).encode('utf8'))
-    password = md5.hexdigest()
+    #md5 = hashlib.md5()
+    hashlib.md5().update((info['old'] + salt).encode('utf8'))
+    password = hashlib.md5().hexdigest()
     if password != obj.password:
         return JsonResponse({'flag': -1, 'message': ''})
     salt = ''.join(random.sample(string.ascii_letters + string.digits, 8))
-    md5 = hashlib.md5()
-    md5.update((new_password + salt).encode('utf8'))
-    password = md5.hexdigest()
+    #md5 = hashlib.md5()
+    hashlib.md5().update((info['new'] + salt).encode('utf8'))
+    password = hashlib.md5().hexdigest()
     try:
-        obj.salt = salt
-        obj.password = password
-        obj.save()
+        models.Enterprise.objects.filter(EID =EID).update(salt = salt, password = password)
         return JsonResponse({'flag': 1, 'message': ''})
     except Exception:
         return JsonResponse({'flag': -2, 'message': ''})
@@ -122,6 +125,19 @@ def enterprise_login(request):
         request.session['eid'] = code[1]
         request.session['email'] = info['email']
         return JsonResponse({'flag': 1, 'message': ''})
+
+@ensure_csrf_cookie
+def enterprise_logout(request):
+    """企业退出"""
+    EID = 'eid'
+    if hasattr(request, 'body'):
+        info = json.loads(request.body.decode('utf8'))
+    if hasattr(request, 'session') and 'eid' in request.session:
+        EID = request.session['eid']
+    else:
+        return JsonResponse({'flag': -12, 'message': ''})
+    del request.session['eid']
+    return JsonResponse({'flag': 1, 'message': ''})
 
 @csrf_exempt
 def enterprise_active(request):
@@ -373,7 +389,7 @@ def enterprise_dialogs(request):
 @ensure_csrf_cookie
 def enterprise_total_service_number(request):
     """获取企业服务过的总人数"""
-    ID = 'eid'
+    EID = 'eid'
     if hasattr(request, 'body'):
         info = json.loads(request.body.decode('utf8'))
     if hasattr(request, 'session') and 'eid' in request.session:
@@ -521,7 +537,8 @@ def enterprise_set_chatbox_type(request):
     #enterprise = models.Enterprise.objects.filter(EID = EID, state = 1)
     try:
         models.Enterprise.objects.filter(EID = EID, state = 1).update(chatbox_type = info['chatbox_type'])
-        return JsonResponse({'flag': 1, 'message': ''})
+        code = 'abcdefzddhetdhsdzfsdgjhgsdxghfgggtfgchgsdzdfsdghfgdfj'
+        return JsonResponse({'flag': 1, 'message': code})
     except Exception:
         return JsonResponse({'flag': -12, 'message': ''})
 
