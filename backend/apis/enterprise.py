@@ -254,7 +254,7 @@ def reset_customer_state(request):
     if len(customer) == 0:
         return JsonResponse({'flag': -13, 'message': ''})
     customer_name = customer[0].name
-    return JsonResponse({'flag': 1, 'message': 'shabi'})
+    return JsonResponse({'flag': 1, 'message': 'logoff success'})
     try:
         if customer[0].state > 0:
             models.Customer.objects.filter(CID = CID).update(state = -1)
