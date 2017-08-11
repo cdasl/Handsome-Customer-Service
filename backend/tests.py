@@ -770,5 +770,48 @@ class EnterpriseDialogtotalOnedayTestCase(TestCase):
         result =  jrToJson(enterprise.enterprise_dialogs_total_oneday(EID))['message']
         self.assertEqual(result, 2)
 
+class EnterpriseRobotStateTestCase(TestCase):
+    '''测试企业设置机器人状态'''
+    def setUp(self):
+        EnterSignupTestCase.setUp(self)
+
+    def test_set_robot_state(self):
+        rf = RequestFactory()
+        request = rf.post('api/enter/set_robot_state/')
+        info = {}
+        request.session = {}
+        request._body = json.dumps(info).encode('utf8')
+        #成功
+        request.session['eid'] = 'eid1' 
+        result = jrToJson(enterprise.enterprise_set_robot_state(request))['flag']
+        self.assertEqual(result, 1)
+        self.assertEqual(models.Enterprise.objects.get(EID = 'eid1').robot_state, 1)
+        #失败
+        del request.session['eid']
+        result = jrToJson(enterprise.enterprise_set_robot_state(request))['flag']
+        self.assertEqual(result, -12)
+
+class GetRobotInfoTestCase(TestCase):
+    '''测试企业获取机器人信息'''
+    def setUp(self):
+        SetRobotMessageTestCase.setUp(self)
+
+    def test_get_robot_info(self):
+        rf = RequestFactory()
+        request = rf.post('api/enter/get_robot_info/')
+        info = {}
+        request.session = {}
+        request._body = json.dumps(info).encode('utf8')
+        #成功
+        request.session['eid'] = 'eid1' 
+        result = jrToJson(enterprise.enterprise_get_robot_info(request))
+        self.assertEqual(result['flag'], 1)
+        self.assertEqual((result['message'])['robot_name'], 'rn1')
+        self.assertEqual((result['message'])['robot_icon'], 'ri1')
+        #失败
+        del request.session['eid']
+        result = jrToJson(enterprise.enterprise_get_robot_info(request))['flag']
+        self.assertEqual(result, -12)
+
 
 
