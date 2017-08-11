@@ -50,15 +50,15 @@ def enterprise_changepassword(request):
     #new_password = info['new']
     obj = models.Enterprise.objects.get(EID =EID)
     salt = obj.salt
-    #md5 = hashlib.md5()
-    hashlib.md5().update((info['old'] + salt).encode('utf8'))
-    password = hashlib.md5().hexdigest()
+    md5 = hashlib.md5()
+    md5.update((info['old'] + salt).encode('utf8'))
+    password = md5.hexdigest()
     if password != obj.password:
         return JsonResponse({'flag': -1, 'message': ''})
     salt = ''.join(random.sample(string.ascii_letters + string.digits, 8))
-    #md5 = hashlib.md5()
-    hashlib.md5().update((info['new'] + salt).encode('utf8'))
-    password = hashlib.md5().hexdigest()
+    md5 = hashlib.md5()
+    md5.update((info['new'] + salt).encode('utf8'))
+    password = md5.hexdigest()
     try:
         models.Enterprise.objects.filter(EID =EID).update(salt = salt, password = password)
         return JsonResponse({'flag': 1, 'message': ''})
@@ -323,7 +323,6 @@ def enterprise_online_customers(request):
         online_list.append({'cid': customer.CID, 'name': customer.name})
     return JsonResponse({'flag': 1, 'message': online_list})
 
-@ensure_csrf_cookie
 def enterprise_total_servicetime(EID):
     """获取企业总的服务时间，返回的是分钟"""
     """EID = 'eid'
@@ -340,7 +339,6 @@ def enterprise_total_servicetime(EID):
     total /= 60
     return JsonResponse({'flag': 1, 'message': total})
 
-@ensure_csrf_cookie
 def enterprise_total_messages(EID):
     """获取企业发送的总消息数"""
     """EID = 'eid'
@@ -356,7 +354,6 @@ def enterprise_total_messages(EID):
         total += len(models.Message.objects.filter(DID = dialog.DID))
     return JsonResponse({'flag': 1, 'message': total})
 
-@ensure_csrf_cookie
 def enterprise_total_dialogs(EID):
     """获取企业发送的总会话数"""
     """EID = 'eid'
@@ -385,7 +382,6 @@ def enterprise_dialogs(request):
             'uid': dialog.UID, 'cid': dialog.CID})
     return JsonResponse({'flag': 1, 'message': dialogs_list})
 
-@ensure_csrf_cookie
 def enterprise_total_service_number(EID):
     """获取企业服务过的总人数"""
     """EID = 'eid'
@@ -436,7 +432,6 @@ def messages_between_chatters(request):
         messages_list.append({'mid': message.MID, 'sid': message.SID, 'content': message.content, 'rid': message.RID, 'date': message.date})
     return JsonResponse({'flag': 1, 'message': messages_list})
 
-@ensure_csrf_cookie
 def enterprise_avgtime_dialogs(EID):
     """获取客服会话平均时间"""
     """EID = 'eid'
@@ -505,7 +500,6 @@ def enterprise_get_robot_info(request):
     robot_info = {'robot_name': robot_name, 'robot_icon': robot_icon, 'robot_state': robot_state}
     return JsonResponse({'flag': 1, 'message': robot_info})
 
-@ensure_csrf_cookie
 def enterprise_avgmes_dialogs(EID):
     """获取企业会话的平均消息数"""
     """EID = 'eid'
@@ -632,7 +626,6 @@ def enterprise_dialogs_oneday(request):
                 total[time1 - time2] += 1
     return JsonResponse({'flag': 1, 'message': total})
 
-@ensure_csrf_cookie
 def enterprise_dialogs_total_oneday(EID):
     """获取企业最近24小时会话总数"""
     """EID = 'eid'
