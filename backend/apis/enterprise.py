@@ -714,6 +714,7 @@ def enterprise_get_all_question(request):
     except Exception:
         return JsonResponse({'flag': -12, 'message': ''})
 
+@csrf_exempt
 def UrlValidateJudge(request):
     """判断访问是否含有session"""
     EID = 'eid'
@@ -722,11 +723,11 @@ def UrlValidateJudge(request):
     if hasattr(request, 'session') and 'eid' in request.session:
         EID = request.session['eid']
     else:
-        return redirect('http://127.0.0.1:8000/enterprise/')
+        return JsonResponse({'flag': -12, 'message': ''})
     try:
         enterprise = models.Enterprise.objects.get(EID = EID)
     except Exception:
-        return redirect('http://127.0.0.1:8000/enterprise/')
+        return JsonResponse({'flag': -12, 'message': ''})
 
 @ensure_csrf_cookie
 def enterprise_delete_question(request):
@@ -742,6 +743,27 @@ def enterprise_delete_question(request):
         QID = info['qid']
         questions = models.Question.objects.filter(QID = QID)
         questions.delete()
+        return JsonResponse({'flag': 1, 'message': ''})
+    except Exception:
+        return JsonResponse({'flag': -12, 'message': ''})
+
+@ensure_csrf_cookie
+def enterprise_modify_question(request):
+    """企业修改问题"""
+    EID = 'eid'
+    if hasattr(request, 'body'):
+        info = json.loads(request.body.decode('utf8'))
+    if hasattr(request, 'session') and 'eid' in request.session:
+        EID = request.session['eid']
+    else:
+        return JsonResponse({'flag': -12, 'message': ''})
+    try:
+        question = info['question']
+        answer = info['answer']
+        category = info['category']
+        QID = info['qid']
+        questions = models.Question.objects.filter(QID = QID)
+        questions.update(question = question, answer = answer, category = category)
         return JsonResponse({'flag': 1, 'message': ''})
     except Exception:
         return JsonResponse({'flag': -12, 'message': ''})
