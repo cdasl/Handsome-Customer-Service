@@ -7,6 +7,8 @@
     <div class="main">
       <message :content="content"></message>
       <text-input @onKeyup="send"></text-input>
+      dfzgdzgfzsdgsdz
+      <Button type="primary" class="btn" @click="transfer" v-show="talkToRobot">转接客服</Button>
     </div>
     <Modal v-model="modal" title="本次会话结束，请对客服进行评分" @on-ok="ok" @on-cancel="cancel">
       <Rate v-model="value"></Rate>
@@ -28,7 +30,9 @@
         timeout: null,
         modal: false,
         value: 0,
-        did: ''
+        did: '',
+        talkToRobot: true,
+        uid: 'connect'
       }
     },
     methods: {
@@ -40,6 +44,10 @@
         this.socket.emit('rate', {rate: 0})
         this.socket.emit('disconnect request')
       },
+      transfer () {
+        this.socket.emit('connect to customer', {uid: this.uid})
+        this.talkToRobot = false
+      },
       send (message) {
         let data = {}
         data['word'] = message
@@ -47,7 +55,7 @@
         data['self'] = true
         data['src'] = '/static/js/emojiSources/huaji/10.jpg'
         this.content.push(data)
-        this.socket.emit('user message', {data: encodeURI(message), time: data['time'], sid: this.sid, src: encodeURI(data['src'])})
+        this.socket.emit('user message', {data: encodeURI(message), time: data['time'], sid: this.sid, src: encodeURI(data['src']), flag: this.talkToRobot})
         clearTimeout(this.timeout)
         this.timeout = setTimeout(() => {
           alert('您已超过5分钟未发送消息')
@@ -73,8 +81,11 @@
         let namespace = '/test'
         /* global location io: true */
         this.socket = io.connect('http://' + document.domain + ':' + location.port + namespace)
-        this.socket.emit('a user connected', {uid: 'connect to customer'})
-        this.socket.on('connect to customer', (msg) => {
+        this.socket.emit('a user connected', {uid: this.uid})
+        this.socket.on('connected', (msg) => {
+          this.uid = msg['sid']
+        })
+        this.socket.on('connected to customer', (msg) => {
           this.sid = msg['sid']
           /* global alert: true */
           alert('connect to customer')
@@ -132,5 +143,9 @@
 #app .message {
   height: calc(100% - 160px);
 }
-
+.btn {
+  position: absolute;
+  bottom: 26%;
+  right: 0;
+}
 </style>
