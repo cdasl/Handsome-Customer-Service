@@ -726,6 +726,7 @@ def UrlValidateJudge(request):
         return JsonResponse({'flag': -12, 'message': ''})
     try:
         enterprise = models.Enterprise.objects.get(EID = EID)
+        return JsonResponse({'flag': 1, 'message': ''})
     except Exception:
         return JsonResponse({'flag': -12, 'message': ''})
 
