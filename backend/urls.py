@@ -66,4 +66,11 @@ urlpatterns = [
     url(r'^api/enter/set_robot_question/$', enterprise.enterprise_set_robot_question),
     url(r'^api/enter/get_all_question/$', enterprise.enterprise_get_all_question),
     url(r'^api/url_validate/$', enterprise.UrlValidateJudge),
+    url(r'^api/enter/chattype/$', enterprise.enterprise_set_chatbox_type),
+    url(r'^api/enter/reset_password/$', enterprise.enterprise_changepassword),
+    url(r'^api/enter/invite/$', enterprise.enterprise_invite),
+    url(r'^api/enter/dialogs/$', enterprise.enterprise_dialogs),
+    url(r'^api/enter/dialog_message/$', enterprise.enterprise_dialog_messages),
+    url(r'^api/enter/customer_info/$', enterprise.inquire_customer_info),
+    url(r'^api/enter/delete_question/$', enterprise.enterprise_delete_question),
 ]
