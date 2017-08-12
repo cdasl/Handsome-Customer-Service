@@ -73,4 +73,5 @@ urlpatterns = [
     url(r'^api/enter/dialog_message/$', enterprise.enterprise_dialog_messages),
     url(r'^api/enter/customer_info/$', enterprise.inquire_customer_info),
     url(r'^api/enter/delete_question/$', enterprise.enterprise_delete_question),
+    url(r'^api/enter/modify_question/$', enterprise.enterprise_modify_question),
 ]

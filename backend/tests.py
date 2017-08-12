@@ -877,11 +877,12 @@ class UrlValidateTestCase(TestCase):
         request.session = {}
         request._body = json.dumps(info).encode('utf8')
         #没有eid
-        result = enterprise.UrlValidateJudge(request)
-        self.assertIsInstance(result, HttpResponseRedirect)
+        result = jrToJson(enterprise.UrlValidateJudge(request))
+        self.assertEqual(result['flag'], -12)
         #eid错误
         request.session['eid'] = 'hahaha'
-        self.assertIsInstance(result, HttpResponseRedirect)
+        result = jrToJson(enterprise.UrlValidateJudge(request))
+        self.assertEqual(result['flag'], -12)
 
 class DeleteQuestionTestCase(TestCase):
     '''测试企业删除问题'''
@@ -904,4 +905,30 @@ class DeleteQuestionTestCase(TestCase):
         #失败
         del request.session['eid']
         result = jrToJson(enterprise.enterprise_delete_question(request))['flag']
+        self.assertEqual(result, -12)
+
+class EnterpriseModifyQuestionTestCase(TestCase):
+    '''测试企业修改问题'''
+    def setUp(self):
+        EnterpriseGetAllQuestionTestCase.setUp(self)
+
+    def test_modify_question(self):
+        rf = RequestFactory()
+        request = rf.post('api/enter/modify_question/')
+        info = {
+            'qid': '2', 
+            'question': '777', 
+            'answer': 'TTT', 
+            'category': 'fun'
+        }
+        request.session = {}
+        request._body = json.dumps(info).encode('utf8')
+        #成功
+        request.session['eid'] = 'test_eid1'
+        response = enterprise.enterprise_modify_question(request)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual((models.Question.objects.get(QID = '2')).answer, 'TTT')
+        #失败
+        del request.session['eid']
+        result = jrToJson(enterprise.enterprise_modify_question(request))['flag']
         self.assertEqual(result, -12)
