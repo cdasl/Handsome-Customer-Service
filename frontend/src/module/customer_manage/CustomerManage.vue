@@ -67,8 +67,8 @@
         currentcontent: [],
         status: '2',
         sid: '',
-        cid: 'ccid',
-        eid: 'eeid'
+        cid: 'cid',
+        eid: 'eid'
       }
     },
     computed: {
@@ -157,7 +157,7 @@
         return ''
       },
       getCid () {
-        fetch('api/customer_get_id/', {
+        fetch('/api/customer/get_id/', {
           method: 'post',
           credentials: 'same-origin',
           headers: {
@@ -175,6 +175,7 @@
       if (this.socket === null) {
           /* global location io: true */
         this.socket = io.connect('http://' + document.domain + ':' + location.port + '/test')
+        this.getCid()
         this.socket.emit('a customer connected', {cid: this.cid})
         this.socket.on('customer connected', (msg) => {
           console.log(msg['data'])
@@ -189,7 +190,7 @@
         this.socket.on('my response', (msg) => {
           let data = {}
           data['word'] = decodeURI(msg['data'])
-          data['time'] = this.dateformat(new Date())
+          data['time'] = msg['time']
           data['self'] = false
           data['src'] = decodeURI(msg['src'])
           this.content[msg['sid']].push(data)

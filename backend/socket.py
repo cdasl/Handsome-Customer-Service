@@ -2,7 +2,9 @@ from django.shortcuts import render
 import socketio
 from django.views.decorators.csrf import ensure_csrf_cookie,csrf_exempt
 import hashlib, time, datetime
-from .models import Dialog, Message
+from .models import Dialog, Message, Customer
+from chatterbot import ChatBot
+import urllib.parse
 
 async_mode = None
 sio = socketio.Server(async_mode = async_mode)
@@ -11,6 +13,8 @@ talker_list = {}
 customer_list = {}
 conversation = {}
 starttime = {}
+chatbot = ChatBot('Ron Obvious', trainer = 'chatterbot.trainers.ChatterBotCorpusTrainer')
+chatbot.train("chatterbot.corpus.chinese")
 
 def get_mid(msg):
     """获取消息的mid"""
@@ -28,9 +32,14 @@ def user(request):
 
 @sio.on('user message', namespace = '/test')
 def user_message(sid, message):
-    global conversation, talker_list
-    sio.emit('my response', {'data': message['data'], 'time': message['time'], 'src': message['src'], 'sid': sid}, room = message['sid'], namespace = '/test')
-    conversation[sid].append({'send': talker_list[sid], 'receive': talker_list[message['sid']], 'time': message['time'], 'data': message['data']})
+    global conversation, talker_list, chatbot
+    if not message['flag']:
+        sio.emit('my response', {'data': message['data'], 'time': message['time'], 'src': message['src'], 'sid': sid}, room = message['sid'], namespace = '/test')
+        conversation[sid].append({'send': talker_list[sid], 'receive': talker_list[message['sid']], 'time': message['time'], 'data': message['data']})
+    else:
+        sio.emit('my response', {'data': chatbot.get_response(urllib.parse.unquote(message['data'])).text, 'time': time2str(), 'src': '/static/img/robot_icon/1.jpg'}, room = sid, namespace = '/test')
+        conversation[sid].append({'send': talker_list[sid], 'receive': 'robot', 'time': message['time'], 'data': message['data']})
+        conversation[sid].append({'send': 'robot', 'receive': talker_list[sid], 'time': message['time'], 'data': chatbot.get_response(message['data'])})
 
 @sio.on('customer message', namespace = '/test')
 def customer_message(sid, message):
@@ -53,6 +62,11 @@ def write_message(sid,message):
     Message.objects.bulk_create(msglist)
     Dialog.objects.create(DID = did, EID = message['eid'], start_time = starttime[message['sid']], end_time = endtime, UID = talker_list[message['sid']], CID = talker_list[sid])
     del conversation[message['sid']]
+    del start_time[message['sid']]
+    del talker_list[message['sid']]
+    customer = Customer.objects.get(CID = talker_list[sid])
+    customer.serviced_number += 1
+    customer.save()
     sio.emit('user disconnected', {'did': did}, room = message['sid'], namespace = '/test')
 
 @sio.on('rate', namespace = '/test')
@@ -63,8 +77,18 @@ def rate(sid, message):
 
 @sio.on('a user connected', namespace = '/test')
 def user_connect(sid, message):
-    global talker_list, customer_list, conversation
-    talker_list[sid] = message['uid']
+    global talker_list
+    md = hashlib.md5()
+    md.update(str(int(time.time())).encode('utf8'))
+    uid = md.hexdigest()
+    talker_list[sid] = uid
+    conversation[sid] = []
+    starttime[sid] = time2str()
+    sio.emit('connected', {'uid': uid})
+
+@sio.on('connect to customer', namespace = '/test')
+def connect_customer(sid, message):
+    global customer_list, conversation
     num = 100
     target = None
     for customer_sid in customer_list:
@@ -74,11 +98,12 @@ def user_connect(sid, message):
     if target == None:
         sio.emit('no customer online', {'data': 'no customer on line'}, room = sid, namespace = '/test')
     else:
-        sio.emit('connect to customer', {'sid': target}, room = sid, namespace = '/test')
+        sio.emit('connected to customer', {'sid': target}, room = sid, namespace = '/test')
         sio.emit('new user', {'sid': sid}, room = target, namespace = '/test')
+        customer = Customer.objects.get(CID = target)
+        customer.service_number += 1
+        customer.save()
         customer_list[target] += 1
-        conversation[sid] = []
-        starttime[sid] = time2str()
 
 @sio.on('a customer connected', namespace = '/test')
 def customer_connect(sid, message):
