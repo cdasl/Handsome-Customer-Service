@@ -16,8 +16,8 @@
         <Page :total="questionData.length" @on-change="changePage" :page-size="pageSize"></Page>
     </Row>
     <br>
-    <Button type="primary" size="large" @click="exportData()"><Icon type="ios-download-outline"></Icon> 导出原始数据</Button>
-    <Button type="primary" size="large" @click="exportData()"><Icon type="ios-download-outline"></Icon> 导出排序和过滤后的数据</Button>
+    <Button type="primary" size="large" @click="exportData(1)"><Icon type="ios-download-outline"></Icon> 导出原始数据</Button>
+    <Button type="primary" size="large" @click="exportData(2)"><Icon type="ios-download-outline"></Icon> 导出排序和过滤后的数据</Button>
     <Modal
       v-model="show"
       title="添加问题"
@@ -290,15 +290,21 @@
         })
         this.init(true)
       },
-      exportData () {
+      exportData (num) {
         let csv = '\ufeff'
         let keys = []
+        let data = []
+        if (num === 1) {
+          data = this.questionDataAll
+        } else if (num === 2) {
+          data = this.questionData
+        }
         this.questionForm.forEach(function (item) {
           csv += '"' + item['title'] + '",'
           keys.push(item['key'])
         })
         csv = csv.replace(/,$/, '\n')
-        this.questionData.forEach(function (item) {
+        data.forEach(function (item) {
           keys.forEach(function (key) {
             csv += '"' + item[key] + '",'
           })
