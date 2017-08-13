@@ -64,7 +64,7 @@
         <span>{{ statics['avgMessages'] }}条/次</span>
       </div>
     </div>
-    <h3>选择统计图形状<h3>
+    <h3>选择统计图形状</h3>
     <Select v-model="chartType" style="width:200px">
       <Option v-for="item in typeList" :value="item.value" :key="item.value">{{ item.label }}</Option>
     </Select>
@@ -131,7 +131,7 @@
       },
       async getChart (num) {
         // 从后端获取统计图所需要的数据（欠一个）
-        let urls = ['/api/enter/message_oneday/', '/api/enter/dialog_oneday/', '/api/enter/serviced_oneday/']
+        let urls = ['/api/enter/get_enterprise_msgnum/', '/api/enter/get_oneday/', '/api/enter/get_enter_serviced_num/']
         let titles = ['过去24小时消息数统计', '过去24小时会话数统计', '过去24小时服务人数统计']
         let res = await this.fetchBase(urls[num - 1], {})
         if (res['flag'] === -12) {
@@ -145,9 +145,8 @@
           let tmp = currentHour - i
           this.data.push({
             name: tmp > 0 ? tmp : tmp + 24,
-            value: res['message'][23 - i]
+            value: res['message'][24 - i]
           })
-          console.log(res['message'][23 - i])
         }
       },
       getCookie (cName) {
@@ -183,26 +182,26 @@
 }
 .item {
   display: inline-block;
-  width: 200px;
-  height: 200px;
-  margin-right: 10px;
-  margin-bottom: 20px;
+  width: 15vw;
+  height: 20vh;
+  margin-right: 2vw;
+  margin-bottom: 2vh;
   border: 1px solid #ddd;
   border-radius: 20px;
   box-shadow: 5px 5px 2px #888888;
 }
 .title {
-  width: 200px;
-  height: 80px;
+  width: 100%;
+  height: 7vh;
 }
 .data {
-  width: 200px;
-  height: 120px;
+  width: 100%;
+  height: 13vh;
 }
 .title p {
-  width: 150px;
+  width: 70%;
   font-size: 1.4em;
-  line-height: 80px;
+  line-height: 7vh;
   margin-left: auto;
   margin-right: auto;
 }
@@ -212,10 +211,10 @@
 }
 .data span {
   display: block;
-  width: 120px;
+  width: 80%;
   font-size: 1.8em;
   font-weight: bold;
-  line-height: 100px;
+  line-height: 13vh;
   margin-left: auto;
   margin-right: auto;
   color: rgb(52, 101, 255);

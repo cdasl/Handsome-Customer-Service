@@ -1,16 +1,23 @@
 <template>
   <div id="app">
     <Button @click="addQuestion" type="primary">添加问题</Button>
-    <Select v-model="myCategory" style="width:200px" @on-change="changeCategory">
+    <Select v-model="myCategory" style="width:200px;" @on-change="changeCategory">
       <Option v-for="item of categoryList2" :value="item" :key="item">{{ item }}</Option>
+    </Select>
+    <span style="margin-left: 5%;">按关键字排序</span>
+    <Select v-model="sortKeyWord" @on-change="changeSort" style="width: 200px;">
+      <Option v-for="item of sortList" :value="item" :key="item">{{ item }}</Option>
+    </Select>
+    <Select v-model="sortOrder" @on-change="changeSort" style="width: 200px;">
+      <Option v-for="item of orderList" :value="item" :key="item">{{ item }}</Option>
     </Select>
     <Row>
         <Table border :columns="questionForm" :data="questionDataShow" ref="table"></Table>
         <Page :total="questionData.length" @on-change="changePage" :page-size="pageSize"></Page>
     </Row>
     <br>
-    <Button type="primary" size="large" @click="exportData(1)"><Icon type="ios-download-outline"></Icon> 导出原始数据</Button>
-    <Button type="primary" size="large" @click="exportData(2)"><Icon type="ios-download-outline"></Icon> 导出排序和过滤后的数据</Button>
+    <Button type="primary" size="large" @click="exportData()"><Icon type="ios-download-outline"></Icon> 导出原始数据</Button>
+    <Button type="primary" size="large" @click="exportData()"><Icon type="ios-download-outline"></Icon> 导出排序和过滤后的数据</Button>
     <Button @click="add">添加</Button>
     <Modal
       v-model="show"
@@ -54,6 +61,11 @@
   export default {
     data () {
       return {
+        sortList: ['', '类别'], // 排序的所有关键字
+        sortKeyWord: '', // 排序关键字
+        sortOrder: '升序', // 升序或降序
+        orderList: ['升序', '降序'],
+        qid: '', // 问题id
         myCategory: '全部问题', // 当前问题类别
         myQuestoin: '', // 添加问题的问题
         myAnswer: '', // 添加问题的答案
@@ -65,17 +77,17 @@
         show2: false, // 显示修改问题
         questionForm: [
           {
-            title: '问题',
-            key: 'question'
+            'title': '问题',
+            'key': 'question'
           }, {
-            title: '答案',
-            key: 'answer'
+            'title': '答案',
+            'key': 'answer'
           }, {
-            title: '类别',
-            key: 'category'
+            'title': '类别',
+            'key': 'category'
           }, {
-            title: '操作',
-            key: 'action',
+            'title': '操作',
+            'key': 'action',
             width: 150,
             align: 'center',
             render: (h, params) => {
@@ -111,11 +123,7 @@
         ], // 问题表格格式
         questionDataAll: [], // 所有问题
         questionData: [], // 当前类别所有问题
-        questionDataShow: [{
-          question: '为什么我有了奥特曼变僧器还是不能变僧？',
-          answer: '你可能买了假货',
-          category: '类别'
-        }], // 当前显示的所有问题
+        questionDataShow: [], // 当前显示的所有问题
         current: 1, // 页码
         pageSize: 10 // 每页的数据条数
       }
@@ -134,14 +142,14 @@
         })
         .then((res) => res.json())
       },
-      // 根据当前情况将questionDataAll中的数据传给questionData和questionDataShow
       init (iWantToChangePage) {
+        // 根据当前情况将questionDataAll中的数据传给questionData和questionDataShow
         if (this.myCategory === '全部问题') {
           this.questionData = this.questionDataAll
         } else {
           this.questionData = []
           for (let i = 0; i < this.questionDataAll.length; ++i) {
-            if (this.questionDataAll[i].category === this.myCategory) {
+            if (this.questionDataAll[i]['category'] === this.myCategory) {
               this.questionData.push(this.questionDataAll[i])
             }
           }
@@ -159,38 +167,57 @@
       },
       add () {
         this.questionDataAll.push({
-          question: Math.round(Math.random() * 100),
-          answer: '答案',
-          category: this.categoryList[Math.floor(Math.random() * this.categoryList.length)]
+          'question': Math.round(Math.random() * 100),
+          'answer': '答案',
+          'category': new Date()
         })
         this.changeCategory()
       },
-      submitQuestion () {
+      async submitQuestion () {
         // 提交添加问题
+        let cate = ''
+        if (this.myQuestoin.trim() === '') {
+          this.$Message.warning('问题内容不能为空')
+          return
+        }
         if (this.currentCategory.trim() === '' && this.selfCategory.trim() === '') {
           this.$Message.warning('类别不能为空')
           return
         } else if (this.selfCategory.trim() !== '') {
-          this.$Message.success('自定义')
+          cate = this.selfCategory.trim()
         } else {
-          this.$Message.success('下拉框')
+          cate = this.currentCategory.trim()
         }
-        this.questionDataAll.push({
-          question: this.myQuestoin,
-          answer: this.myAnswer,
-          category: this.selfCategory.trim() === '' ? this.currentCategory : this.selfCategory
+        let res = await this.fetchBase('/api/enter/set_robot_question/', {
+          'question': this.myQuestoin,
+          'answer': this.myAnswer,
+          'category': cate
         })
-        this.init(true)
+        if (res['flag'] === -12) {
+          this.$Message.error('问题添加失败')
+        } else {
+          this.$Message.success('添加成功')
+          this.questionDataAll.push({
+            'qid': res['message'],
+            'question': this.myQuestoin,
+            'answer': this.myAnswer,
+            'category': this.selfCategory.trim() === '' ? this.currentCategory : this.selfCategory
+          })
+          this.init(true)
+        }
       },
-      submitModify () {
+      async submitModify () {
         // 提交修改问题
         for (let i = 0; i < this.questionDataAll.length; ++i) {
-          if (this.questionDataAll[i].question === this.myQuestoin) {
-            this.questionDataAll[i].answer = this.myAnswer
-            this.questionDataAll[i].category = this.currentCategory
+          if (this.questionDataAll[i]['qid'] === this.qid) {
+            this.questionDataAll[i]['question'] === this.myQuestoin
+            this.questionDataAll[i]['answer'] = this.myAnswer
+            this.questionDataAll[i]['category'] = this.currentCategory
             break
           }
         }
+        let res = await this.fetchBase('/')
+
         this.init(false)
         this.cancel()
       },
@@ -208,42 +235,85 @@
       },
       modify (index) {
         // 弹出修改问题模态框
-        this.$Message.success('' + this.questionDataShow[index].question)
-        this.myQuestoin = this.questionDataShow[index].question
-        this.myAnswer = this.questionDataShow[index].answer
-        this.currentCategory = this.questionDataShow[index].category
+        this.qid = this.questionDataShow[index]['qid']
+        this.myQuestoin = this.questionDataShow[index]['question']
+        this.myAnswer = this.questionDataShow[index]['answer']
+        this.currentCategory = this.questionDataShow[index]['category']
         this.show2 = true
       },
-      remove (index) {
+      async remove (index) {
         // 提交删除问题
-        this.$Message.success('' + this.questionDataShow[index].question)
-        let qid = this.questionDataShow[index]
+        let qid = this.questionDataShow[index]['qid']
         let i = 0
         for (; i < this.questionDataAll.length; ++i) {
-          if (this.questionDataAll[i] === qid) {
+          if (this.questionDataAll[i]['qid'] === qid) {
             break
           }
         }
-        this.questionDataAll.splice(i, 1)
-        this.init(false)
-        // 发送请求删除该问题（欠一个）
+        let res = await this.fetchBase('/api/enter/delete_question/', {
+          'qid': this.questionDataShow[index]['qid']
+        })
+        if (res['flag'] === -12) {
+          this.$Message.warning('删除失败')
+        } else {
+          this.$Message.success('删除成功')
+          this.questionDataAll.splice(i, 1)
+          this.init(false)
+        }
       },
       changePage (current) {
         // 修改页码
         this.current = current
         this.init(false)
       },
-      exportData (type) {
-        if (type === 1) {
-          this.$refs.table.exportCsv({
-            filename: '原始数据'
-          })
-        } else if (type === 2) {
-          this.$refs.table.exportCsv({
-            filename: '排序和过滤后的数据',
-            original: false
-          })
+      changeSort () {
+        // 排序
+        let key = ''
+        if (this.sortKeyWord === '类别') {
+          key = 'category'
+        } else if (this.sortKeyWord === '') {
+          return
         }
+        let num = 1
+        if (this.sortOrder === '降序') {
+          num = -1
+        }
+        this.questionData.sort((item1, item2) => {
+          if (item1[key] > item2[key]) {
+            return num
+          } else if (item1[key] < item2[key]) {
+            return -num
+          } else {
+            return 0
+          }
+        })
+        this.init(true)
+      },
+      exportData () {
+        let csv = '\ufeff'
+        let keys = []
+        this.questionForm.forEach(function (item) {
+          csv += '"' + item['title'] + '",'
+          keys.push(item['key'])
+        })
+        csv = csv.replace(/,$/, '\n')
+        this.questionData.forEach(function (item) {
+          keys.forEach(function (key) {
+            csv += '"' + item[key] + '",'
+          })
+          csv = csv.replace(/\,$/, '\n')
+        })
+        csv = csv.replace(/"null"/g, '""')
+        var blob = new Blob([csv], {
+          type: 'text/csv,charset=UTF-8'
+        })
+        let csvUrl = window.URL.createObjectURL(blob)
+        let a = document.createElement('a')
+        a.download = '知识库.csv'
+        a.href = csvUrl
+        document.body.appendChild(a)
+        a.click()
+        document.body.removeChild(a)
       },
       getCookie (cName) {
         if (document.cookie.length > 0) {
@@ -258,6 +328,22 @@
           }
         }
         return ''
+      }
+    },
+    async mounted () {
+      // 获取所有问题信息，并收集所有类别
+      let res = await this.fetchBase('/api/enter/get_all_question/', {})
+      if (res['flag'] === -12) {
+        this.$Message.error('问题获取失败')
+      } else {
+        this.questionDataAll = res['message']
+        this.init(true)
+        for (let i = 0; i < this.questionDataAll.length; ++i) {
+          if (this.categoryList.indexOf(this.questionDataAll[i]['category']) === -1) {
+            this.categoryList.push(this.questionDataAll[i]['category'])
+            this.categoryList2.push(this.questionDataAll[i]['category'])
+          }
+        }
       }
     }
   }

@@ -63,14 +63,14 @@
   export default {
     data () {
       return {
-        showRobot: '', // 显示机器人信息
+        showRobot: false, // 显示机器人信息
         iconList1: ['1.jpg', '2.jpg', '3.jpg', '4.jpg', '5.jpg', '6.jpg', '7.jpg', '8.jpg', '9.jpg'],
         iconList2: ['10.jpg', '11.jpg', '12.jpg', '13.jpg', '14.jpg', '15.jpg'],
         imgSrc: '', // 机器人头像地址，真正地址
         iconSrc: '', // 机器人头像地址，表示上述简写
         robotName: '',
         robotIcon: '',
-        innerCode: '内嵌', // 内嵌码
+        innerCode: '', // 内嵌码
         popType: '',
         types: [
           {
@@ -104,7 +104,7 @@
       },
       async switchRobot () {
         // 向后端发送设置机器人开关
-        let res = await this.fetchBase('/api/enter/robot_switch/', {})
+        let res = await this.fetchBase('/api/enter/set_robot_state/', {})
         if (res['flag'] === -12) {
           this.$Message.error('设置错误')
           this.showRobot = !this.showRobot
@@ -121,11 +121,12 @@
         this.imgSrc = '/static/img/robot_icon/' + this.iconSrc
       },
       async resetPassword () {
+        // 企业修改密码
         if (this.password.new !== this.password.newConfirm) {
           this.$Message.warning('两次输入的新密码不一致')
-          this.reset()
+        } else if (this.password.new.trim().length < 8) {
+          this.$Message.warning('密码长度不能小于8')
         } else {
-          // 修改密码
           let res = await this.fetchBase('/api/enter/reset_password/', {
             'old': this.password.old,
             'new': this.password.new
@@ -137,8 +138,8 @@
           } else {
             this.$Message.success('修改成功')
           }
-          this.reset()
         }
+        this.reset()
       },
       async submit () {
         //  提交设置机器人
@@ -183,15 +184,24 @@
       }
     },
     async mounted () {
-      let res = await this.fetchBase('/api/enter/robot_into/', {})
+      // 获取机器人信息和innerCode
+      let res = await this.fetchBase('/api/enter/get_robot_info/', {})
       if (res['flag'] === -12) {
         this.$Message.error('机器人信息获取失败')
       } else {
         this.imgSrc = res['message']['robot_icon']
-        this.robot_name = res['message']['robot_name']
+        this.robotName = res['message']['robot_name']
         if (res['message']['robot_state'] === 1) {
           this.showRobot = true
         }
+      }
+      res = await this.fetchBase('/api/enter/chattype/', {
+        'chatbox_type': 1
+      })
+      if (res['flag'] === -12) {
+        this.$Message.error('弹窗方式获取失败')
+      } else {
+        this.innerCode = res['message']
       }
     }
   }

@@ -1,12 +1,19 @@
 <template>
   <div id="app">
+    <span>按关键字排序</span>
+    <Select v-model="sortKeyWord" @on-change="changeSort" style="width: 200px;">
+      <Option v-for="item of sortList" :value="item" :key="item">{{ item }}</Option>
+    </Select>
+    <Select v-model="sortOrder" @on-change="changeSort" style="width: 200px;">
+      <Option v-for="item of orderList" :value="item" :key="item">{{ item }}</Option>
+    </Select>
     <Row>
         <Table border :columns="dialogForm" :data="dialogDataShow" ref="table"></Table>
         <Page :total="dialogData.length" @on-change="changePage" :page-size="pageSize"></Page>
     </Row>
     <br>
-    <Button type="primary" size="large" @click="exportData(1)"><Icon type="ios-download-outline"></Icon> 导出原始数据</Button>
-    <Button type="primary" size="large" @click="exportData(2)"><Icon type="ios-download-outline"></Icon> 导出排序和过滤后的数据</Button>
+    <Button type="primary" size="large" @click="exportData()"><Icon type="ios-download-outline"></Icon> 导出原始数据</Button>
+    <Button type="primary" size="large" @click="exportData()"><Icon type="ios-download-outline"></Icon> 导出排序和过滤后的数据</Button>
     <Modal
         v-model="show"
         title="对话框"
@@ -29,19 +36,23 @@
     components: {Message},
     data () {
       return {
+        sortList: ['', '开始时间', '结束时间', '用户ID', '客服ID'], // 排序的所有关键字
+        sortKeyWord: '', // 排序关键字
+        sortOrder: '升序', // 升序或降序
+        orderList: ['升序', '降序'],
         customerForm: [
           {
-            title: '姓名',
-            key: 'name'
+            'title': '姓名',
+            'key': 'name'
           }, {
-            title: '邮箱',
-            key: 'email'
+            'title': '邮箱',
+            'key': 'email'
           }, {
-            title: '服务过的人数',
-            key: 'serviced_number'
+            'title': '服务过的人数',
+            'key': 'serviced_number'
           }, {
-            title: '最后一次登陆时间',
-            key: 'last_login'
+            'title': '最后一次登陆时间',
+            'key': 'last_login'
           }
         ], // 客服表格格式
         customerData: [], // 客服数据
@@ -49,20 +60,20 @@
         content: [], // 会话内容
         dialogForm: [
           {
-            title: '开始时间',
-            key: 'startTime'
+            'title': '开始时间',
+            'key': 'start_time'
           }, {
-            title: '结束时间',
-            key: 'endTime'
+            'title': '结束时间',
+            'key': 'end_time'
           }, {
-            title: '用户ID',
-            key: 'uid'
+            'title': '用户ID',
+            'key': 'uid'
           }, {
-            title: '客服ID',
-            key: 'cid'
+            'title': '客服ID',
+            'key': 'cid'
           }, {
-            title: '操作',
-            key: 'action',
+            'title': '操作',
+            'key': 'action',
             width: 150,
             align: 'center',
             render: (h, params) => {
@@ -105,6 +116,15 @@
         })
         .then((res) => res.json())
       },
+      init (iWantToChangePage) {
+        // 根据当前情况将dialogData中的数据传给dialogDataShow
+        if (iWantToChangePage) {
+          this.current = 1
+          this.dialogDataShow = this.dialogData.slice(0, Math.min(this.pageSize, this.dialogData.length))
+        } else {
+          this.dialogDataShow = this.dialogData.slice((this.current - 1) * this.pageSize, Math.min((this.current - 1) * this.pageSize + this.pageSize, this.dialogData.length))
+        }
+      },
       async showCustomerInfo (index) {
         // 根据客服id获取客服信息
         let res = await this.fetchBase('/api/enter/customer_info/', {
@@ -112,11 +132,11 @@
         })
         if (res['flag'] > 0) {
           this.customerData = [{
-            name: res['message']['name'],
-            email: res['message']['email'],
-            serviced_number: res['message']['serviced_number'],
-            last_login: res['message']['last_login'],
-            icon: res['message']['icon']
+            'name': res['message']['name'],
+            'email': res['message']['email'],
+            'serviced_number': res['message']['serviced_number'],
+            'last_login': res['message']['last_login'],
+            'icon': res['message']['icon']
           }]
           this.showDialog(index)
         } else {
@@ -134,7 +154,6 @@
           this.content = []
           for (let i = 0; i < res['message'].length; ++i) {
             if (res['message'][i]['sid'] === this.dialogDataShow[index].cid) {
-              console.log(res['message'][i]['icon'])
               this.content.push({
                 'word': res['message'][i]['content'],
                 'time': res['message'][i]['date'],
@@ -165,17 +184,60 @@
         this.current = current
         this.dialogDataShow = this.dialogData.slice((this.current - 1) * this.pageSize, Math.min((this.current - 1) * this.pageSize + this.pageSize, this.dialogData.length))
       },
-      exportData (type) {
-        if (type === 1) {
-          this.$refs.table.exportCsv({
-            filename: '原始数据'
-          })
-        } else if (type === 2) {
-          this.$refs.table.exportCsv({
-            filename: '排序和过滤后的数据',
-            original: false
-          })
+      changeSort () {
+        // 排序
+        let key = ''
+        if (this.sortKeyWord === '开始时间') {
+          key = 'start_time'
+        } else if (this.sortKeyWord === '结束时间') {
+          key = 'end_time'
+        } else if (this.sortKeyWord === '客服ID') {
+          key = 'cid'
+        } else if (this.sortKeyWord === '用户ID') {
+          key = 'uid'
+        } else if (this.sortKeyWord === '') {
+          return
         }
+        let num = 1
+        if (this.sortOrder === '降序') {
+          num = -1
+        }
+        this.dialogData.sort((item1, item2) => {
+          if (item1[key] > item2[key]) {
+            return num
+          } else if (item1[key] < item2[key]) {
+            return -num
+          } else {
+            return 0
+          }
+        })
+        this.init(true)
+      },
+      exportData (type) {
+        let csv = '\ufeff'
+        let keys = []
+        this.dialogForm.forEach(function (item) {
+          csv += '"' + item['title'] + '",'
+          keys.push(item['key'])
+        })
+        csv = csv.replace(/,$/, '\n')
+        this.dialogData.forEach(function (item) {
+          keys.forEach(function (key) {
+            csv += '"' + item[key] + '",'
+          })
+          csv = csv.replace(/\,$/, '\n')
+        })
+        csv = csv.replace(/"null"/g, '""')
+        var blob = new Blob([csv], {
+          type: 'text/csv,charset=UTF-8'
+        })
+        let csvUrl = window.URL.createObjectURL(blob)
+        let a = document.createElement('a')
+        a.download = '历史会话.csv'
+        a.href = csvUrl
+        document.body.appendChild(a)
+        a.click()
+        document.body.removeChild(a)
       },
       getCookie (cName) {
         if (document.cookie.length > 0) {
@@ -196,18 +258,8 @@
       // 组件装载完成之后获取历史会话列表
       let res = await this.fetchBase('/api/enter/dialogs/', {})
       if (res['flag'] > 0) {
-        for (let i = 0; i < res['message'].length; ++i) {
-          this.dialogData.push({
-            startTime: res['message'][i]['start_time'],
-            endTime: res['message'][i]['end_time'],
-            uid: 'test_uid',
-            cid: 'test_cid',
-            did: res['message'][i]['did']
-          })
-        }
-        this.current = 1
-        this.pageSize = 10
-        this.dialogDataShow = this.dialogData.slice((this.current - 1) * this.pageSize, Math.min((this.current - 1) * this.pageSize + this.pageSize, this.dialogData.length))
+        this.dialogData = res['message']
+        this.init(true)
       } else if (res['flag'] === -12) {
         this.$Message.error('历史会话获取失败')
       }
