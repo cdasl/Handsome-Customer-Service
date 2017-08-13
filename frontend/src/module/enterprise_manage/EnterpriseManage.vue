@@ -99,7 +99,7 @@
 <style scoped>
 .row {
   display: flex;
-  height: 100%;
+  height: 80%;
 }
 .layout {
   border: 1px solid #d7dde4;
@@ -107,14 +107,13 @@
   position: relative;
   border-radius: 4px;
   overflow: hidden;
-  min-height: 100%;
-  /* height: 100%; */
+  min-height: 80%;
 }
 .layout-breadcrumb {
   padding: 10px 15px 0;
 }
 .layout-content {
-  min-height: 1080px;
+  min-height: 760px; 
   margin: 15px;
   overflow: hidden;
   background: #fff;

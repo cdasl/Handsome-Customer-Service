@@ -16,8 +16,7 @@
     </Row>
     <br>
     <Button type="primary" size="large" @click="exportData(1)"><Icon type="ios-download-outline"></Icon> 导出原始数据</Button>
-    <Button type="primary" size="large" @click="exportData(2)"><Icon type="ios-download-outline"></Icon> 导出排序和过滤后的数据</Button>
-  </div>
+    </div>
 </template>
 <script>
   export default {
