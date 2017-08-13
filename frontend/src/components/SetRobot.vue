@@ -18,7 +18,6 @@
     <br>
     <Button type="primary" size="large" @click="exportData()"><Icon type="ios-download-outline"></Icon> 导出原始数据</Button>
     <Button type="primary" size="large" @click="exportData()"><Icon type="ios-download-outline"></Icon> 导出排序和过滤后的数据</Button>
-    <Button @click="add">添加</Button>
     <Modal
       v-model="show"
       title="添加问题"
@@ -164,14 +163,6 @@
       changeCategory () {
         // 改变问题类别
         this.init(true)
-      },
-      add () {
-        this.questionDataAll.push({
-          'question': Math.round(Math.random() * 100),
-          'answer': '答案',
-          'category': new Date()
-        })
-        this.changeCategory()
       },
       async submitQuestion () {
         // 提交添加问题
