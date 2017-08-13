@@ -208,17 +208,27 @@
       },
       async submitModify () {
         // 提交修改问题
-        for (let i = 0; i < this.questionDataAll.length; ++i) {
+        let i = 0
+        for (i = 0; i < this.questionDataAll.length; ++i) {
           if (this.questionDataAll[i]['qid'] === this.qid) {
-            this.questionDataAll[i]['question'] === this.myQuestoin
-            this.questionDataAll[i]['answer'] = this.myAnswer
-            this.questionDataAll[i]['category'] = this.currentCategory
             break
           }
         }
-        let res = await this.fetchBase('/')
-
-        this.init(false)
+        let res = await this.fetchBase('/api/enter/modify_question/', {
+          'qid': this.questionDataAll[i]['qid'],
+          'question': this.myQuestoin,
+          'answer': this.myAnswer,
+          'category': this.selfCategory === '' ? this.currentCategory : this.selfCategory
+        })
+        if (res['flag'] === -12) {
+          this.$Message.error('修改失败')
+        } else {
+          this.$Message.success('修改成功')
+          this.questionDataAll[i]['question'] = this.myQuestoin
+          this.questionDataAll[i]['answer'] = this.myAnswer
+          this.questionDataAll[i]['category'] = this.selfCategory === '' ? this.currentCategory : this.selfCategory
+          this.init(false)
+        }
         this.cancel()
       },
       addQuestion () {
