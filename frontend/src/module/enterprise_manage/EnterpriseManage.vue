@@ -75,6 +75,24 @@
       select (name) {
         this.type = name
       }
+    },
+    created () {
+      fetch('/api/url_validate/', {
+        method: 'post',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({})
+      })
+      .then((res) => res.json())
+      .then((res) => {
+        if (res['flag'] === -1) {
+          // window.location.href = '/enterprise/'
+        } else {
+          console.log('成功')
+        }
+      })
     }
   }
 </script>

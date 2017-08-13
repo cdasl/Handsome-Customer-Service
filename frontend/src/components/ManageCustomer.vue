@@ -2,7 +2,15 @@
   <div id="app">
     <Input v-model="customerEmail" class="email-input" placeholder="输入邮箱邀请客服"></Input>
     <Button @click="invite">邀请客服</Button>
+    <span style="margin-left: 5%;">按关键字排序</span>
+    <Select v-model="sortKeyWord" @on-change="changeSort" style="width: 200px;">
+      <Option v-for="item of sortList" :value="item" :key="item">{{ item }}</Option>
+    </Select>
+    <Select v-model="sortOrder" @on-change="changeSort" style="width: 200px;">
+      <Option v-for="item of orderList" :value="item" :key="item">{{ item }}</Option>
+    </Select>
     <Row>
+        <p class="legend">状态: -1->被注销,0->未激活,1->激活,2->在线,3->不在线</p>
         <Table border :columns="customerForm" :data="customerDataShow" ref="table"></Table>
         <Page :total="customerData.length" @on-change="changePage" :page-size="pageSize"></Page>
     </Row>
@@ -15,26 +23,30 @@
   export default {
     data () {
       return {
+        sortList: ['', '状态', '服务总人数', '当前服务人数'], // 排序的所有关键字
+        sortKeyWord: '', // 排序关键字
+        sortOrder: '升序', // 升序或降序
+        orderList: ['升序', '降序'],
         customerEmail: '', // 邀请客服输入的邮箱
         customerForm: [
           {
-            title: '姓名',
-            key: 'name'
+            'title': '姓名',
+            'key': 'name'
           }, {
-            title: '邮箱',
-            key: 'email'
+            'title': '邮箱',
+            'key': 'email'
           }, {
-            title: '状态',
-            key: 'state'
+            'title': '状态',
+            'key': 'state'
           }, {
-            title: '服务总人数',
-            key: 'serviced_number'
+            'title': '服务总人数',
+            'key': 'serviced_number'
           }, {
-            title: '当前服务人数',
-            key: 'service_number'
+            'title': '当前服务人数',
+            'key': 'service_number'
           }, {
-            title: '操作',
-            key: 'action',
+            'title': '操作',
+            'key': 'action',
             width: 150,
             align: 'center',
             render: (h, params) => {
@@ -143,17 +155,57 @@
           this.init(false)
         }
       },
-      exportData (type) {
-        if (type === 1) {
-          this.$refs.table.exportCsv({
-            filename: '原始数据'
-          })
-        } else if (type === 2) {
-          this.$refs.table.exportCsv({
-            filename: '排序和过滤后的数据',
-            original: false
-          })
+      changeSort () {
+        // 排序
+        let key = ''
+        if (this.sortKeyWord === '状态') {
+          key = 'state'
+        } else if (this.sortKeyWord === '服务总人数') {
+          key = 'serviced_number'
+        } else if (this.sortKeyWord === '当前服务人数') {
+          key = 'service_number'
+        } else if (this.sortKeyWord === '') {
+          return
         }
+        let num = 1
+        if (this.sortOrder === '降序') {
+          num = -1
+        }
+        this.customerData.sort((item1, item2) => {
+          if (item1[key] > item2[key]) {
+            return num
+          } else if (item1[key] < item2[key]) {
+            return -num
+          } else {
+            return 0
+          }
+        })
+        this.init(true)
+      },
+      exportData (type) {
+        let csv = '\ufeff'
+        let keys = []
+        this.customerForm.forEach(function (item) {
+          csv += '"' + item['title'] + '",'
+          keys.push(item['key'])
+        })
+        csv = csv.replace(/,$/, '\n')
+        this.customerData.forEach(function (item) {
+          keys.forEach(function (key) {
+            csv += '"' + item[key] + '",'
+          })
+          csv = csv.replace(/\,$/, '\n')
+        })
+        var blob = new Blob([csv], {
+          type: 'text/csv,charset=UTF-8'
+        })
+        let csvUrl = window.URL.createObjectURL(blob)
+        let a = document.createElement('a')
+        a.download = '客服人员.csv'
+        a.href = csvUrl
+        document.body.appendChild(a)
+        a.click()
+        document.body.removeChild(a)
       },
       getCookie (cName) {
         if (document.cookie.length > 0) {
@@ -176,16 +228,7 @@
       if (res['flag'] === -12) {
         this.$Message.error('客服人员获取失败')
       } else {
-        for (let i = 0; i < res['message'].length; ++i) {
-          this.customerData.push({
-            name: res['message'][i]['name'],
-            email: res['message'][i]['email'],
-            state: res['message'][i]['state'],
-            serviced_number: res['message'][i]['serviced_number'],
-            service_number: res['message'][i]['service_number'],
-            cid: res['message'][i]['cid']
-          })
-        }
+        this.customerData = res['message']
         this.init(true)
       }
     }
@@ -195,5 +238,12 @@
 .email-input {
   width: 30%;
   height: 5%;
+}
+.legend {
+  font-size: 12px;
+  line-height: 1;
+  color: #999;
+  padding-top: 15px;
+  padding-bottom: 15px;
 }
 </style>
