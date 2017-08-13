@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <h3 class="title">登陆</h3>
+    <h3 class="title">企业登陆</h3>
     <Input v-model="formItem.email" placeholder="邮箱" type="text" class="my-input"></Input>
     <Input v-model="formItem.password" placeholder="密码" type="password" class="my-input"></Input>
     <Button type="primary" @click="submit" class="my-input">登录</Button><br>
@@ -119,6 +119,7 @@
   margin-left: 5vw;
   margin-bottom: 2vh;
   font-size: 1.5em;
+  color: white;
 }
 .my-input {
   width: 75%;

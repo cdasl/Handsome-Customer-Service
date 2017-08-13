@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <h3 class="title">注册</h3>
+    <h3 class="title">企业注册</h3>
     <Input v-model="formItem.email" placeholder="请输入邮箱" type="text" class="my-input"></Input>
     <Input v-model="formItem.password" placeholder="请输入密码，长度不小于8" type="password" class="my-input"></Input>
     <Input v-model="formItem.password2" placeholder="请确认密码" type="password" class="my-input"></Input>
@@ -108,6 +108,7 @@
   margin-left: 5vw;
   margin-bottom: 2vh;
   font-size: 1.5em;
+  color: white;
 }
 .my-input {
   width: 75%;

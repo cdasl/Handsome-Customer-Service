@@ -194,9 +194,9 @@
           keys.forEach(function (key) {
             csv += '"' + item[key] + '",'
           })
-          csv = csv.replace(/\,$/, '\n')
+          csv = csv.replace(/,$/, '\n')
         })
-        var blob = new Blob([csv], {
+        var blob = new window.Blob([csv], {
           type: 'text/csv,charset=UTF-8'
         })
         let csvUrl = window.URL.createObjectURL(blob)
