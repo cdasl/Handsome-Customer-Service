@@ -50,7 +50,7 @@
     data () {
       return {
         leftClass: 'my-fixed',
-        type: 'set-robot',
+        type: 'enterprise-overview',
         spanLeft: 5,
         spanRight: 19
       }

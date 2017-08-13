@@ -23,11 +23,11 @@
     }
   }
 </script>
-<style lang="">
+<style scoped>
 .app {
   display: block;
   width: 100vw;
-  height: 100vh;
+  height: 80vh;
 }
 .wrap {
   display: block;
@@ -35,8 +35,6 @@
   margin-left: auto;
   margin-right: auto;
   margin-top: 20vh;
-  background-color: white;
-  border: 1px solid black;
 }
 .image {
   display: block;
