@@ -28,6 +28,10 @@ urlpatterns = [
     url(r'^enterprise_active/([a-zA-Z]+)$', TemplateView.as_view(template_name = 'enterprise_active.html'), name = 'enterprise_active'),
     url(r'^reset_pwd/$', TemplateView.as_view(template_name = 'reset_password.html')),
     url(r'^enter_manage/$', TemplateView.as_view(template_name = 'enterprise_manage.html')),
+    url(r'^customer_manage/$', TemplateView.as_view(template_name = 'customer_manage.html')),
+    url(r'^user/$', TemplateView.as_view(template_name = 'User.html')),
+    url(r'^storeimage/$', views.store_image),
+    url(r'^customer_login/$', TemplateView.as_view(template_name = 'customer_login.html')),
 
     #apis
     url(r'^api/enter/signup/$', enterprise.enterprise_signup, name = 'enter_signup'),
@@ -41,7 +45,7 @@ urlpatterns = [
     url(r'^api/new_pwd_submit/$', enterprise.reset_password, name = 'reset_password_submit'),
     url(r'^api/enter/set_robot_message/$', enterprise.enterprise_set_robot_message, name = 'enterprise_set_robot_message'),
     url(r'^api/enter/setuser_message/$', enterprise.enterprise_setuser_message, name = 'enterprise_setuser_message'),
-    url(r'^api/enter/customer/login/$', customer.customer_login, name = 'customer_login'),
+    url(r'^api/customer/login/$', customer.customer_login, name = 'customer_login'),
     url(r'^api/customer/logout/$', customer.customer_logout, name = 'customer_logout'),
     url(r'^api/enter/get_enterprise_msgnum/$', enterprise.enterprise_message_number_oneday),
     url(r'^api/customer/change_ol/$', customer.customer_change_onlinestate),
@@ -62,7 +66,7 @@ urlpatterns = [
     url(r'^api/customer/get_info/$', customer.customer_get_info),
     url(r'^api/customer/get_id/$', customer.customer_get_id),
     url(r'^api/enter/set_robot_state/$', enterprise.enterprise_set_robot_state),
-    url(r'^api/enter/get_robot_info/$', enterprise.enterprise_get_robot_info),
+    url(r'^api/enter/robot_into/$', enterprise.enterprise_get_robot_info),
     url(r'^api/enter/set_robot_question/$', enterprise.enterprise_set_robot_question),
     url(r'^api/enter/get_all_question/$', enterprise.enterprise_get_all_question),
     url(r'^api/url_validate/$', enterprise.UrlValidateJudge),
