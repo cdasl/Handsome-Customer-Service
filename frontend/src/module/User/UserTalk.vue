@@ -83,7 +83,7 @@
         this.socket = io.connect('http://' + document.domain + ':' + location.port + namespace)
         this.socket.emit('a user connected', {uid: this.uid})
         this.socket.on('connected', (msg) => {
-          this.uid = msg['sid']
+          this.uid = msg['uid']
         })
         this.socket.on('connected to customer', (msg) => {
           this.sid = msg['sid']
