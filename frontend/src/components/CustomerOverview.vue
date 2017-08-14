@@ -56,7 +56,7 @@
         <span>{{ messagesPerDialog }}条/次</span>
       </div>
     </div>
-    <h3>选择统计图形状<h3>
+    <h3>选择统计图形状</h3>
     <Select v-model="chartType" style="width:200px" @on-change="changeType">
       <Option v-for="item in typeList" :value="item.value" :key="item.value">{{ item.label }}</Option>
     </Select>
@@ -123,10 +123,42 @@
         } else if (num === 3) {
           this.options.title = '过去24小时服务人数统计'
         }
+      },
+      getCookie (cName) {
+        if (document.cookie.length > 0) {
+          let cStart = document.cookie.indexOf(cName + '=')
+          if (cStart !== -1) {
+            cStart = cStart + cName.length + 1
+            let cEnd = document.cookie.indexOf(';', cStart)
+            if (cEnd === -1) {
+              cEnd = document.cookie.length
+            }
+            return unescape(document.cookie.substring(cStart, cEnd))
+          }
+        }
+        return ''
+      },
+      changeType (current) {
       }
     },
     mounted: function () {
-      // fetch()
+      fetch('/api/customer/get_alldata/', {
+        method: 'post',
+        credentials: 'same-origin',
+        headers: {
+          'X-CSRFToken': this.getCookie('csrftoken'),
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        }
+      }).then((res) => res.json()).then((res) => {
+        this.servicedTime = res['message']['totalTime']
+        this.messages = res['message']['totalMessage']
+        this.dialogs = res['message']['totalDialog']
+        this.servicedPeople = res['message']['totalServiced']
+        this.todayDialogs = res['message']['todayDialog']
+        this.timePerDialog = res['message']['avgDialogTime']
+        this.messagesPerDialog = res['message']['avgMessages']
+      })
     }
   }
 </script>

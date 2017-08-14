@@ -86,7 +86,8 @@
           for (let i = 0; i < res['message'].length; ++i) {
             let data = {}
             data['word'] = decodeURI(res['message'][i]['content'])
-            data['self'] = res['message'][i]['sid'] === 'ccid'
+            // 判断消息是谁发送的
+            data['self'] = (res['message'][i]['sid'] === 'ccid') || res['message'][i]['sid'] === 'robot'
             data['time'] = res['message'][i]['date']
             data['src'] = '/static/js/emojiSources/huaji/1.jpg'
             this.content.push(data)
@@ -132,7 +133,6 @@
       }
     },
     mounted: function () {
-      console.log('是否执行')
       fetch('/api/customer/dialog_list/', {
         method: 'post',
         credentials: 'same-origin',

@@ -67,8 +67,8 @@
         currentcontent: [],
         status: '2',
         sid: '',
-        cid: 'cid',
-        eid: 'eid'
+        cid: 'ccid',
+        eid: 'eeid'
       }
     },
     computed: {
