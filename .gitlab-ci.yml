@@ -1,5 +1,5 @@
 stages:
- - install_requirements
+  - install_requirements
  
  install_requirements:
    stage: install_requirements
