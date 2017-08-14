@@ -5,7 +5,7 @@ from django.http import HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
 from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie
 import json, hashlib, time, random, string
-from .. import models, tests
+from .. import models, tests, const_table
 from chatterbot import ChatBot
 from . import helper, messages
 import django.utils.timezone as timezone
@@ -27,7 +27,7 @@ def customer_chatted(request):
     elif info['cid'] != -1:
         CID = info['cid']
     else:
-        return JsonResponse({'message': -12})
+        return JsonResponse({'flag': const_table.const.CID_NOT_EXIST})
     user_list = []
     list1 = models.Message.objects.filter(SID = CID)
     list2 = models.Message.objects.filter(RID = CID)
@@ -35,7 +35,7 @@ def customer_chatted(request):
         user_list.append(l.RID)
     for l in list2:
         user_list.append(l.SID)
-    return JsonResponse({'message': list(set(user_list))})
+    return JsonResponse({'flag': const_table.const.SUCCESS, 'message': list(set(user_list))})
 
 def customer_login_helper(info):
     try:
@@ -48,20 +48,20 @@ def customer_login_helper(info):
         if md5.hexdigest() == customer.password:
             if customer.state == 1  or customer.state == 2:
                 #成功
-                models.Customer.objects.filter(email = email).update(state = 3)
+                models.Customer.objects.filter(email = email).update(state = 2)
                 return (1, customer.CID)
             elif customer.state == 0:
                 #账号未激活
-                return (0, -5)
+                return (0, const_table.const.ACCOUNT_NOT_ACTIVETED)
             elif customer.state == -1:
                 #账号被注销
-                return (-1, -6)
+                return (-1, const_table.const.ACCOUNT_LOGGED_OFF)
         else:
             #密码错误
-            return (-2, -1)
+            return (-2, const_table.const.WRONG_PASSWORD)
     except Exception:
         #账号错误
-        return (-3, -7)
+        return (-3, const_table.const.WRONG_ACCOUNT)
 
 @ensure_csrf_cookie
 def customer_login(request):
@@ -69,11 +69,11 @@ def customer_login(request):
     info = json.loads(request.body.decode('utf8'))
     code = customer_login_helper(info)
     if code[0] < 1:
-        return JsonResponse({'flag': code[1], 'message': ''})
+        return JsonResponse({'flag': code[1]})
     else:
         request.session['cid'] = code[1]
         request.session['email'] = info['email']
-        return JsonResponse({'flag': 1, 'message': ''})
+        return JsonResponse({'flag': const_table.const.SUCCESS, 'message': ''})
 
 @ensure_csrf_cookie
 def customer_logout(request):
@@ -82,9 +82,9 @@ def customer_logout(request):
     if 'cid' in request.session:
         CID = request.session['cid']
     else:
-        return JsonResponse({'flag': -12, 'message': ''})
+        return JsonResponse({'flag': const_table.const.CID_NOT_EXIST})
     models.Customer.objects.filter(CID = CID).update(state = 1)
-    return JsonResponse({'flag': 1, 'message': ''})
+    return JsonResponse({'flag': const_table.const.SUCCESS, 'message': ''})
 
 @ensure_csrf_cookie
 def customer_get_info(request):
@@ -93,12 +93,12 @@ def customer_get_info(request):
     if 'cid' in request.session:
         CID = request.session['cid']
     else:
-        return JsonResponse({'flag': -12, 'message': ''})
+        return JsonResponse({'flag': const_table.const.CID_NOT_EXIST})
     customer = models.Customer.objects.get(CID = CID)
     info = {'cid': customer.CID, 'eid': customer.EID, 'email': customer.email, 'state': customer.state, 
     'name': customer.name, 'serviced_number': customer.serviced_number, 'service_number': customer.service_number, 
     'last_login': customer.last_login}
-    return JsonResponse({'flag': 1, 'message': info})
+    return JsonResponse({'flag': const_table.const.SUCCESS, 'message': info})
 
 @ensure_csrf_cookie
 def customer_get_id(request):
@@ -107,10 +107,10 @@ def customer_get_id(request):
     if 'cid' in request.session:
         CID = request.session['cid']
     else:
-        return JsonResponse({'flag': -12, 'message': ''})
+        return JsonResponse({'flag': const_table.const.CID_NOT_EXIST})
     customer = models.Customer.objects.get(CID = CID)
     id_list = {'cid': customer.CID, 'eid': customer.EID}
-    return JsonResponse({'flag': 1, 'message': id_list})
+    return JsonResponse({'flag': const_table.const.SUCCESS, 'message': id_list})
 
 @ensure_csrf_cookie
 def customer_change_onlinestate(request):
@@ -119,33 +119,23 @@ def customer_change_onlinestate(request):
     if 'cid' in request.session:
         CID = request.session['cid']
     else:
-        return JsonResponse({'flag': -12, 'message': ''})
+        return JsonResponse({'flag': const_table.const.CID_NOT_EXIST})
     customer = models.Customer.objects.filter(CID = CID)[0]
     if customer.state == 3:
         models.Customer.objects.filter(CID = CID).update(state = 2)
     elif customer.state == 2:
         models.Customer.objects.filter(CID = CID).update(state = 3)
     else:
-        return JsonResponse({'flag': -12, 'message': ''})
-    return JsonResponse({'flag': 1, 'message': ''})
+        return JsonResponse({'flag': const_table.const.CID_NOT_EXIST})
+    return JsonResponse({'flag': const_table.const.SUCCESS, 'message': ''})
 
 def customer_serviced_number(CID):
     """获取客服服务过的人数"""
-    """CID = 'cid1'
-    if 'cid' in request.session:
-        CID = request.session['cid']
-    else:
-        return JsonResponse({'flag': -12, 'message': ''})"""
     customer = models.Customer.objects.filter(CID = CID)
-    return JsonResponse({'flag': 1, 'message': customer[0].serviced_number})
+    return JsonResponse({'flag': const_table.const.SUCCESS, 'message': customer[0].serviced_number})
 
 def customer_dialogs_oneday(CID):
     """获取客服最近24小时会话数"""
-    """CID = 'cid1'
-    if 'cid' in request.session:
-        CID = request.session['cid']
-    else:
-        return JsonResponse({'flag': -12, 'message': ''})"""
     total = 0
     nowtime = datetime.datetime.now()
     dialogs = models.Dialog.objects.filter(CID = CID)
@@ -154,62 +144,42 @@ def customer_dialogs_oneday(CID):
         time2 = time.mktime(dialog.start_time.timetuple())
         if time1 - time2 < 60 * 60 * 24:
             total += 1
-    return JsonResponse({'flag': 1, 'message': total})
+    return JsonResponse({'flag': const_table.const.SUCCESS, 'message': total})
 
 def customer_total_servicedtime(CID):
     """返回客服总的服务时间(分钟)"""
-    """CID = 'cid1'
-    if 'cid' in request.session:
-        CID = request.session['cid']
-    else:
-        return JsonResponse({'flag': -12, 'message': ''})"""
     totaltime = 0
     dialogs = models.Dialog.objects.filter(CID = CID)
     for dialog in dialogs:
         totaltime += (dialog.end_time - dialog.start_time).seconds
     totaltime = round(totaltime / 60, 2)
-    return JsonResponse({'flag': 1, 'message': totaltime})
+    return JsonResponse({'flag': const_table.const.SUCCESS, 'message': totaltime})
 
 def customer_total_messages(CID):
     """返回客服发送总的消息数"""
-    """CID = 'cid1'
-    if 'cid' in request.session:
-        CID = request.session['cid']
-    else:
-        return JsonResponse({'flag': -12, 'message': ''})"""
     total = 0
     dialogs = models.Dialog.objects.filter(CID = CID)
     for dialog in dialogs:
         for message in models.Message.objects.filter(DID = dialog.DID):
             total += 1
-    return JsonResponse({'flag': 1, 'message': total})
+    return JsonResponse({'flag': const_table.const.SUCCESS, 'message': total})
 
 def customer_total_dialogs(CID):
     """获取客服总会话数"""
     total = 0
     dialogs = models.Dialog.objects.filter(CID = CID)
     total = len(dialogs)
-    return JsonResponse({'flag': 1, 'message': total})
+    return JsonResponse({'flag': const_table.const.SUCCESS, 'message': total})
 
 def customer_avgtime_dialogs(CID):
     """获取客服会话平均时间"""
-    """CID = 'cid1'
-    if 'cid' in request.session:
-        CID = request.session['cid']
-    else:
-        return JsonResponse({'flag': -12, 'message': ''})"""
     totaltime = jrToJson(customer_total_servicedtime(CID))['message']
     total = jrToJson(customer_total_dialogs(CID))['message']
     avgtime = round(totaltime / total, 2)
-    return JsonResponse({'flag': 1, 'message': avgtime})
+    return JsonResponse({'flag': const_table.const.SUCCESS, 'message': avgtime})
 
 def customer_avgmes_dialogs(CID):
     """获取客服平均消息数"""
-    """CID = 'cid1'
-    if 'cid' in request.session:
-        CID = request.session['cid']
-    else:
-        return JsonResponse({'flag': -12, 'message': ''})"""
     totalmessage = 0
     totaldialog = 0
     dialogs = models.Dialog.objects.filter(CID = CID)
@@ -218,7 +188,7 @@ def customer_avgmes_dialogs(CID):
         messages = models.Message.objects.filter(DID = dialog.DID)
         totalmessage += len(messages)
     avgmes = round(totalmessage / totaldialog, 2)
-    return JsonResponse({'flag': 1, 'message': avgmes})
+    return JsonResponse({'flag': const_table.const.SUCCESS, 'message': avgmes})
 
 @ensure_csrf_cookie
 def customer_dialogs(request):
@@ -227,27 +197,33 @@ def customer_dialogs(request):
     if 'cid' in request.session:
         CID = request.session['cid']
     else:
-        return JsonResponse({'flag': -12, 'message': ''})
+        return JsonResponse({'flag': const_table.const.CID_NOT_EXIST})
     dialogs_list = []
     dialogs = models.Dialog.objects.filter(CID = CID)
     for dialog in dialogs:
         dialogs_list.append({'cid': dialog.CID, 'uid': dialog.UID, 'start_time': dialog.start_time, 
             'end_time': dialog.end_time, 'did': dialog.DID})
-    return JsonResponse({'flag': 1, 'message': dialogs_list})
+    return JsonResponse({'flag': const_table.const.SUCCESS, 'message': dialogs_list})
 
 @ensure_csrf_cookie
 def customer_dialog_messages(request):
     """获取客服某个会话内容"""
     info = json.loads(request.body.decode('utf8'))
+    if 'cid' in request.session:
+        CID = request.session['cid']
     DID = info['did']
     dialog = models.Message.objects.filter(DID = DID)
     if len(dialog) == 0:
-        return JsonResponse({'flag': -16, 'message': ''})
+        return JsonResponse({'flag': const_table.const.DIALOGID_NOT_EXIST})
     messages_list = []    
-    messages = models.Message.objects.filter(DID = DID)
+    messages = models.Message.objects.filter(DID = DID).order_by('date')
     for message in messages:
-        messages_list.append({'mid': message.MID, 'sid': message.SID, 'content': message.content, 'rid': message.RID, 'date': message.date})
-    return JsonResponse({'flag': 1, 'message': messages_list})
+        if message.SID == CID or message.SID == 'robot':
+            is_customer = True
+        else:
+            is_customer = False
+        messages_list.append({'mid': message.MID, 'isCustomer': is_customer, 'content': message.content, 'date': message.date})
+    return JsonResponse({'flag': const_table.const.SUCCESS, 'message': messages_list})
 
 @ensure_csrf_cookie
 def reset_password_request(request):
@@ -257,7 +233,7 @@ def reset_password_request(request):
     valid_enterprise = models.Enterprise.objects.filter(email = email)
     vaild_customer = models.Customer.objects.filter(email = email)
     if len(valid_enterprise) == 0 and len(vaild_customer) == 0:
-        return JsonResponse({'flag': -8, 'message': ''})
+        return JsonResponse({'flag': const_table.const.INVALID})
     active_code = helper.get_active_code(email)
     url = 'http://127.0.0.1:8000/password_reset/%s' % (active_code)
     mySubject = u"重置密码"
@@ -265,20 +241,20 @@ def reset_password_request(request):
     try:
         helper.send_active_email(email, mySubject, myMessage)
         if len(valid_enterprise) > 0:
-            return JsonResponse({'flag': 1, 'message': 'enterprise_reset'})
-        return JsonResponse({'flag': 1, 'message': 'customer_reset'})
+            return JsonResponse({'flag': const_table.const.SUCCESS, 'message': 'enterprise_reset'})
+        return JsonResponse({'flag': const_table.const.SUCCESS, 'message': 'customer_reset'})
     except Exception:
-        return JsonResponse({'flag': -12, 'message': ''})
+        return JsonResponse({'flag': const_table.const.ERROR, 'message': ''})
 
 @ensure_csrf_cookie
 def reset_password(request):
     """重置密码，前端发送激活码，新密码"""
     info = json.loads(request.body.decode('utf8'))
     tip = helper.active_code_check(info['active_code'])
-    if tip == -8:
-        return JsonResponse({'flag': -8, 'message': ''})
-    if tip == -9:
-        return JsonResponse({'flag': -9, 'message': ''})
+    if tip == const_table.const.INVALID:
+        return JsonResponse({'flag': const_table.const.INVALID})
+    if tip == const_table.const.EXPIRED:
+        return JsonResponse({'flag': const_table.const.EXPIRED})
     decrypt_str = helper.decrypt(9, info['active_code'])
     decrypt_data = decrypt_str.split('|')
     email = decrypt_data[0]
@@ -291,9 +267,9 @@ def reset_password(request):
         else:
             customer = models.Customer.objects.filter(email = email)
             models.Customer.objects.filter(email = email).update(password = password, salt = salt)
-        return JsonResponse({'flag': 1, 'message': 'reset'})
+        return JsonResponse({'flag': const_table.const.SUCCESS, 'message': 'reset'})
     except Exception:
-        return JsonResponse({'flag': -12, 'message': ''})
+        return JsonResponse({'flag': const_table.const.ERROR})
 
 @ensure_csrf_cookie
 def customer_modify_icon(request):
@@ -304,12 +280,12 @@ def customer_modify_icon(request):
     if hasattr(request, 'session') and 'cid' in request.session:
         CID = request.session['cid']
     else:
-        return JsonResponse({'flag': -12, 'message': ''})
+        return JsonResponse({'flag': const_table.const.CID_NOT_EXIST})
     try:
         models.Customer.objects.filter(CID = CID).update(icon = info['icon'], name = info['name'])
-        return JsonResponse({'flag': 1, 'message': ''})
+        return JsonResponse({'flag': const_table.const.SUCCESS, 'message': ''})
     except Exception:
-        return JsonResponse({'flag': -12, 'message': ''})
+        return JsonResponse({'flag': const_table.const.ERROR})
 
 @ensure_csrf_cookie
 def customer_get_alldata(request):
@@ -322,7 +298,7 @@ def customer_get_alldata(request):
     if hasattr(request, 'session') and 'cid' in request.session:
         CID = request.session['cid']
     else:
-        return JsonResponse({'flag': -12, 'message': ''})
+        return JsonResponse({'flag': const_table.const.CID_NOT_EXIST})
     try:
         totaltime = jrToJson(customer_total_servicedtime(CID))['message']
         totalmessage = jrToJson(customer_total_messages(CID))['message']
@@ -333,6 +309,6 @@ def customer_get_alldata(request):
         avgmessages = jrToJson(customer_avgmes_dialogs(CID))['message']
         allData = {'totalTime': totaltime, 'totalMessage': totalmessage, 'totalDialog': totaldialog, 
         'totalServiced': totalserviced, 'todayDialog': todaydialog, 'avgDialogTime': avgdialogtime, 'avgMessages': avgmessages}
-        return JsonResponse({'flag': 1, 'message': allData})
+        return JsonResponse({'flag': const_table.const.SUCCESS, 'message': allData})
     except Exception:
-        return JsonResponse({'flag': -12, 'message': ''})
+        return JsonResponse({'flag': const_table.const.ERROR})

@@ -5,7 +5,7 @@ from django.http import HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
 from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie
 import json, hashlib, time, random, string
-from .. import models, tests
+from .. import models, tests, const_table
 from chatterbot import ChatBot
 from . import helper, messages
 import django.utils.timezone as timezone
@@ -44,25 +44,23 @@ def enterprise_changepassword(request):
     if hasattr(request, 'session') and 'eid' in request.session:
         EID = request.session['eid']
     else:
-        return JsonResponse({'flag': -12, 'message': ''})
-    #old_password = info['old']
-    #new_password = info['new']
+        return JsonResponse({'flag': const_table.const.EID_NOT_EXIST})
     obj = models.Enterprise.objects.get(EID =EID)
     salt = obj.salt
     md5 = hashlib.md5()
     md5.update((info['old'] + salt).encode('utf8'))
     password = md5.hexdigest()
     if password != obj.password:
-        return JsonResponse({'flag': -1, 'message': ''})
+        return JsonResponse({'flag': const_table.const.WRONG_PASSWORD})
     salt = ''.join(random.sample(string.ascii_letters + string.digits, 8))
     md5 = hashlib.md5()
     md5.update((info['new'] + salt).encode('utf8'))
     password = md5.hexdigest()
     try:
         models.Enterprise.objects.filter(EID =EID).update(salt = salt, password = password)
-        return JsonResponse({'flag': 1, 'message': ''})
+        return JsonResponse({'flag': const_table.const.SUCCESS, 'message': ''})
     except Exception:
-        return JsonResponse({'flag': -2, 'message': ''})
+        return JsonResponse({'flag': const_table.const.FAIL_MODIFY})
 
 @ensure_csrf_cookie
 def enterprise_signup(request):
@@ -71,7 +69,7 @@ def enterprise_signup(request):
     email = info['email']
     #检查email是否已经存在
     if len(models.Enterprise.objects.filter(email = email)) > 0:
-        return JsonResponse({'flag': -3, 'message': ''})
+        return JsonResponse({'flag': const_table.const.EMAIL_REGISTERED})
     info_dict = signup_init(info)
     try:
         active_code = helper.get_active_code(email)
@@ -83,9 +81,9 @@ def enterprise_signup(request):
                                          name = info_dict['name'], robot_icon = info_dict['ri'],
                                          robot_name = info_dict['rn'], robot_state = info_dict['rs'], 
                                          salt = info_dict['salt'])
-        return JsonResponse({'flag': 1, 'message': ''})
+        return JsonResponse({'flag': const_table.const.SUCCESS, 'message': ''})
     except Exception:
-        return JsonResponse({'flag': -4, 'message': ''})
+        return JsonResponse({'flag': const_table.const.FAIL_SIGN_UP})
 
 def enterprise_login_helper(info):
     try:
@@ -101,16 +99,16 @@ def enterprise_login_helper(info):
                 return (1, enterprise.EID)
             elif enterprise.state == 0:
                 #账号未激活
-                return (0, -5)
+                return (0, const_table.const.ACCOUNT_NOT_ACTIVETED)
             elif enterprise.state == -1:
                 #账号被注销
-                return (-1, -6)
+                return (-1, const_table.const.ACCOUNT_LOGGED_OFF)
         else:
             #密码错误
-            return (-2, -1)
+            return (-2, const_table.const.WRONG_PASSWORD)
     except Exception:
         #账号错误
-        return (-3, -7)
+        return (-3, const_table.const.WRONG_ACCOUNT)
 
 @ensure_csrf_cookie
 def enterprise_login(request):
@@ -118,11 +116,11 @@ def enterprise_login(request):
     info = json.loads(request.body.decode('utf8'))
     code = enterprise_login_helper(info)
     if code[0] < 1:
-        return JsonResponse({'flag': code[1], 'message': ''})
+        return JsonResponse({'flag': code[1]})
     else:
         request.session['eid'] = code[1]
         request.session['email'] = info['email']
-        return JsonResponse({'flag': 1, 'message': ''})
+        return JsonResponse({'flag': const_table.const.SUCCESS, 'message': ''})
 
 @ensure_csrf_cookie
 def enterprise_logout(request):
@@ -133,9 +131,9 @@ def enterprise_logout(request):
     if hasattr(request, 'session') and 'eid' in request.session:
         EID = request.session['eid']
     else:
-        return JsonResponse({'flag': -12, 'message': ''})
+        return JsonResponse({'flag': const_table.const.EID_NOT_EXIST})
     del request.session['eid']
-    return JsonResponse({'flag': 1, 'message': ''})
+    return JsonResponse({'flag': const_table.const.SUCCESS, 'message': ''})
 
 @csrf_exempt
 def enterprise_active(request):
@@ -148,18 +146,18 @@ def enterprise_active(request):
     enterprise = models.Enterprise.objects.filter(email = email)
     if len(enterprise) == 0:
         #链接无效
-        return JsonResponse({'flag': -8, 'message': ''})
+        return JsonResponse({'flag':const_table.const.INVALID})
     create_date = time.mktime(time.strptime(decrypt_data[1], "%Y-%m-%d"))
     time_lag = time.time() - create_date
     if time_lag > 7 * 24 * 60 * 60:
         #链接过期
-        return JsonResponse({'flag': -9, 'message': ''})
+        return JsonResponse({'flag': const_table.const.EXPIRED})
     if enterprise[0].state == 1:
         #已经激活
-        return JsonResponse({'flag': -12, 'message': ''})
+        return JsonResponse({'flag': const_table.const.EID_NOT_EXIST})
     models.Enterprise.objects.filter(email = email).update(state = 1)
     #成功
-    return JsonResponse({'flag': 1, 'message': ''})
+    return JsonResponse({'flag': const_table.const.SUCCESS, 'message': ''})
 
 @ensure_csrf_cookie
 def enterprise_invite(request):
@@ -170,7 +168,7 @@ def enterprise_invite(request):
         EID = request.session['eid']
     email = info['email']
     if len(models.Customer.objects.filter(email = email)) > 0:
-        return JsonResponse({'flag': -10, 'message': ''})
+        return JsonResponse({'flag': const_table.const.MAILBOX_REGISTERED})
     try:
         customer_info = tests.jrToJson(set_customer_message(email, EID))['message']
         active_code = helper.get_active_code(email)
@@ -178,9 +176,9 @@ def enterprise_invite(request):
         myMessage = messages.customer_active_message(
             'http:/127.0.0.1:8000%s' % ('/customer_active/' + active_code))
         helper.send_active_email(email, mySubject, myMessage)
-        return JsonResponse({'flag': 1, 'message': customer_info})
+        return JsonResponse({'flag': const_table.const.SUCCESS, 'message': customer_info})
     except Exception:
-        return JsonResponse({'flag': -11, 'message': ''})
+        return JsonResponse({'flag': const_table.const.INVITE_FAILURE})
 
 def set_customer_message(email, EID):
     """ 设置客服默认信息"""
@@ -189,6 +187,10 @@ def set_customer_message(email, EID):
     CID = md5.hexdigest()
     salt = ''.join(random.sample(string.ascii_letters + string.digits, 8))
     password = '12345678'
+    password += salt
+    md52 = hashlib.md5()
+    md52.update(password.encode('utf8'))
+    password = md52.hexdigest()
     icon = 'demo.png'
     name_list = ['库', '里', '汤', '普', '森', '杜', '兰', '特', '格', '林', '科', '尔', '尼', '克', '杨', '麦', '基']
     name = random.choice(name_list) + random.choice(name_list)
@@ -196,7 +198,7 @@ def set_customer_message(email, EID):
     models.Customer.objects.create(CID = CID, EID = EID, email = email, password = password, 
         icon = icon, name = name, last_login = last_login, salt = salt)
     customer_info = {'cid': CID, 'name': name, 'email': email, 'state': 0, 'service_number': 0, 'serviced_number': 0}
-    return JsonResponse({'flag': 1, 'message': customer_info})
+    return JsonResponse({'flag': const_table.const.SUCCESS, 'message': customer_info})
 
 @ensure_csrf_cookie
 def reset_password_request(request):
@@ -206,7 +208,7 @@ def reset_password_request(request):
     valid_enterprise = models.Enterprise.objects.filter(email = email)
     vaild_customer = models.Customer.objects.filter(email = email)
     if len(valid_enterprise) == 0 and len(vaild_customer) == 0:
-        return JsonResponse({'flag': -8, 'message': ''})
+        return JsonResponse({'flag': const_table.const.INVALID})
     active_code = helper.get_active_code(email)
     url = 'http://127.0.0.1:8000/password_reset/%s' % (active_code)
     mySubject = u"重置密码"
@@ -214,20 +216,20 @@ def reset_password_request(request):
     try:
         helper.send_active_email(email, mySubject, myMessage)
         if len(valid_enterprise) > 0:
-            return JsonResponse({'flag': 1, 'message': 'enterprise_reset'})
-        return JsonResponse({'flag': 1, 'message': 'customer_reset'})
+            return JsonResponse({'flag': const_table.const.SUCCESS, 'message': 'enterprise_reset'})
+        return JsonResponse({'flag': const_table.const.SUCCESS, 'message': 'customer_reset'})
     except Exception:
-        return JsonResponse({'flag': -12, 'message': ''})
+        return JsonResponse({'flag': const_table.const.ERROR})
 
 @ensure_csrf_cookie
 def reset_password(request):
     """重置密码，前端发送激活码，新密码"""
     info = json.loads(request.body.decode('utf8'))
     tip = helper.active_code_check(info['active_code'])
-    if tip == -8:
-        return JsonResponse({'flag': -8, 'message': ''})
-    if tip == -9:
-        return JsonResponse({'flag': -9, 'message': ''})
+    if tip == const_table.const.INVALID:
+        return JsonResponse({'flag': const_table.const.INVALID})
+    if tip == const_table.const.EXPIRED:
+        return JsonResponse({'flag': const_table.const.EXPIRED})
     decrypt_str = helper.decrypt(9, info['active_code'])
     decrypt_data = decrypt_str.split('|')
     email = decrypt_data[0]
@@ -240,9 +242,9 @@ def reset_password(request):
         else:
             customer = models.Customer.objects.filter(email = email)
             models.Customer.objects.filter(email = email).update(password = password, salt = salt)
-        return JsonResponse({'flag': 1, 'message': 'reset'})
+        return JsonResponse({'flag': const_table.const.SUCCESS, 'message': 'reset'})
     except Exception:
-        return JsonResponse({'flag': -12, 'message': ''})
+        return JsonResponse({'flag': const_table.const.ERROR})
 
 @ensure_csrf_cookie
 def reset_customer_state(request):
@@ -252,19 +254,19 @@ def reset_customer_state(request):
     #检查是否存在该客服
     customer = models.Customer.objects.filter(CID = CID)
     if len(customer) == 0:
-        return JsonResponse({'flag': -13, 'message': ''})
+        return JsonResponse({'flag': const_table.const.CUSTOMER_NOT_EXIST})
     customer_name = customer[0].name
     try:
         if customer[0].state > 0:
             models.Customer.objects.filter(CID = CID).update(state = -1)
-            return JsonResponse({'flag': 1, 'message': 'logoff success'})
+            return JsonResponse({'flag': const_table.const.SUCCESS, 'message': 'logoff success'})
         elif customer[0].state == -1:
             models.Customer.objects.filter(CID = CID).update(state = 1)
-            return JsonResponse({'flag': 1, 'message': 'activate success'})
+            return JsonResponse({'flag': const_table.const.SUCCESS, 'message': 'activate success'})
         elif customer[0].state == 0:
-            return JsonResponse({'flag': 1, 'message': 'not activate'})
+            return JsonResponse({'flag': const_table.const.SUCCESS, 'message': 'not activate'})
     except Exception:
-        return JsonResponse({'flag': -14, 'message': ''})
+        return JsonResponse({'flag': const_table.const.FAIL_LOG_OFF})
 
 @ensure_csrf_cookie
 def enterprise_get_customers(request):
@@ -275,14 +277,13 @@ def enterprise_get_customers(request):
     if hasattr(request, 'session') and 'eid' in request.session:
         EID = request.session['eid']
     else:
-        return JsonResponse({'flag': -12, 'message': ''})
+        return JsonResponse({'flag': const_table.const.EID_NOT_EXIST})
     customer_list = []
     customers = models.Customer.objects.filter(EID = EID)
     for customer in customers:
         customer_list.append({'cid': customer.CID, 'name': customer.name, 'email': customer.email,
             'state': customer.state, 'service_number': customer.service_number, 'serviced_number': customer.serviced_number})
-    #return JsonResponse({'message': customer_list})
-    return JsonResponse({'flag': 1, 'message': customer_list})
+    return JsonResponse({'flag': const_table.const.SUCCESS, 'message': customer_list})
     
 @ensure_csrf_cookie
 def inquire_customer_info(request):
@@ -292,7 +293,7 @@ def inquire_customer_info(request):
     #检查是否存在该客服
     customer = models.Customer.objects.filter(CID = CID)
     if len(customer) == 0:
-        return JsonResponse({'flag': -13, 'message': ''})
+        return JsonResponse({'flag': const_table.const.CUSTOMER_NOT_EXIST})
     info = {
         'name': customer[0].name,
         'EID': customer[0].EID,
@@ -304,9 +305,9 @@ def inquire_customer_info(request):
         'last_login': customer[0].last_login
         }
     try:
-        return JsonResponse({'flag': 1, 'message': info})
+        return JsonResponse({'flag': const_table.const.SUCCESS, 'message': info})
     except Exception:
-        return JsonResponse({'flag': -15, 'message': ''})
+        return JsonResponse({'flag': const_tables.const.FAIL_INQUIRE_INFORMATION})
 
 @ensure_csrf_cookie
 def enterprise_online_customers(request):
@@ -317,54 +318,33 @@ def enterprise_online_customers(request):
     if hasattr(request, 'session') and 'eid' in request.session:
         EID = request.session['eid']
     else:
-        return JsonResponse({'flag': -12, 'message': ''})
+        return JsonResponse({'flag': const_table.const.EID_NOT_EXIST})
     online_list = []
     customers = models.Customer.objects.filter(EID = EID, state = 2)
     for customer in customers:
         online_list.append({'cid': customer.CID, 'name': customer.name})
-    return JsonResponse({'flag': 1, 'message': online_list})
+    return JsonResponse({'flag': const_table.const.SUCCESS, 'message': online_list})
 
 def enterprise_total_servicetime(EID):
     """获取企业总的服务时间，返回的是分钟"""
-    """EID = 'eid'
-    if hasattr(request, 'body'):
-        info = json.loads(request.body.decode('utf8'))
-    if hasattr(request, 'session') and 'eid' in request.session:
-        EID = request.session['eid']
-    else:
-        return JsonResponse({'flag': -12, 'message': ''})"""
     total = 0
     times = models.Dialog.objects.filter(EID = EID)
     for t in times:
         total += (t.end_time - t.start_time).seconds
     total = round(total / 60, 2)
-    return JsonResponse({'flag': 1, 'message': total})
+    return JsonResponse({'flag': const_table.const.SUCCESS, 'message': total})
 
 def enterprise_total_messages(EID):
     """获取企业发送的总消息数"""
-    """EID = 'eid'
-    if hasattr(request, 'body'):
-        info = json.loads(request.body.decode('utf8'))
-    if hasattr(request, 'session') and 'eid' in request.session:
-        EID = request.session['eid']
-    else:
-        return JsonResponse({'flag': -12, 'message': ''})"""
     total = 0
     dialogs = models.Dialog.objects.filter(EID = EID)
     for dialog in dialogs:
         total += len(models.Message.objects.filter(DID = dialog.DID))
-    return JsonResponse({'flag': 1, 'message': total})
+    return JsonResponse({'flag': const_table.const.SUCCESS, 'message': total})
 
 def enterprise_total_dialogs(EID):
     """获取企业发送的总会话数"""
-    """EID = 'eid'
-    if hasattr(request, 'body'):
-        info = json.loads(request.body.decode('utf8'))
-    if hasattr(request, 'session') and 'eid' in request.session:
-        EID = request.session['eid']
-    else:
-        return JsonResponse({'flag': -12, 'message': ''})"""
-    return JsonResponse({'flag': 1, 'message': len(models.Dialog.objects.filter(EID = EID))})
+    return JsonResponse({'flag': const_table.const.SUCCESS, 'message': len(models.Dialog.objects.filter(EID = EID))})
 
 @ensure_csrf_cookie
 def enterprise_dialogs(request):
@@ -373,28 +353,21 @@ def enterprise_dialogs(request):
     if hasattr(request, 'session') and 'eid' in request.session:
         EID = request.session['eid']
     else:
-        return JsonResponse({'flag': -12, 'message': ''})
+        return JsonResponse({'flag': const_table.const.EID_NOT_EXIST})
     dialogs_list = []
     dialogs = models.Dialog.objects.filter(EID = EID)
     for dialog in dialogs:
         dialogs_list.append({'did': dialog.DID, 'start_time': dialog.start_time, 'end_time': dialog.end_time,
             'uid': dialog.UID, 'cid': dialog.CID})
-    return JsonResponse({'flag': 1, 'message': dialogs_list})
+    return JsonResponse({'flag': const_table.const.SUCCESS, 'message': dialogs_list})
 
 def enterprise_total_service_number(EID):
     """获取企业服务过的总人数"""
-    """EID = 'eid'
-    if hasattr(request, 'body'):
-        info = json.loads(request.body.decode('utf8'))
-    if hasattr(request, 'session') and 'eid' in request.session:
-        EID = request.session['eid']
-    else:
-        return JsonResponse({'flag': -12, 'message': ''})"""
     totalserviced = []
     dialogs = models.Dialog.objects.filter(EID = EID)
     for dialog in dialogs:
         totalserviced.append(dialog.UID)
-    return JsonResponse({'flag': 1, 'message': len(list(set(totalserviced)))})
+    return JsonResponse({'flag': const_table.const.SUCCESS, 'message': len(list(set(totalserviced)))})
 
 @ensure_csrf_cookie
 def enterprise_dialog_messages(request):
@@ -404,12 +377,12 @@ def enterprise_dialog_messages(request):
     #检查是否存在该did
     dialog = models.Message.objects.filter(DID = DID)
     if len(dialog) == 0:
-        return JsonResponse({'flag': -16, 'message': ''})
+        return JsonResponse({'flag': const_table.const.DIALOGID_NOT_EXIST})
     messages_list = []    
     messages = models.Message.objects.filter(DID = DID)
     for message in messages:
         messages_list.append({'mid': message.MID, 'sid': message.SID, 'content': message.content, 'rid': message.RID, 'date': message.date})
-    return JsonResponse({'flag': 1, 'message': messages_list})
+    return JsonResponse({'flag': const_table.const.SUCCESS, 'message': messages_list})
 
 @ensure_csrf_cookie
 def messages_between_chatters(request):
@@ -420,26 +393,19 @@ def messages_between_chatters(request):
     #检查是否存在该sid
     sid_mes = models.Message.objects.filter(SID = SID)
     if len(sid_mes) == 0:
-        return JsonResponse({'flag': -17, 'message': ''})
+        return JsonResponse({'flag': const_table.const.SID_NOT_EXIST})
     #检查是否存在该rid
     rid_mes = models.Message.objects.filter(RID = RID)
     if len(rid_mes) == 0:
-        return JsonResponse({'flag': -18, 'message': ''})
+        return JsonResponse({'flag': const_table.const.RID_NOT_EXIST})
     messages_list = []    
     messages = models.Message.objects.filter(SID=SID, RID=RID)
     for message in messages:
         messages_list.append({'mid': message.MID, 'sid': message.SID, 'content': message.content, 'rid': message.RID, 'date': message.date})
-    return JsonResponse({'flag': 1, 'message': messages_list})
+    return JsonResponse({'flag': const_table.const.SUCCESS, 'message': messages_list})
 
 def enterprise_avgtime_dialogs(EID):
     """获取客服会话平均时间"""
-    """EID = 'eid'
-    if hasattr(request, 'body'):
-        info = json.loads(request.body.decode('utf8'))
-    if hasattr(request, 'session') and 'eid' in request.session:
-        EID = request.session['eid']
-    else:
-        return JsonResponse({'flag': -12, 'message': ''})"""
     totaltime = 0
     times = models.Dialog.objects.filter(EID = EID)
     for t in times:
@@ -447,7 +413,7 @@ def enterprise_avgtime_dialogs(EID):
     totaltime /= 60
     totaldialogs = len(models.Dialog.objects.filter(EID = EID))
     avgtime = round(totaltime / totaldialogs, 2)
-    return JsonResponse({'flag': 1, 'message': avgtime})
+    return JsonResponse({'flag': const_table.const.SUCCESS, 'message': avgtime})
 
 @ensure_csrf_cookie
 def enterprise_set_robot_message(request):
@@ -458,13 +424,13 @@ def enterprise_set_robot_message(request):
     if hasattr(request, 'session') and 'eid' in request.session:
         EID = request.session['eid']
     else:
-        return JsonResponse({'flag': -12, 'message': ''})
+        return JsonResponse({'flag': const_table.const.EID_NOT_EXIST})
     try:
         models.Enterprise.objects.filter(EID = EID, state = 1).update(robot_name = info['robot_name'], 
             robot_icon = info['robot_icon'])
-        return JsonResponse({'flag': 1, 'message': ''})
+        return JsonResponse({'flag': const_table.const.SUCCESS, 'message': ''})
     except Exception:
-        return JsonResponse({'flag': -12, 'message': ''})
+        return JsonResponse({'flag': const_table.const.ERROR})
 
 @ensure_csrf_cookie
 def enterprise_set_robot_state(request):
@@ -475,13 +441,13 @@ def enterprise_set_robot_state(request):
     if hasattr(request, 'session') and 'eid' in request.session:
         EID = request.session['eid']
     else:
-        return JsonResponse({'flag': -12, 'message': ''})
+        return JsonResponse({'flag': const_table.const.EID_NOT_EXIST})
     robot_state = models.Enterprise.objects.get(EID = EID).robot_state
     if robot_state == 0:
         models.Enterprise.objects.filter(EID = EID).update(robot_state = 1)
     else:
         models.Enterprise.objects.filter(EID = EID).update(robot_state = 0)
-    return JsonResponse({'flag': 1, 'message': ''})
+    return JsonResponse({'flag': const_table.const.SUCCESS, 'message': ''})
 
 @ensure_csrf_cookie
 def enterprise_get_robot_info(request):
@@ -492,29 +458,22 @@ def enterprise_get_robot_info(request):
     if hasattr(request, 'session') and 'eid' in request.session:
         EID = request.session['eid']
     else:
-        return JsonResponse({'flag': -12, 'message': ''})
+        return JsonResponse({'flag': const_table.const.EID_NOT_EXIST})
     robot_name = models.Enterprise.objects.get(EID = EID).robot_name
     robot_icon = models.Enterprise.objects.get(EID = EID).robot_icon
     robot_state = models.Enterprise.objects.get(EID = EID).robot_state
     robot_info = {'robot_name': robot_name, 'robot_icon': robot_icon, 'robot_state': robot_state}
-    return JsonResponse({'flag': 1, 'message': robot_info})
+    return JsonResponse({'flag': const_table.const.SUCCESS, 'message': robot_info})
 
 def enterprise_avgmes_dialogs(EID):
     """获取企业会话的平均消息数"""
-    """EID = 'eid'
-    if hasattr(request, 'body'):
-        info = json.loads(request.body.decode('utf8'))
-    if hasattr(request, 'session') and 'eid' in request.session:
-        EID = request.session['eid']
-    else:
-        return JsonResponse({'flag': -12, 'message': ''})"""
     total_messages = 0
     dialogs = models.Dialog.objects.filter(EID = EID)
     for dialog in dialogs:
         total_messages += len(models.Message.objects.filter(DID = dialog.DID))
     total_dialogs = len(models.Dialog.objects.filter(EID = EID))
     avgmes = round(total_messages / total_dialogs, 2)
-    return JsonResponse({'flag': 1, 'message': avgmes})
+    return JsonResponse({'flag': const_table.const.SUCCESS, 'message': avgmes})
 
 @ensure_csrf_cookie
 def enterprise_set_chatbox_type(request):
@@ -525,33 +484,29 @@ def enterprise_set_chatbox_type(request):
     if hasattr(request, 'session') and 'eid' in request.session:
         EID = request.session['eid']
     else:
-        return JsonResponse({'flag': -12, 'message': ''})
-    #enterprise = models.Enterprise.objects.filter(EID = EID, state = 1)
+        return JsonResponse({'flag': const_table.const.EID_NOT_EXIST})
     try:
         models.Enterprise.objects.filter(EID = EID, state = 1).update(chatbox_type = info['chatbox_type'])
         code = 'abcdefzddhetdhsdzfsdgjhgsdxghfgggtfgchgsdzdfsdghfgdfj'
-        return JsonResponse({'flag': 1, 'message': code})
+        return JsonResponse({'flag': const_table.const.SUCCESS, 'message': code})
     except Exception:
-        return JsonResponse({'flag': -12, 'message': ''})
+        return JsonResponse({'flag': const_table.const.ERROR})
 
 @ensure_csrf_cookie
 def enterprise_setuser_message(request):
     """企业将用户信息传给系统"""
-    # info = {'eid': -1}
     EID = 'eid'
     if hasattr(request, 'body'):
         info = json.loads(request.body.decode('utf8'))
     if hasattr(request, 'session') and 'eid' in request.session:
         EID = request.session['eid']
-    # elif info['eid'] != -1:
-    #     EID = info['eid']
     else:
-        return JsonResponse({'flag': -12, 'message': ''})
+        return JsonResponse({'flag': const_table.const.EID_NOT_EXIST})
     try:
         models.User.objects.create(UID = info['uid'])
-        return JsonResponse({'flag': 1, 'message': ''})
+        return JsonResponse({'flag': const_table.const.SUCCESS, 'message': ''})
     except Exception:
-        return JsonResponse({'flag': -12, 'message': ''})
+        return JsonResponse({'flag': const_table.const.ERROR})
 
 @ensure_csrf_cookie
 def enterprise_message_number_oneday(request):
@@ -562,7 +517,7 @@ def enterprise_message_number_oneday(request):
     if hasattr(request, 'session') and 'eid' in request.session:
         EID = request.session['eid']
     else:
-        return JsonResponse({'flag': -12, 'message': ''})
+        return JsonResponse({'flag': const_table.const.EID_NOT_EXIST})
     total = [0 for x in range(24)]
     nowtime = datetime.datetime.now()
     time1 = nowtime.hour
@@ -576,7 +531,7 @@ def enterprise_message_number_oneday(request):
                     total[time1 - time2 + 24] += 1
                 else:
                     total[time1 - time2] += 1
-    return JsonResponse({'flag': 1, 'message': total})
+    return JsonResponse({'flag': const_table.const.SUCCESS, 'message': total})
 
 @ensure_csrf_cookie
 def enterprise_serviced_number_oneday(request):
@@ -586,7 +541,7 @@ def enterprise_serviced_number_oneday(request):
     if hasattr(request, 'session') and 'eid' in request.session:
         EID = request.session['eid']
     else:
-        return JsonResponse({'flag': -12, 'message': ''})
+        return JsonResponse({'flag': const_table.const.EID_NOT_EXIST})
     nowtime = datetime.datetime.now()
     time1 = nowtime.hour
     serviced = [[] for x in range(24)]
@@ -600,7 +555,7 @@ def enterprise_serviced_number_oneday(request):
                 serviced[time1 - time2].append(dialog.UID)
     for i in range(0, 24):
         serviced[i] = len(list(set(serviced[i])))
-    return JsonResponse({'flag': 1, 'message': serviced})
+    return JsonResponse({'flag': const_table.const.SUCCESS, 'message': serviced})
 
 @ensure_csrf_cookie
 def enterprise_dialogs_oneday(request):
@@ -611,7 +566,7 @@ def enterprise_dialogs_oneday(request):
     if hasattr(request, 'session') and 'eid' in request.session:
         EID = request.session['eid']
     else:
-        return JsonResponse({'flag': -12, 'message': ''})
+        return JsonResponse({'flag': const_table.const.EID_NOT_EXIST})
     total = [0 for x in range(24)]
     nowtime = datetime.datetime.now()
     time1 = nowtime.hour
@@ -623,17 +578,10 @@ def enterprise_dialogs_oneday(request):
                 total[time1 - time2 + 24] += 1
             else:
                 total[time1 - time2] += 1
-    return JsonResponse({'flag': 1, 'message': total})
+    return JsonResponse({'flag': const_table.const.SUCCESS, 'message': total})
 
 def enterprise_dialogs_total_oneday(EID):
     """获取企业最近24小时会话总数"""
-    """EID = 'eid'
-    if hasattr(request, 'body'):
-        info = json.loads(request.body.decode('utf8'))
-    if hasattr(request, 'session') and 'eid' in request.session:
-        EID = request.session['eid']
-    else:
-        return JsonResponse({'flag': -12, 'message': ''})"""
     total = 0
     nowtime = datetime.datetime.now()
     dialogs = models.Dialog.objects.filter(EID = EID)
@@ -642,7 +590,7 @@ def enterprise_dialogs_total_oneday(EID):
         time2 = time.mktime(dialog.start_time.timetuple())
         if time1 - time2 < 60 * 60 * 24:
             total += 1
-    return JsonResponse({'flag': 1, 'message': total})
+    return JsonResponse({'flag': const_table.const.SUCCESS, 'message': total})
 
 @ensure_csrf_cookie
 def enterprise_get_alldata(request):
@@ -655,7 +603,7 @@ def enterprise_get_alldata(request):
     if hasattr(request, 'session') and 'eid' in request.session:
         EID = request.session['eid']
     else:
-        return JsonResponse({'flag': -12, 'message': ''})
+        return JsonResponse({'flag': const_table.const.EID_NOT_EXIST})
     try:
         totaltime = jrToJson(enterprise_total_servicetime(EID))['message']
         totalmessage = jrToJson(enterprise_total_messages(EID))['message']
@@ -667,9 +615,9 @@ def enterprise_get_alldata(request):
         avgmessages = jrToJson(enterprise_avgmes_dialogs(EID))['message']
         alldata = {'totalTime': totaltime, 'totalMessage': totalmessage, 'totalDialog': totaldialog, 'totalServiced': totalserviced, 
         'totalOnline': totalonline, 'todayDialog': todaydialog, 'avgDialogTime': avgdialogtime, 'avgMessages': avgmessages}
-        return JsonResponse({'flag': 1, 'message': alldata})
+        return JsonResponse({'flag': const_table.const.SUCCESS, 'message': alldata})
     except Exception:
-        return JsonResponse({'flag': -12, 'message': ''})
+        return JsonResponse({'flag': const_table.const.ERROR})
 
 @ensure_csrf_cookie
 def enterprise_set_robot_question(request):
@@ -680,7 +628,7 @@ def enterprise_set_robot_question(request):
     if hasattr(request, 'session') and 'eid' in request.session:
         EID = request.session['eid']
     else:
-        return JsonResponse({'flag': -12, 'message': ''})
+        return JsonResponse({'flag': const_table.const.EID_NOT_EXIST})
     question = info['question']
     answer = info['answer']
     category = info['category']
@@ -688,9 +636,9 @@ def enterprise_set_robot_question(request):
     try:
         models.Question.objects.create(QID = QID, EID = EID, question = question, 
             answer = answer, category = category)
-        return JsonResponse({'flag': 1, 'message': QID})
+        return JsonResponse({'flag': const_table.const.SUCCESS, 'message': QID})
     except Exception:
-        return JsonResponse({'flag': -12, 'message': ''})
+        return JsonResponse({'flag': const_table.const.ERROR})
 
 @ensure_csrf_cookie
 def enterprise_get_all_question(request):
@@ -701,7 +649,7 @@ def enterprise_get_all_question(request):
     if hasattr(request, 'session') and 'eid' in request.session:
         EID = request.session['eid']
     else:
-        return JsonResponse({'flag': -12, 'message': ''})
+        return JsonResponse({'flag': const_table.const.EID_NOT_EXIST})
     try:
         question_list = []
         questions = models.Question.objects.filter(EID = EID)
@@ -710,9 +658,9 @@ def enterprise_get_all_question(request):
                 'qid': question.QID, 'question': question.question, 
                 'answer': question.answer, 'category': question.category
             })
-        return JsonResponse({'flag': 1, 'message': question_list})
+        return JsonResponse({'flag': const_table.const.SUCCESS, 'message': question_list})
     except Exception:
-        return JsonResponse({'flag': -12, 'message': ''})
+        return JsonResponse({'flag': const_table.const.ERROR})
 
 @csrf_exempt
 def UrlValidateJudge(request):
@@ -723,12 +671,12 @@ def UrlValidateJudge(request):
     if hasattr(request, 'session') and 'eid' in request.session:
         EID = request.session['eid']
     else:
-        return JsonResponse({'flag': -12, 'message': ''})
+        return JsonResponse({'flag': const_table.const.EID_NOT_EXIST})
     try:
         enterprise = models.Enterprise.objects.get(EID = EID)
-        return JsonResponse({'flag': 1, 'message': ''})
+        return JsonResponse({'flag': const_table.const.SUCCESS, 'message': ''})
     except Exception:
-        return JsonResponse({'flag': -12, 'message': ''})
+        return JsonResponse({'flag': const_table.const.ERROR})
 
 @ensure_csrf_cookie
 def enterprise_delete_question(request):
@@ -739,14 +687,14 @@ def enterprise_delete_question(request):
     if hasattr(request, 'session') and 'eid' in request.session:
         EID = request.session['eid']
     else:
-        return JsonResponse({'flag': -12, 'message': ''})
+        return JsonResponse({'flag': const_table.const.EID_NOT_EXIST})
     try:
         QID = info['qid']
         questions = models.Question.objects.filter(QID = QID)
         questions.delete()
-        return JsonResponse({'flag': 1, 'message': ''})
+        return JsonResponse({'flag': const_table.const.SUCCESS, 'message': ''})
     except Exception:
-        return JsonResponse({'flag': -12, 'message': ''})
+        return JsonResponse({'flag': const_table.const.ERROR})
 
 @ensure_csrf_cookie
 def enterprise_modify_question(request):
@@ -757,7 +705,7 @@ def enterprise_modify_question(request):
     if hasattr(request, 'session') and 'eid' in request.session:
         EID = request.session['eid']
     else:
-        return JsonResponse({'flag': -12, 'message': ''})
+        return JsonResponse({'flag': const_table.const.EID_NOT_EXIST})
     try:
         question = info['question']
         answer = info['answer']
@@ -765,6 +713,6 @@ def enterprise_modify_question(request):
         QID = info['qid']
         questions = models.Question.objects.filter(QID = QID)
         questions.update(question = question, answer = answer, category = category)
-        return JsonResponse({'flag': 1, 'message': ''})
+        return JsonResponse({'flag': const_table.const.SUCCESS, 'message': ''})
     except Exception:
-        return JsonResponse({'flag': -12, 'message': ''})
+        return JsonResponse({'flag': const_table.const.ERROR})
