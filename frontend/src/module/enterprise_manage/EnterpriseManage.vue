@@ -32,7 +32,7 @@
             <Icon type="navicon" size="32"></Icon>
           </i-button>
         </div>
-        <div class="layout-content">
+        <div :class="contentClass">
           <div class="layout-content-main"><div :is="type"></div></div>
         </div>
       </i-col>
@@ -49,6 +49,7 @@
     components: {ManageCustomer, EnterpriseSetting, EnterpriseOverview, HistoryDialog, SetRobot},
     data () {
       return {
+        contentClass: 'layout-content',
         leftClass: 'my-fixed',
         type: 'enterprise-overview',
         spanLeft: 5,
@@ -73,6 +74,11 @@
         }
       },
       select (name) {
+        if (name === 'enterprise-setting') {
+          this.contentClass = 'layout-content2'
+        } else {
+          this.contentClass = 'layout-content'
+        }
         this.type = name
       }
     },
@@ -88,7 +94,7 @@
       .then((res) => res.json())
       .then((res) => {
         if (res['flag'] === -1) {
-          // window.location.href = '/enterprise/'
+          window.location.href = '/enterprise/'
         } else {
           console.log('成功')
         }
@@ -99,7 +105,7 @@
 <style scoped>
 .row {
   display: flex;
-  height: 80%;
+  height: 100%;
 }
 .layout {
   border: 1px solid #d7dde4;
@@ -107,14 +113,23 @@
   position: relative;
   border-radius: 4px;
   overflow: hidden;
-  min-height: 80%;
+  min-height: 100%;
 }
 .layout-breadcrumb {
   padding: 10px 15px 0;
 }
 .layout-content {
-  min-height: 760px; 
+  min-height: 800px;
   margin: 15px;
+  margin-top: 75px;
+  overflow: hidden;
+  background: #fff;
+  border-radius: 4px;
+}
+.layout-content2 {
+  min-height: 1080px;
+  margin: 15px;
+  margin-top: 75px;
   overflow: hidden;
   background: #fff;
   border-radius: 4px;
@@ -143,9 +158,12 @@
   left: 0;
 }
 .layout-header {
+  position: fixed;
+  width: 100%;
   height: 60px;
   background: #fff;
   box-shadow: 0 1px 1px rgba(0,0,0,.1);
+  z-index: 100;
 }
 .layout-logo-left {
   width: 90%;

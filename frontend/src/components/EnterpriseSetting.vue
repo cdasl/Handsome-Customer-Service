@@ -185,7 +185,7 @@
     },
     async mounted () {
       // 获取机器人信息和innerCode
-      let res = await this.fetchBase('/api/enter/get_robot_info/', {})
+      let res = await this.fetchBase('/api/enter/robot_into/', {})
       if (res['flag'] === -12) {
         this.$Message.error('机器人信息获取失败')
       } else {
@@ -214,7 +214,7 @@
 .psw {
   display: block;
   width: 100%;
-  height: 30%;
+  height: 25%;
 }
 .pop-up {
   display: block;
@@ -251,7 +251,7 @@
 .robot {
   display: block;
   width: 100%;
-  height: 40%;
+  height: 45%;
 }
 .robot-switch {
   margin-top: 2vh;
@@ -265,7 +265,7 @@
 .wrap {
   display: block;
   width: 100vw;
-  height: 15vh;
+  height: 20vh;
   margin-bottom: 4vh;
 }
 .left {
