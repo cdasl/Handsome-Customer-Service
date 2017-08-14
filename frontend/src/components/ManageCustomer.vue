@@ -116,7 +116,7 @@
           })
           this.customerEmail = ''
           if (res['flag'] === global_.CONSTGET.MAILBOX_REGISTERED) {
-            this.$Message.warning(global_.CONSTSHOW.MAILBOX_REGISTERE)
+            this.$Message.warning(global_.CONSTSHOW.MAILBOX_REGISTERED)
           } else if (res['flag'] === global_.CONSTGET.INVITE_FAILURE) {
             this.$Message.error(global_.CONSTSHOW.INVITE_FAILURE)
           } else if (res['flag'] === global_.CONSTGET.EID_NOT_EXIST) {
