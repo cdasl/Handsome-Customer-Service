@@ -13,16 +13,32 @@ services:
 
 # This folder is cached between builds
 # http://docs.gitlab.com/ce/ci/yaml/README.html#cache
+stages:
+  - install_deps
+  - test_backend
+  - run_build
+  - test_frontend
 cache:
   paths:
   - frontend/node_modules/
-
-test_async:
+  - frontend/dist/
+install_deps:
+  stage: install_deps
   script:
+   - cd frontend
    - npm install
-   - node ./specs/start.js ./specs/async.spec.js
-
-test_db:
+test_backend:
+  stage: test_backend
   script:
-   - npm install
-   - node ./specs/start.js ./specs/db-postgres.spec.js
+   - cd backend
+   - python manage.py runserver
+run_build:
+  stage: run_build
+  script:
+   - cd frontend
+   - npm run build
+test_frontend:
+  stage: test_frontend
+  script:
+   - cd frontend
+   - npm run unit
