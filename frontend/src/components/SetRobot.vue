@@ -229,7 +229,6 @@
       },
       addQuestion () {
         // 弹出添加问题模态框
-        this.$Message.error('添加问题')
         this.show = true
         this.cancel()
       },
