@@ -10,7 +10,6 @@
       <Option v-for="item of orderList" :value="item" :key="item">{{ item }}</Option>
     </Select>
     <Row>
-        <p class="legend">状态: -1->被注销,0->未激活,1->激活,2->在线,3->不在线</p>
         <Table border :columns="customerForm" :data="customerDataShow" ref="table"></Table>
         <Page :total="customerData.length" @on-change="changePage" :page-size="pageSize"></Page>
     </Row>
@@ -22,6 +21,13 @@
   export default {
     data () {
       return {
+        stateMap: {
+          '-1': '已被注销',
+          '0': '未激活',
+          '1': '不在线',
+          '2': '休息中',
+          '3': '工作中'
+        },
         sortList: ['', '状态', '服务总人数', '当前服务人数'], // 排序的所有关键字
         sortKeyWord: '', // 排序关键字
         sortOrder: '升序', // 升序或降序
@@ -116,7 +122,7 @@
             this.customerData.push({
               name: res['message']['name'],
               email: res['message']['email'],
-              state: res['message']['state'],
+              state: this.stateMap['' + res['message']['state']],
               service_number: res['message']['service_number'],
               serviced_number: res['message']['serviced_number'],
               cid: res['message']['cid']
@@ -150,7 +156,7 @@
               break
             }
           }
-          this.customerData[i]['state'] = this.customerData[i]['state'] === -1 ? 1 : -1
+          this.customerData[i]['state'] = this.customerData[i]['state'] === this.stateMap['-1'] ? this.stateMap['1'] : this.stateMap['-1']
           this.init(false)
         }
       },
@@ -223,11 +229,22 @@
     },
     async mounted () {
       // 先获取所有客服列表
+      console.log('hehe')
       let res = await this.fetchBase('/api/get_customers/', {})
+      console.log(res)
       if (res['flag'] === -12) {
         this.$Message.error('客服人员获取失败')
       } else {
-        this.customerData = res['message']
+        for (let i = 0; i < res['message'].length; ++i) {
+          this.customerData.push({
+            'name': res['message'][i]['name'],
+            'email': res['message'][i]['email'],
+            'cid': res['message'][i]['cid'],
+            'state': this.stateMap['' + res['message'][i]['state']],
+            'service_number': res['message'][i]['service_number'],
+            'serviced_number': res['message'][i]['serviced_number']
+          })
+        }
         this.init(true)
       }
     }
