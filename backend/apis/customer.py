@@ -17,7 +17,7 @@ def jrToJson(jr):
 
 @ensure_csrf_cookie
 def customer_chatted(request):
-    """获取与某位客服聊过天的所有用户"""
+    """获取与某位客服聊过天所有用户"""
     info = {'cid': -1}
     CID = 'cid'
     if hasattr(request, 'body'):
