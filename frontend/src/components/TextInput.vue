@@ -25,12 +25,20 @@
     methods: {
       onKeyup (e) {
         if (e.ctrlKey && e.keyCode === 13 && this.content.length) {
-          this.$emit('onKeyup', this.content)
+          this.$emit('onKeyup', this.html2Escape(this.content))
           this.content = ''
         }
       },
       toggle () {
         this.emoji = !this.emoji
+      },
+      html2Escape (sHtml) {
+        // 将html字符转义
+        return sHtml.replace(/[<>&"]/g, function (c) {
+          return {
+            '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;'
+          }[c]
+        })
       },
       screenshot () {
         /* global html2canvas: true */
@@ -99,6 +107,7 @@
           console.log(res)
           this.$emit('onKeyup', res['url'])
         })
+        return false
       }
     },
     mounted: function () {

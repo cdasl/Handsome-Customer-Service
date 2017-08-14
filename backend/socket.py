@@ -39,7 +39,7 @@ def user_message(sid, message):
     else:
         sio.emit('my response', {'data': chatbot.get_response(urllib.parse.unquote(message['data'])).text, 'time': time2str(), 'src': '/static/img/robot_icon/1.jpg'}, room = sid, namespace = '/test')
         conversation[sid].append({'send': talker_list[sid], 'receive': 'robot', 'time': message['time'], 'data': urllib.parse.unquote(message['data'])})
-        conversation[sid].append({'send': 'robot', 'receive': talker_list[sid], 'time': message['time'], 'data': chatbot.get_response(urllib.parse.unquote(message['data'])).text})
+        conversation[sid].append({'send': 'robot', 'receive': talker_list[sid], 'time': time2str(), 'data': chatbot.get_response(urllib.parse.unquote(message['data'])).text})
 
 @sio.on('customer message', namespace = '/test')
 def customer_message(sid, message):

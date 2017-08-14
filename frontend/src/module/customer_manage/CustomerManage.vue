@@ -35,6 +35,7 @@
             <i-option value="2">在线</i-option>
             <i-option value="3">休息</i-option>
           </i-select>
+          <Button type="text" class="logout" @click="logout">退出</Button>
         </div>
         <div class="layout-content">
           <div class="layout-content-main" :is="type" @send="send" @swit="swit" @close="close" :content="currentcontent" :lists="lists"></div>
@@ -67,8 +68,8 @@
         currentcontent: [],
         status: '2',
         sid: '',
-        cid: 'ccid',
-        eid: 'eeid'
+        cid: '',
+        eid: ''
       }
     },
     computed: {
@@ -87,6 +88,19 @@
           this.spanRight = 19
           this.leftClass = 'my-fixed'
         }
+      },
+      logout () {
+        fetch('/api/customer/logout/', {
+          method: 'post',
+          credentials: 'same-origin',
+          headers: {
+            'X-CSRFToken': this.getCookie('csrftoken'),
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          }
+        }).then((res) => res.json()).then((res) => {
+          window.location.replace('/customer_login/')
+        })
       },
       swit (item) {
         // 由于switch是js关键字 无法使用
@@ -157,7 +171,7 @@
         return ''
       },
       getCid () {
-        fetch('/api/customer/get_id/', {
+        return fetch('/api/customer/get_id/', {
           method: 'post',
           credentials: 'same-origin',
           headers: {
@@ -165,17 +179,16 @@
             'Accept': 'application/json',
             'Content-Type': 'application/json'
           }
-        }).then((res) => res.json()).then((res) => {
-          this.cid = res['message']['cid']
-          this.eid = res['message']['eid']
-        })
+        }).then((res) => res.json())
       }
     },
-    mounted: function () {
+    mounted: async function () {
       if (this.socket === null) {
           /* global location io: true */
         this.socket = io.connect('http://' + document.domain + ':' + location.port + '/test')
-        this.getCid()
+        let res = await this.getCid()
+        this.cid = res['message']['cid']
+        this.eid = res['message']['eid']
         this.socket.emit('a customer connected', {cid: this.cid})
         this.socket.on('customer connected', (msg) => {
           console.log(msg['data'])
@@ -276,7 +289,12 @@
 .select {
   position: absolute;
   right: 10%;
-  width: 100px;
+  width: 7%;
+  top: 1.5%;
+}
+.logout {
+  position: absolute;
+  right: 0;
   top: 1.5%;
 }
 </style>
