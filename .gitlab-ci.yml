@@ -30,8 +30,8 @@ install_deps:
 test_backend:
   stage: test_backend
   script:
-   - cd backend
-   - python manage.py runserver
+   - ./manage.py test backend.tests
+   - ./manage.py test backend.customer_tests
 run_build:
   stage: run_build
   script:
