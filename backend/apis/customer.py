@@ -84,6 +84,7 @@ def customer_logout(request):
     else:
         return JsonResponse({'flag': const_table.const.CID_NOT_EXIST})
     models.Customer.objects.filter(CID = CID).update(state = 1)
+    del request.session
     return JsonResponse({'flag': const_table.const.SUCCESS, 'message': ''})
 
 @ensure_csrf_cookie
