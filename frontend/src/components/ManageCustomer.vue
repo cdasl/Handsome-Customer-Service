@@ -229,9 +229,7 @@
     },
     async mounted () {
       // 先获取所有客服列表
-      console.log('hehe')
       let res = await this.fetchBase('/api/get_customers/', {})
-      console.log(res)
       if (res['flag'] === -12) {
         this.$Message.error('客服人员获取失败')
       } else {
