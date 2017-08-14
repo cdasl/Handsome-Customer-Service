@@ -226,9 +226,9 @@ def reset_password(request):
     """重置密码，前端发送激活码，新密码"""
     info = json.loads(request.body.decode('utf8'))
     tip = helper.active_code_check(info['active_code'])
-    if tip == const_table.const.INVALID:
+    if tip == -8:
         return JsonResponse({'flag': const_table.const.INVALID})
-    if tip == const_table.const.EXPIRED:
+    if tip == -9:
         return JsonResponse({'flag': const_table.const.EXPIRED})
     decrypt_str = helper.decrypt(9, info['active_code'])
     decrypt_data = decrypt_str.split('|')

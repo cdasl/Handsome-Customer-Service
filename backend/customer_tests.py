@@ -4,10 +4,13 @@ from .apis import enterprise, helper, messages, customer
 from . import models
 import json, hashlib, time, random, string, datetime
 import django.utils.timezone as timezone
-from . import tests
+
+def jrToJson(jr):
+    '''将JsonResponse对象转为Json对象'''
+    return json.loads(jr.content.decode('utf8'))
 
 class CustomerLoginTestCase(TestCase):
-    """测试用户登录Api"""
+    '''测试用户登录Api'''
     def setUp(self):
         md5 = hashlib.md5()
         salt = 'testsalt'
@@ -30,18 +33,18 @@ class CustomerLoginTestCase(TestCase):
         request = rf.post('api/customer/login/')
         request._body = json.dumps(info).encode('utf8')
         request.session = {}
-        self.assertEqual(tests.jrToJson(customer.customer_login(request))['flag'], 1)
+        self.assertEqual(jrToJson(customer.customer_login(request))['flag'], 1)
         #测试密码错误
         info['password'] = '123456789'
         request._body = json.dumps(info).encode('utf8')
-        self.assertEqual(tests.jrToJson(customer.customer_login(request))['flag'], -1)
+        self.assertEqual(jrToJson(customer.customer_login(request))['flag'], -1)
         #测试登录失败
         info['email'] = '123456@qq.com'
         request._body = json.dumps(info).encode('utf8')
-        self.assertEqual(tests.jrToJson(customer.customer_login(request))['flag'], -7)
+        self.assertEqual(jrToJson(customer.customer_login(request))['flag'], -7)
 
 class CustomerLogoutTestCase(TestCase):
-    """测试客服退出Api"""
+    '''测试客服退出Api'''
     def setUp(self):
         models.Customer.objects.create(CID = 'test_cid1', EID = 'test_eid', email = '2222@qq.com', salt = 'salt',
             password = 'password', icon = 'test_icon', name = 'test_name', state = 2,
@@ -55,14 +58,14 @@ class CustomerLogoutTestCase(TestCase):
         #登出失败
         info = {}
         request._body = json.dumps(info).encode('utf8')
-        self.assertEqual(tests.jrToJson(customer.customer_logout(request))['flag'], -12)
+        self.assertEqual(jrToJson(customer.customer_logout(request))['flag'], -12)
         #登出成功
         request.session['cid'] = 'test_cid1'
         request._body = json.dumps(info).encode('utf8')
-        self.assertEqual(tests.jrToJson(customer.customer_logout(request))['flag'], 1)
+        self.assertEqual(jrToJson(customer.customer_logout(request))['flag'], 1)
 
 class OnlineStateTestCase(TestCase):
-    """测试改变在线状态"""
+    '''测试改变在线状态'''
     def setUp(self):
         models.Customer.objects.create(CID = 'test_cid', EID = 'test_eid', email = '2222@qq.com', salt = 'salt',
             password = 'password', icon = 'test_icon', name = 'test_name', state = 2,
@@ -76,16 +79,16 @@ class OnlineStateTestCase(TestCase):
         info = {}
         #失败
         request._body = json.dumps(info).encode('utf8')
-        self.assertEqual(tests.jrToJson(customer.customer_change_onlinestate(request))['flag'], -12)
+        self.assertEqual(jrToJson(customer.customer_change_onlinestate(request))['flag'], -12)
         #成功
         request.session['cid'] = 'test_cid'
-        self.assertEqual(tests.jrToJson(customer.customer_change_onlinestate(request))['flag'], 1)
+        self.assertEqual(jrToJson(customer.customer_change_onlinestate(request))['flag'], 1)
         self.assertEqual(models.Customer.objects.get(CID = 'test_cid').state, 3)
-        self.assertEqual(tests.jrToJson(customer.customer_change_onlinestate(request))['flag'], 1)
+        self.assertEqual(jrToJson(customer.customer_change_onlinestate(request))['flag'], 1)
         self.assertEqual(models.Customer.objects.get(CID = 'test_cid').state, 2)
 
 class ServicedNumTestCase(TestCase):
-    """测试客服服务过的人数"""
+    '''测试客服服务过的人数'''
     def setUp(self):
         models.Customer.objects.create(CID = 'test_cid', EID = 'test_eid', email = '2222@qq.com', salt = 'salt',
             password = 'password', icon = 'test_icon', name = 'test_name', state = 2,
@@ -93,7 +96,7 @@ class ServicedNumTestCase(TestCase):
 
     def test_serviced_number(self):
         CID = 'test_cid'
-        result = tests.jrToJson(customer.customer_serviced_number(CID))
+        result = jrToJson(customer.customer_serviced_number(CID))
         self.assertEqual(result['message'], 100)
 
 class CustomerOnedayTestCase(TestCase):
@@ -114,7 +117,7 @@ class CustomerOnedayTestCase(TestCase):
     
     def test_customer_oneday(self):
         CID = 'test_cid1'
-        result = tests.jrToJson(customer.customer_dialogs_oneday(CID))
+        result = jrToJson(customer.customer_dialogs_oneday(CID))
         self.assertEqual(result['message'], 2)
 
 class CustomerTotalMsgTestCase(TestCase):
@@ -149,7 +152,7 @@ class CustomerTotalMsgTestCase(TestCase):
 
     def test_customer_total_msg(self):
         CID = 'test_cid1'
-        result = tests.jrToJson(customer.customer_total_messages(CID))
+        result = jrToJson(customer.customer_total_messages(CID))
         self.assertEqual(result['message'], 6)
 
 class CustomerTotalServicedTimeTestCase(TestCase):
@@ -170,7 +173,7 @@ class CustomerTotalServicedTimeTestCase(TestCase):
 
     def test_customer_total_minute(self):
         CID = 'test_cid1'
-        result = tests.jrToJson(customer.customer_total_servicedtime(CID))
+        result = jrToJson(customer.customer_total_servicedtime(CID))
         self.assertAlmostEqual(result['message'], 112, delta = 1)
 
 class CustomerTotalDialogTestCase(TestCase):
@@ -191,7 +194,7 @@ class CustomerTotalDialogTestCase(TestCase):
 
     def test_total_dialog(self):
         CID = 'test_cid1'
-        result = tests.jrToJson(customer.customer_total_dialogs(CID))
+        result = jrToJson(customer.customer_total_dialogs(CID))
         self.assertEqual(result['message'], 3)
 
 class CustomerAvgTimeTestCase(TestCase):
@@ -212,7 +215,7 @@ class CustomerAvgTimeTestCase(TestCase):
 
     def test_customer_avg_time(self):
         CID = 'test_cid1'
-        result = tests.jrToJson(customer.customer_avgtime_dialogs(CID))
+        result = jrToJson(customer.customer_avgtime_dialogs(CID))
         self.assertAlmostEqual(result['message'], 37, delta = 0.8)
 
 class CustomerAvgMegTestCase(TestCase):
@@ -247,7 +250,7 @@ class CustomerAvgMegTestCase(TestCase):
 
     def test_avg_msg(self):
         CID = 'test_cid1'
-        result = tests.jrToJson(customer.customer_avgmes_dialogs(CID))
+        result = jrToJson(customer.customer_avgmes_dialogs(CID))
         self.assertAlmostEqual(result['message'], 2, delta = 0.8)
 
 class CustomerDialogListTestCase(TestCase):
@@ -263,12 +266,12 @@ class CustomerDialogListTestCase(TestCase):
         #成功
         request.session['cid'] = 'test_cid1'
         request._body = json.dumps(info).encode('utf8')
-        result = tests.jrToJson(customer.customer_dialogs(request))['message']
+        result = jrToJson(customer.customer_dialogs(request))['message']
         self.assertEqual(len(result), 3)
         self.assertEqual((result[1])['uid'], '7')
         #失败
         del request.session['cid']
-        self.assertEqual(tests.jrToJson(customer.customer_dialogs(request))['flag'], -12)
+        self.assertEqual(jrToJson(customer.customer_dialogs(request))['flag'], -12)
 
 class CustomerDialogMsgTestCase(TestCase):
     '''测试获取客服某个会话内容'''
@@ -283,13 +286,13 @@ class CustomerDialogMsgTestCase(TestCase):
         }
         #成功
         request._body = json.dumps(info).encode('utf8')
-        result = tests.jrToJson(customer.customer_dialog_messages(request))['message']
+        result = jrToJson(customer.customer_dialog_messages(request))['message']
         self.assertEqual(len(result), 2)
         self.assertEqual((result[1])['content'], '12358')
         #失败
         info['did'] = '10086'
         request._body = json.dumps(info).encode('utf8')
-        self.assertEqual(tests.jrToJson(customer.customer_dialog_messages(request))['flag'], -16)
+        self.assertEqual(jrToJson(customer.customer_dialog_messages(request))['flag'], -16)
 
 class CustomerModifyTestCase(TestCase):
     '''测试客服修改'''
@@ -307,12 +310,12 @@ class CustomerModifyTestCase(TestCase):
         #成功
         request.session['cid'] = 'test_cid1'
         request._body = json.dumps(info).encode('utf8')
-        self.assertEqual(tests.jrToJson(customer.customer_modify_icon(request))['flag'], 1)
+        self.assertEqual(jrToJson(customer.customer_modify_icon(request))['flag'], 1)
         self.assertEqual(models.Customer.objects.get(CID = 'test_cid1').name, 'Takahashi')
         self.assertEqual(models.Customer.objects.get(CID = 'test_cid1').icon, 'umaru')
         #失败
         del request.session['cid']
-        self.assertEqual(tests.jrToJson(customer.customer_modify_icon(request))['flag'], -12)
+        self.assertEqual(jrToJson(customer.customer_modify_icon(request))['flag'], -12)
 
 class allDataTestCase(TestCase):
     '''测试返回客服所有数据'''
@@ -328,10 +331,10 @@ class allDataTestCase(TestCase):
         #成功
         request.session['cid'] = 'test_cid1'
         request._body = json.dumps(info).encode('utf8')
-        self.assertEqual(tests.jrToJson(customer.customer_get_alldata(request))['flag'], 1)
+        self.assertEqual(jrToJson(customer.customer_get_alldata(request))['flag'], 1)
         #失败
         del request.session['cid']
-        self.assertEqual(tests.jrToJson(customer.customer_get_alldata(request))['flag'], -12)
+        self.assertEqual(jrToJson(customer.customer_get_alldata(request))['flag'], -12)
 
 class CustomerGetInfoTestCase(TestCase):
     '''测试客服获取个人信息'''
@@ -346,12 +349,12 @@ class CustomerGetInfoTestCase(TestCase):
         #成功
         request.session['cid'] = 'test_cid1'
         request._body = json.dumps(info).encode('utf8')
-        result = tests.jrToJson(customer.customer_get_info(request))['message']
+        result = jrToJson(customer.customer_get_info(request))['message']
         self.assertEqual(result['eid'], 'test_eid')
         self.assertEqual(result['name'], 'test_name')
         #失败
         del request.session['cid']
-        self.assertEqual(tests.jrToJson(customer.customer_get_info(request))['flag'], -12)
+        self.assertEqual(jrToJson(customer.customer_get_info(request))['flag'], -12)
 
 class CustomerGetIDTestCase(TestCase):
     '''测试客服获取id'''
@@ -366,9 +369,9 @@ class CustomerGetIDTestCase(TestCase):
         #成功
         request.session['cid'] = 'test_cid1'
         request._body = json.dumps(info).encode('utf8')
-        result = tests.jrToJson(customer.customer_get_info(request))['message']
+        result = jrToJson(customer.customer_get_info(request))['message']
         self.assertEqual(result['eid'], 'test_eid')
         self.assertEqual(result['cid'], 'test_cid1')
         #失败
         del request.session['cid']
-        self.assertEqual(tests.jrToJson(customer.customer_get_info(request))['flag'], -12)
+        self.assertEqual(jrToJson(customer.customer_get_info(request))['flag'], -12)
