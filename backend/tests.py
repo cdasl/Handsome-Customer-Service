@@ -799,7 +799,7 @@ class GetRobotInfoTestCase(TestCase):
 
     def test_get_robot_info(self):
         rf = RequestFactory()
-        request = rf.post('api/enter/get_robot_info/')
+        request = rf.post('api/enter/robot_into/')
         info = {}
         request.session = {}
         request._body = json.dumps(info).encode('utf8')

@@ -27,7 +27,7 @@ class CustomerLoginTestCase(TestCase):
             'password': 'password1'
         }
         rf = RequestFactory()
-        request = rf.post('api/enter/customer/login/')
+        request = rf.post('api/customer/login/')
         request._body = json.dumps(info).encode('utf8')
         request.session = {}
         self.assertEqual(tests.jrToJson(customer.customer_login(request))['flag'], 1)
