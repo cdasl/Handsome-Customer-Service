@@ -11,6 +11,7 @@
   </div>
 </template>
 <script>
+  import global_ from './Const'
   export default {
     data () {
       return {
@@ -37,7 +38,7 @@
         .then((res) => res.json())
       },
       trans () {
-        // 向父组件发送切换到登陆界面消息
+        // 向父组件发送切换到登录界面消息
         this.$emit('transfer', 'enterprise-login')
       },
       getCookie (cName) {
@@ -88,13 +89,13 @@
           'name': this.formItem.name
         })
         this.reset()
-        if (res['flag'] > 0) {
+        if (res['flag'] === global_.CONSTGET.EMAIL_REGISTERED) {
+          this.$Message.error(global_.CONSTSHOW.EMAIL_REGISTERED)
+        } else if (res['flag'] === global_.CONSTGET.FAIL_SIGN_UP) {
+          this.$Message.error(global_.CONSTSHOW.FAIL_SIGN_UP)
+        } else if (res['flag'] === global_.CONSTGET.SUCCESS) {
           this.$Message.success('注册成功')
           this.trans()
-        } else if (res['flag'] === -3) {
-          this.$Message.error('该邮箱已被注册')
-        } else if (res['flag'] === -4) {
-          this.$Message.error('注册失败')
         }
       }
     }

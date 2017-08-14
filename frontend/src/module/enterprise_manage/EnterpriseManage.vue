@@ -40,6 +40,7 @@
   </div>
 </template>
 <script>
+  import global_ from '../../components/Const'
   import ManageCustomer from '../../components/ManageCustomer'
   import EnterpriseSetting from '../../components/EnterpriseSetting'
   import EnterpriseOverview from '../../components/EnterpriseOverview'
@@ -85,6 +86,7 @@
     created () {
       fetch('/api/url_validate/', {
         method: 'post',
+        credentials: 'same-origin',
         headers: {
           'Accept': 'application/json',
           'Content-Type': 'application/json'
@@ -93,7 +95,7 @@
       })
       .then((res) => res.json())
       .then((res) => {
-        if (res['flag'] === -1) {
+        if (res['flag'] === global_.CONSTGET.ERROR || res['flag'] === global_.CONSTGET.EID_NOT_EXIST) {
           window.location.href = '/enterprise/'
         } else {
           console.log('成功')

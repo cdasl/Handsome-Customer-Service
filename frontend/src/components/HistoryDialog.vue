@@ -31,6 +31,7 @@
 </template>
 <script>
   import Message from './Message'
+  import global_ from './Const'
   export default {
     components: {Message},
     data () {
@@ -129,7 +130,7 @@
         let res = await this.fetchBase('/api/enter/customer_info/', {
           'cid': this.dialogDataShow[index].cid
         })
-        if (res['flag'] > 0) {
+        if (res['flag'] === global_.CONSTGET.SUCCESS) {
           this.customerData = [{
             'name': res['message']['name'],
             'email': res['message']['email'],
@@ -138,8 +139,10 @@
             'icon': res['message']['icon']
           }]
           this.showDialog(index)
-        } else {
+        } else if (res['flag'] === global_.CONSTGET.ERROR) {
           this.$Message.error('信息获取失败')
+        } else if (res['flag'] === global_.CONSTGET.EID_NOT_EXIST) {
+          window.location.href = '/enterprise/'
         }
       },
       async showDialog (index) {
@@ -147,9 +150,9 @@
         let res = await this.fetchBase('/api/enter/dialog_message/', {
           'did': this.dialogDataShow[index].did
         })
-        if (res['flag'] === -16) {
-          this.$Message.warning('会话不存在')
-        } else if (res['flag'] > 0) {
+        if (res['flag'] === global_.CONSTGET.DIALOGID_NOT_EXIST) {
+          this.$Message.warning(global_.CONSTSHOW.DIALOGID_NOT_EXIST)
+        } else if (res['flag'] === global_.CONSTGET.SUCCESS) {
           this.content = []
           for (let i = 0; i < res['message'].length; ++i) {
             if (res['message'][i]['sid'] === this.dialogDataShow[index].cid) {
@@ -168,6 +171,8 @@
               })
             }
           }
+        } else if (res['flag'] === global_.CONSTGET.EID_NOT_EXIST) {
+          window.location.href = '/enterprise/'
         }
         this.customerID = this.dialogDataShow[index].cid
         this.show = true
@@ -256,11 +261,13 @@
     async mounted () {
       // 组件装载完成之后获取历史会话列表
       let res = await this.fetchBase('/api/enter/dialogs/', {})
-      if (res['flag'] > 0) {
+      if (res['flag'] === global_.CONSTGET.SUCCESS) {
         this.dialogData = res['message']
         this.init(true)
-      } else if (res['flag'] === -12) {
+      } else if (res['flag'] === global_.CONSTGET.ERROR) {
         this.$Message.error('历史会话获取失败')
+      } else if (res['flag'] === global_.CONSTGET.EID_NOT_EXIST) {
+        window.location.href = '/enterprise/'
       }
     }
   }

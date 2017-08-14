@@ -60,6 +60,7 @@
   </div>
 </template>
 <script>
+  import global_ from './Const'
   export default {
     data () {
       return {
@@ -105,11 +106,13 @@
       async switchRobot () {
         // 向后端发送设置机器人开关
         let res = await this.fetchBase('/api/enter/set_robot_state/', {})
-        if (res['flag'] === -12) {
-          this.$Message.error('设置错误')
+        if (res['flag'] === global_.CONSTGET.ERROR) {
+          this.$Message.error(global_.CONSTSHOW.ERROR)
           this.showRobot = !this.showRobot
-        } else {
+        } else if (res['flag'] === global_.CONSTGET.SUCCESS) {
           this.$Message.success('修改成功')
+        } else if (res['flag'] === global_.CONSTGET.EID_NOT_EXIST) {
+          window.location.href = '/enterprise/'
         }
       },
       reset () {
@@ -131,12 +134,14 @@
             'old': this.password.old,
             'new': this.password.new
           })
-          if (res['flag'] === -1) {
-            this.$Message.error('旧密码错误')
-          } else if (res['flag'] === -2) {
-            this.$Message.warning('修改失败')
-          } else {
+          if (res['flag'] === global_.CONSTGET.WRONG_PASSWORD) {
+            this.$Message.error(global_.CONSTSHOW.WRONG_PASSWORD)
+          } else if (res['flag'] === global_.CONSTGET.FAIL_MODIFY) {
+            this.$Message.warning(global_.CONSTSHOW.FAIL_MODIFY)
+          } else if (res['flag'] === global_.CONSTGET.SUCCESS) {
             this.$Message.success('修改成功')
+          } else if (res['flag'] === global_.CONSTGET.EID_NOT_EXIST) {
+            window.location.href = '/enterprise/'
           }
         }
         this.reset()
@@ -151,21 +156,25 @@
           'robot_name': this.robotName,
           'robot_icon': this.imgSrc
         })
-        if (res['flag'] === -12) {
-          this.$Message.error('修改失败')
-        } else {
+        if (res['flag'] === global_.CONSTGET.ERROR) {
+          this.$Message.error(global_.CONSTSHOW.ERROR)
+        } else if (res['flag'] === global_.CONSTGET.SUCCESS) {
           this.$Message.success('修改成功')
+        } else if (res['flag'] === global_.CONSTGET.EID_NOT_EXIST) {
+          window.location.href = '/enterprise/'
         }
       },
       async changeTypePop () {
         let res = await this.fetchBase('/api/enter/chattype/', {
           'chatbox_type': this.popType
         })
-        if (res['flag'] === -12) {
-          this.$Message.error('发生错误')
-        } else {
+        if (res['flag'] === global_.CONSTGET.ERROR) {
+          this.$Message.error(global_.CONSTSHOW.ERROR)
+        } else if (res['flag'] === global_.CONSTGET.SUCCESS) {
           this.innerCode = res['message']
           this.$Message.success('修改成功')
+        } else if (res['flag'] === global_.CONSTGET.EID_NOT_EXIST) {
+          window.location.href = '/enterprise/'
         }
       },
       getCookie (cName) {
@@ -186,20 +195,22 @@
     async mounted () {
       // 获取机器人信息和innerCode
       let res = await this.fetchBase('/api/enter/robot_into/', {})
-      if (res['flag'] === -12) {
-        this.$Message.error('机器人信息获取失败')
-      } else {
+      if (res['flag'] === global_.CONSTGET.ERROR) {
+        this.$Message.error(global_.CONSTSHOW.ERROR)
+      } else if (res['flag'] === global_.CONSTGET.SUCCESS) {
         this.imgSrc = res['message']['robot_icon']
         this.robotName = res['message']['robot_name']
         if (res['message']['robot_state'] === 1) {
           this.showRobot = true
         }
+      } else if (res['flag'] === global_.CONSTGET.EID_NOT_EXIST) {
+        window.location.href = '/enterprise/'
       }
       res = await this.fetchBase('/api/enter/chattype/', {
         'chatbox_type': 1
       })
-      if (res['flag'] === -12) {
-        this.$Message.error('弹窗方式获取失败')
+      if (res['flag'] === global_.CONSTGET.ERROR) {
+        this.$Message.error(global_.CONSTSHOW.ERROR)
       } else {
         this.innerCode = res['message']
       }

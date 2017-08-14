@@ -18,6 +18,7 @@
     </div>
 </template>
 <script>
+  import global_ from './Const'
   export default {
     data () {
       return {
@@ -114,11 +115,13 @@
             'email': this.customerEmail
           })
           this.customerEmail = ''
-          if (res['flag'] === -10) {
-            this.$Message.warning('改邮箱已被注册')
-          } else if (res['flag'] === -11) {
-            this.$Message.error('邀请失败')
-          } else {
+          if (res['flag'] === global_.CONSTGET.MAILBOX_REGISTERED) {
+            this.$Message.warning(global_.CONSTSHOW.MAILBOX_REGISTERE)
+          } else if (res['flag'] === global_.CONSTGET.INVITE_FAILURE) {
+            this.$Message.error(global_.CONSTSHOW.INVITE_FAILURE)
+          } else if (res['flag'] === global_.CONSTGET.EID_NOT_EXIST) {
+            window.location.href = '/enterprise/'
+          } else if (res['flag'] === global_.CONSTGET.SUCCESS) {
             this.customerData.push({
               name: res['message']['name'],
               email: res['message']['email'],
@@ -145,11 +148,13 @@
         let res = await this.fetchBase('/api/enter/reset/', {
           'cid': this.customerDataShow[index]['cid']
         })
-        if (res['flag'] === -13) {
-          this.$Message.warning('该客服不在数据库中')
-        } else if (res['flag'] === -14) {
-          this.$Message.error('操作失败')
-        } else {
+        if (res['flag'] === global_.CONSTGET.CUSTOMER_NOT_EXIST) {
+          this.$Message.warning(global_.CONSTSHOW.CUSTOMER_NOT_EXIST)
+        } else if (res['flag'] === global_.CONSTGET.FAIL_LOG_OFF) {
+          this.$Message.error(global_.CONSTSHOW.FAIL_LOG_OFF)
+        } else if (res['flag'] === global_.CONSTGET.EID_NOT_EXIST) {
+          window.location.href = '/enterprise/'
+        } else if (res['flag'] === global_.CONSTGET.SUCCESS) {
           let i = 0
           for (; i < this.customerData.length; ++i) {
             if (this.customerData[i].cid === this.customerDataShow[index].cid) {
@@ -230,9 +235,11 @@
     async mounted () {
       // 先获取所有客服列表
       let res = await this.fetchBase('/api/get_customers/', {})
-      if (res['flag'] === -12) {
-        this.$Message.error('客服人员获取失败')
-      } else {
+      if (res['flag'] === global_.CONSTGET.ERROR) {
+        this.$Message.error(global_.CONSTSHOW.ERROR)
+      } else if (res['flag'] === global_.CONSTGET.EID_NOT_EXIST) {
+        window.location.href = '/enterprise/'
+      } else if (res['flag'] === global_.CONSTGET.SUCCESS) {
         for (let i = 0; i < res['message'].length; ++i) {
           this.customerData.push({
             'name': res['message'][i]['name'],

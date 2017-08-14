@@ -57,6 +57,7 @@
   </div>
 </template>
 <script>
+  import global_ from './Const'
   export default {
     data () {
       return {
@@ -184,9 +185,11 @@
           'answer': this.myAnswer,
           'category': cate
         })
-        if (res['flag'] === -12) {
-          this.$Message.error('问题添加失败')
-        } else {
+        if (res['flag'] === global_.CONSTGET.ERROR) {
+          this.$Message.error(global_.CONSTSHOW.ERROR)
+        } else if (res['flag'] === global_.CONSTGET.EID_NOT_EXIST) {
+          window.location.href = '/enterprise/'
+        } else if (res['flag'] === global_.CONSTGET.SUCCESS) {
           this.$Message.success('添加成功')
           this.questionDataAll.push({
             'qid': res['message'],
@@ -211,9 +214,11 @@
           'answer': this.myAnswer,
           'category': this.selfCategory === '' ? this.currentCategory : this.selfCategory
         })
-        if (res['flag'] === -12) {
-          this.$Message.error('修改失败')
-        } else {
+        if (res['flag'] === global_.CONSTGET.ERROR) {
+          this.$Message.error(global_.CONSTSHOW.ERROR)
+        } else if (res['flag'] === global_.CONSTGET.EID_NOT_EXIST) {
+          window.location.href = '/enterprise/'
+        } else if (res['flag'] === global_.CONSTGET.SUCCESS) {
           this.$Message.success('修改成功')
           this.questionDataAll[i]['question'] = this.myQuestoin
           this.questionDataAll[i]['answer'] = this.myAnswer
@@ -254,9 +259,11 @@
         let res = await this.fetchBase('/api/enter/delete_question/', {
           'qid': this.questionDataShow[index]['qid']
         })
-        if (res['flag'] === -12) {
-          this.$Message.warning('删除失败')
-        } else {
+        if (res['flag'] === global_.CONSTGET.ERROR) {
+          this.$Message.warning(global_.CONSTSHOW.ERROR)
+        } else if (res['flag'] === global_.CONSTGET.EID_NOT_EXIST) {
+          window.location.href = '/enterprise/'
+        } else if (res['flag'] === global_.CONSTGET.SUCCESS) {
           this.$Message.success('删除成功')
           this.questionDataAll.splice(i, 1)
           this.init(false)
@@ -340,9 +347,11 @@
     async mounted () {
       // 获取所有问题信息，并收集所有类别
       let res = await this.fetchBase('/api/enter/get_all_question/', {})
-      if (res['flag'] === -12) {
-        this.$Message.error('问题获取失败')
-      } else {
+      if (res['flag'] === global_.CONSTGET.ERROR) {
+        this.$Message.error(global_.CONSTSHOW.ERROR)
+      } else if (res['flag'] === global_.CONSTGET.EID_NOT_EXIST) {
+        window.location.href = '/enterprise/'
+      } else if (res['flag'] === global_.CONSTGET.SUCCESS) {
         this.questionDataAll = res['message']
         this.init(true)
         for (let i = 0; i < this.questionDataAll.length; ++i) {
