@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <h3 class="title">企业登陆</h3>
+    <h3 class="title">企业登录</h3>
     <Input v-model="formItem.email" placeholder="邮箱" type="text" class="my-input"></Input>
     <Input v-model="formItem.password" placeholder="密码" type="password" class="my-input"></Input>
     <Button type="primary" @click="submit" class="my-input">登录</Button><br>
@@ -17,6 +17,7 @@
   </div>
 </template>
 <script>
+  import global_ from './Const'
   export default {
     data () {
       return {
@@ -57,10 +58,12 @@
           'email': this.findback.email
         })
         this.findback.email = ''
-        if (res['message'] === 'enterprise_reset') {
+        if (res['flag'] === global_.CONSTGET.SUCCESS) {
           this.$Message.warning('已发送一封邮件给您，请注意查看')
-        } else {
-          this.$Message.warning('发生错误')
+        } else if (res['flag'] === global_.CONSTGET.ERROR) {
+          this.$Message.error(global_.CONSTSHOW.ERROR)
+        } else if (res['flag'] === global_.CONSTGET.INVALID) {
+          this.$Message.warning(global_.CONSTSHOW.INVALID)
         }
       },
       cancel () {},
@@ -95,17 +98,17 @@
           'password': this.formItem.password
         })
         this.reset()
-        if (res['flag'] > 0) {
+        if (res['flag'] === global_.CONSTGET.ACCOUNT_NOT_ACTIVETED) {
+          this.$Message.warning(global_.CONSTSHOW.ACCOUNT_NOT_ACTIVETED)
+        } else if (res['flag'] === global_.CONSTGET.ACCOUNT_LOGGED_OFF) {
+          this.$Message.warning(global_.CONSTSHOW.ACCOUNT_LOGGED_OFF)
+        } else if (res['flag'] === global_.CONSTGET.WRONG_PASSWORD) {
+          this.$Message.error(global_.CONSTSHOW.WRONG_PASSWORD)
+        } else if (res['flag'] === global_.CONSTGET.WRONG_ACCOUNT) {
+          this.$Message.error(global_.CONSTSHOW.WRONG_ACCOUNT)
+        } else if (res['flag'] === global_.CONSTGET.SUCCESS) {
           this.$Message.success('登陆成功')
-          window.location.href = '/enter_manage'
-        } else if (res['flag'] === -5) {
-          this.$Message.warning('账号未激活')
-        } else if (res['flag'] === -6) {
-          this.$Message.warning('账号已被注销')
-        } else if (res['flag'] === -1) {
-          this.$Message.error('密码错误')
-        } else if (res['flag'] === -7) {
-          this.$Message.error('账号不存在')
+          window.location.href = '/enter_manage/'
         }
       }
     }

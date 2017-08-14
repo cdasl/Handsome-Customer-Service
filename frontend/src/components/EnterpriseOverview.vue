@@ -82,6 +82,7 @@
 </template>
 <script>
   import Schart from 'vue-schart'
+  import global_ from './Const'
   export default {
     components: {Schart},
     data () {
@@ -134,9 +135,11 @@
         let urls = ['/api/enter/get_enterprise_msgnum/', '/api/enter/get_oneday/', '/api/enter/get_enter_serviced_num/']
         let titles = ['过去24小时消息数统计', '过去24小时会话数统计', '过去24小时服务人数统计']
         let res = await this.fetchBase(urls[num - 1], {})
-        if (res['flag'] === -12) {
-          this.$Message.error('获取失败')
+        if (res['flag'] === global_.CONSTGET.ERROR) {
+          this.$Message.error(global_.CONSTAHOW.ERROR)
           return
+        } else if (res['flag'] === global_.CONSTGET.EID_NOT_EXIST) {
+          window.location.href = '/enterprise/'
         }
         this.data = []
         this.options.title = titles[num - 1]
@@ -167,10 +170,12 @@
     async mounted () {
       // 先从后端获取需要的统计信息
       let res = await this.fetchBase('/api/enter/get_alldata/', {})
-      if (res['flag'] === -12) {
-        this.$Message.error('数据获取失败')
-      } else {
+      if (res['flag'] === global_.CONSTGET.ERROR) {
+        this.$Message.error(global_.CONSTSHOW.ERROR)
+      } else if (res['flag'] === global_.CONSTGET.SUCCESS) {
         this.statics = res['message']
+      } else if (res['flag'] === global_.CONSTGET.EID_NOT_EXIST) {
+        window.location.href = '/enterprise/'
       }
     }
   }
