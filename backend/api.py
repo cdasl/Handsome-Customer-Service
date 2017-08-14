@@ -18,3 +18,7 @@ def api(request):
     req = json.loads(request.body.decode('utf8'))
     func = eval(req['method'])
     return func(req['data'])
+
+@ensure_csrf_cookie
+def enterprise(request):
+    return render(request, 'enterprise.html')
