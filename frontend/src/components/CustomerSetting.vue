@@ -10,10 +10,16 @@
         <Input v-model="formItem.name" class="input">
       </Form-item>
       <Form-item label="头像">
-        <img src="../assets/img/zhanhui.jpg" class="image">
+        <img :src="formItem.image" class="image">
+        <Upload action="" :before-upload="handleUpload" >
+          <Button type="ghost" icon="ios-cloud-upload-outline" >更换头像</Button>
+        </Upload>
       </Form-item>
       <Form-item>
-        <Button type="primary">保存</Button>
+        <img :src="upload" class="image" v-show="show">
+      </Form-item>
+      <Form-item>
+        <Button type="primary" @click="save">保存</Button>
       </Form-item>
     </Form>
     <h2>密码设置</h2>
@@ -38,22 +44,87 @@
   export default {
     data () {
       return {
-        getItem: {
-          mail: '123456@qq.com',
-          name: '张三',
-          image: 'demo.png'
-        },
         formItem: {
           mail: '123456@qq.com',
           name: '张三',
-          image: 'demo.png'
+          image: '/static/img/logo.jpg'
         },
         passwordItem: {
           oldpassword: '',
           newpassword: '',
           confirm: ''
-        }
+        },
+        upload: '',
+        show: false
       }
+    },
+    methods: {
+      getCookie (cName) {
+        if (document.cookie.length > 0) {
+          let cStart = document.cookie.indexOf(cName + '=')
+          if (cStart !== -1) {
+            cStart = cStart + cName.length + 1
+            let cEnd = document.cookie.indexOf(';', cStart)
+            if (cEnd === -1) {
+              cEnd = document.cookie.length
+            }
+            return unescape(document.cookie.substring(cStart, cEnd))
+          }
+        }
+        return ''
+      },
+      handleUpload (file) {
+        /* global FormData: true */
+        let image = new FormData()
+        image.append('image', file)
+        fetch('/storeimage/', {
+          method: 'post',
+          credentials: 'same-origin',
+          headers: {
+            'X-CSRFToken': this.getCookie('csrftoken'),
+            'Accept': 'application/json'
+          },
+          body: image
+        }).then((res) => res.json()).then((res) => {
+          this.upload = res['url']
+          this.show = true
+        })
+        return false
+      },
+      save () {
+        if (this.formItem['name'] === '') {
+          console.log('名称不可为空')
+          return
+        }
+        fetch('/api/customer/modify/', {
+          method: 'post',
+          credentials: 'same-origin',
+          headers: {
+            'X-CSRFToken': this.getCookie('csrftoken'),
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({icon: this.upload, name: this.formItem['name']})
+        }).then((res) => res.json()).then((res) => {
+          console.log(res['flag'])
+        })
+      }
+    },
+    created: function () {
+      fetch('/api/customer/get_info/', {
+        method: 'post',
+        credentials: 'same-origin',
+        headers: {
+          'X-CSRFToken': this.getCookie('csrftoken'),
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        }
+      }).then((res) => res.json()).then((res) => {
+        this.formItem['mail'] = res['message']['email']
+        this.formItem['name'] = res['message']['name']
+        this.formItem['image'] = res['message']['icon']
+        this.upload = this.formItem['image']
+      })
     }
   }
 </script>

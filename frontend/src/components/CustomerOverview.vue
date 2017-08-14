@@ -56,74 +56,23 @@
         <span>{{ messagesPerDialog }}条/次</span>
       </div>
     </div>
-    <h3>选择统计图形状</h3>
-    <Select v-model="chartType" style="width:200px" @on-change="changeType">
-      <Option v-for="item in typeList" :value="item.value" :key="item.value">{{ item.label }}</Option>
-    </Select>
-    <div>
-      <schart :canvasId="canvasId"
-        :type="chartType"
-        :width="width"
-        :height="height"
-        :data="data"
-        :options="options"
-        class="chart"
-      ></schart>
-    </div>
   </div>
 </template>
 <script>
-  import Schart from 'vue-schart'
   export default {
-    components: {Schart},
     data () {
       return {
-        servicedTime: 45,
-        messages: 998,
-        dialogs: 56,
-        servicedPeople: 34,
-        onlineCustomers: 7,
-        todayDialogs: 5,
-        timePerDialog: 6,
-        messagesPerDialog: 9,
-        chartType: 'bar',
-        canvasId: 'myCanvas',
-        width: 800,
-        height: 400,
-        data: [],
-        options: {
-          title: ''
-        },
-        typeList: [
-          {
-            label: '柱状图',
-            value: 'bar'
-          }, {
-            label: '折线图',
-            value: 'line'
-          }
-        ]
+        servicedTime: 0,
+        messages: 0,
+        dialogs: 0,
+        servicedPeople: 0,
+        onlineCustomers: 0,
+        todayDialogs: 0,
+        timePerDialog: 0,
+        messagesPerDialog: 0
       }
     },
     methods: {
-      getChart (num) {
-        this.data = []
-        let currentHour = (new Date()).getHours()
-        for (let i = 24; i > 0; --i) {
-          let tmp = currentHour - i
-          this.data.push({
-            name: tmp > 0 ? tmp : tmp + 24,
-            value: Math.round(Math.random() * 100)
-          })
-        }
-        if (num === 1) {
-          this.options.title = '过去24小时消息数统计'
-        } else if (num === 2) {
-          this.options.title = '过去24小时会话数统计'
-        } else if (num === 3) {
-          this.options.title = '过去24小时服务人数统计'
-        }
-      },
       getCookie (cName) {
         if (document.cookie.length > 0) {
           let cStart = document.cookie.indexOf(cName + '=')
@@ -149,7 +98,8 @@
           'X-CSRFToken': this.getCookie('csrftoken'),
           'Accept': 'application/json',
           'Content-Type': 'application/json'
-        }
+        },
+        body: JSON.stringify({'data': ''})
       }).then((res) => res.json()).then((res) => {
         this.servicedTime = res['message']['totalTime']
         this.messages = res['message']['totalMessage']
