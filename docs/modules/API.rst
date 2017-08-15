@@ -1,9 +1,6 @@
 API package
 ============
 
-Submodules
-----------
-
 apis\.customer module
 ---------------------
 
@@ -16,31 +13,6 @@ apis\.enterprise module
 -----------------------
 
 .. automodule:: backend.apis.enterprise
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-apis\.helper module
--------------------
-
-.. automodule:: backend.apis.helper
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-apis\.messages module
----------------------
-
-.. automodule:: backend.apis.messages
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-
-Module contents
----------------
-
-.. automodule:: backend.apis
     :members:
     :undoc-members:
     :show-inheritance:

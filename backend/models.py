@@ -4,13 +4,14 @@ from django.db import models
 
 class Enterprise(models.Model):
     '''
-    企业表
-    **属性**：
-    * EID(String)：企业ID号，
-    * name为企业名字，robot_icon为企业机器人头像，
-    robot_name为企业机器人名字，state为企业状态（0为未激活，1为激活），chatbox_type
-    为企业选择的窗口类型（1为嵌入式，2为窗口式，3为移动端），robot_state为企业机器人状态
-    （0为未激活，1为激活）
+    企业表\n
+    * EID(String)：企业ID\n
+    * name(String)：企业名字\n
+    * robot_icon(String)：企业机器人头像，储存路径\n
+    * robot_name(String)：企业机器人名字\n
+    * state(int)：企业状态（0：未激活，1：激活）\n
+    * chatbox_type(int)：企业选择的窗口类型（1：嵌入式，2：窗口式，3：移动端）\n
+    * robot_state(int)：企业机器人状态（0：未激活，1：激活）\n
     '''
     EID = models.CharField(max_length = 50, primary_key = True)
     email = models.CharField(max_length = 30)
@@ -29,9 +30,14 @@ class Enterprise(models.Model):
 
 class Customer(models.Model):
     '''
-    客服表，CID为客服ID号，EID为客服所在企业的ID号，icon为客服头像，name为客服昵称，
-    state为客服状态（-1为注销，0为未激活，1为激活，2为在线，3为离线），service_number为正在服务
-    的人数，service_number为服务过的人数，last_login为在最后一次登录的时间
+    用户表\n
+    * CID(String)：客服ID\n
+    * EID(String)：客服所在企业ID\n
+    * name(String)：客服昵称\n
+    * state(int)：客服状态（-1：注销，0：未激活，1：激活，2：离线，3：在线）\n
+    * service_number(int)：客服正在服务的人数\n
+    * serviced_number(int)：客服服务过的人数\n
+    * last_login(date)：客服最后一次登录的时间\n
     '''
     CID = models.CharField(max_length = 50, primary_key = True)
     EID = models.CharField(max_length = 50)
@@ -51,7 +57,9 @@ class Customer(models.Model):
 
 class User(models.Model):
     '''
-    客户表，UID为客户ID，info为用户信息
+    客户表\n
+    * UID(String)：客户ID\n
+    * info(String)：用户信息\n
     '''
     UID = models.CharField(max_length = 50, primary_key = True)
     info = models.CharField(max_length = 100)
@@ -60,8 +68,14 @@ class User(models.Model):
 
 class Dialog(models.Model):
     '''
-    对话表，DID为本次对话的ID，EID为本次对话所属企业的ID，start_time为对话开始时间，
-    end_time为对话结束时间，UID为用户ID，CID为客服ID，feedback为对话评分
+    对话表\n
+    * DID(String)：本次对话的ID\n
+    * EID(String)：本次对话所属企业的ID\n
+    * start_time(date)：对话开始时间\n
+    * end_time(date)：对话结束时间\n
+    * UID(String)：用户ID\n
+    * CID(String)：客服ID\n
+    * feedback(int)：对话评分\n
     '''
     DID = models.CharField(max_length = 50, primary_key = True)
     EID = models.CharField(max_length = 50)
@@ -75,8 +89,13 @@ class Dialog(models.Model):
 
 class Message(models.Model):
     '''
-    消息表，MID为本条消息的ID，SID为发送者ID，RID为接收者ID，DID为消息所属对话ID，
-    content为消息内容，date为消息发送时间
+    消息表\n
+    * MID(String)：本条消息的ID\n
+    * SID(String)：发送者ID\n
+    * RID(String)：接收者ID\n
+    * DID(String)：消息所属对话ID\n
+    * content(String)：消息内容\n
+    * date(date)：消息发送时间\n
     '''
     MID = models.CharField(max_length = 50, primary_key = True)
     SID = models.CharField(max_length = 50)
@@ -91,7 +110,10 @@ class Message(models.Model):
 
 class Question(models.Model):
     '''
-    机器人问题表，QID为问题ID，EID为问题所属企业ID，category为问题所属目录
+    机器人问题表\n
+    * QID(String)：问题ID\n
+    * EID(String)：问题所属企业ID\n
+    * category(String)：问题所属目录\n
     '''
     QID = models.CharField(max_length = 50, primary_key = True)
     EID = models.CharField(max_length = 50)
