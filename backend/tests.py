@@ -1,7 +1,7 @@
 from django.test import TestCase
 from django.test.client import RequestFactory
 from .apis import enterprise, helper, messages, customer
-from . import models, const, const_table
+from . import models, const, const_table, tests2
 import json, hashlib, time, random, string, datetime
 import django.utils.timezone as timezone
 from django.http import HttpResponseRedirect
@@ -143,17 +143,20 @@ class GetCustomersTestCase(TestCase):
         models.Customer.objects.create(CID = 'test_cid2', EID = 'test_eid', email = '2222@qq.com', salt = 'testsalt',
             password = 'test_password2', icon = 'test_icon', name = 'test_name2', state = 1,
             service_number = 0, serviced_number = 10, last_login = datetime.datetime.now())
+        tests2.DialogsListTestCase.setUp(self)
 
     def test_get_customers(self):
         rf = RequestFactory()
         info = {}
-        request = rf.post('api/enter/test_get_customers')
+        request = rf.post('api/enter/get_customers')
         request._body = json.dumps(info).encode('utf8')
         request.session = {}
         request.session['eid'] = 'test_eid'
         result = jrToJson(enterprise.enterprise_get_customers(request))['message']
         self.assertEqual(result[0]['cid'], 'test_cid1')
         self.assertEqual(result[1]['cid'], 'test_cid2')
+        self.assertEqual(result[0]['avg_feedback'], 4.5)
+        self.assertEqual(result[1]['avg_feedback'], 1)
         del request.session['eid']
         result = jrToJson(enterprise.enterprise_get_customers(request))['flag']
         self.assertEqual(result, const_table.const.EID_NOT_EXIST)
