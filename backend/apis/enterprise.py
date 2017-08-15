@@ -268,6 +268,17 @@ def reset_customer_state(request):
     except Exception:
         return JsonResponse({'flag': const_table.const.FAIL_LOG_OFF})
 
+def customer_avg_feedback(CID):
+    """返回客服所有会话的平均评分"""
+    dialogs = models.Dialog.objects.filter(CID = CID)
+    if(len(dialogs) == 0):
+        return 0
+    total_scores = 0
+    for dialog in dialogs:
+        total_scores += dialog.feedback
+    avg_score = round(total_scores / len(dialogs), 2)
+    return avg_score
+
 @ensure_csrf_cookie
 def enterprise_get_customers(request):
     """获取客服人员列表"""
@@ -281,8 +292,10 @@ def enterprise_get_customers(request):
     customer_list = []
     customers = models.Customer.objects.filter(EID = EID)
     for customer in customers:
+        avg_feedback = customer_avg_feedback(customer.CID)
         customer_list.append({'cid': customer.CID, 'name': customer.name, 'email': customer.email,
-            'state': customer.state, 'service_number': customer.service_number, 'serviced_number': customer.serviced_number})
+            'state': customer.state, 'service_number': customer.service_number, 
+            'serviced_number': customer.serviced_number, 'avg_feedback': avg_feedback})
     return JsonResponse({'flag': const_table.const.SUCCESS, 'message': customer_list})
     
 @ensure_csrf_cookie
@@ -358,7 +371,7 @@ def enterprise_dialogs(request):
     dialogs = models.Dialog.objects.filter(EID = EID)
     for dialog in dialogs:
         dialogs_list.append({'did': dialog.DID, 'start_time': dialog.start_time, 'end_time': dialog.end_time,
-            'uid': dialog.UID, 'cid': dialog.CID})
+            'uid': dialog.UID, 'cid': dialog.CID, 'feedback': dialog.feedback})
     return JsonResponse({'flag': const_table.const.SUCCESS, 'message': dialogs_list})
 
 def enterprise_total_service_number(EID):
