@@ -5,7 +5,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Enterprise &#8212; Handsome&#39;s Doc 1.0 documentation</title>
+    <title>apis package &#8212; Handsome&#39;s Customer Service 1.0 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
@@ -23,6 +23,7 @@
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="apis" href="api_modules.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -38,9 +39,143 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="enterprise">
-<h1>Enterprise<a class="headerlink" href="#enterprise" title="Permalink to this headline">¶</a></h1>
-<span class="target" id="module-backend.apis.enterprise"></span><dl class="function">
+  <div class="section" id="apis-package">
+<h1>apis package<a class="headerlink" href="#apis-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-backend.apis.customer">
+<span id="apis-customer-module"></span><h2>apis.customer module<a class="headerlink" href="#module-backend.apis.customer" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="backend.apis.customer.customer_avgmes_dialogs">
+<code class="descclassname">backend.apis.customer.</code><code class="descname">customer_avgmes_dialogs</code><span class="sig-paren">(</span><em>CID</em><span class="sig-paren">)</span><a class="headerlink" href="#backend.apis.customer.customer_avgmes_dialogs" title="Permalink to this definition">¶</a></dt>
+<dd><p>获取客服平均消息数</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="backend.apis.customer.customer_avgtime_dialogs">
+<code class="descclassname">backend.apis.customer.</code><code class="descname">customer_avgtime_dialogs</code><span class="sig-paren">(</span><em>CID</em><span class="sig-paren">)</span><a class="headerlink" href="#backend.apis.customer.customer_avgtime_dialogs" title="Permalink to this definition">¶</a></dt>
+<dd><p>获取客服会话平均时间</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="backend.apis.customer.customer_change_onlinestate">
+<code class="descclassname">backend.apis.customer.</code><code class="descname">customer_change_onlinestate</code><span class="sig-paren">(</span><em>request</em><span class="sig-paren">)</span><a class="headerlink" href="#backend.apis.customer.customer_change_onlinestate" title="Permalink to this definition">¶</a></dt>
+<dd><p>客服改变在线状态</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="backend.apis.customer.customer_chatted">
+<code class="descclassname">backend.apis.customer.</code><code class="descname">customer_chatted</code><span class="sig-paren">(</span><em>request</em><span class="sig-paren">)</span><a class="headerlink" href="#backend.apis.customer.customer_chatted" title="Permalink to this definition">¶</a></dt>
+<dd><p>获取与某位客服聊过天所有用户</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="backend.apis.customer.customer_dialog_messages">
+<code class="descclassname">backend.apis.customer.</code><code class="descname">customer_dialog_messages</code><span class="sig-paren">(</span><em>request</em><span class="sig-paren">)</span><a class="headerlink" href="#backend.apis.customer.customer_dialog_messages" title="Permalink to this definition">¶</a></dt>
+<dd><p>获取客服某个会话内容</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="backend.apis.customer.customer_dialogs">
+<code class="descclassname">backend.apis.customer.</code><code class="descname">customer_dialogs</code><span class="sig-paren">(</span><em>request</em><span class="sig-paren">)</span><a class="headerlink" href="#backend.apis.customer.customer_dialogs" title="Permalink to this definition">¶</a></dt>
+<dd><p>获取客服所有会话列表</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="backend.apis.customer.customer_dialogs_oneday">
+<code class="descclassname">backend.apis.customer.</code><code class="descname">customer_dialogs_oneday</code><span class="sig-paren">(</span><em>CID</em><span class="sig-paren">)</span><a class="headerlink" href="#backend.apis.customer.customer_dialogs_oneday" title="Permalink to this definition">¶</a></dt>
+<dd><p>获取客服最近24小时会话数</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="backend.apis.customer.customer_get_alldata">
+<code class="descclassname">backend.apis.customer.</code><code class="descname">customer_get_alldata</code><span class="sig-paren">(</span><em>request</em><span class="sig-paren">)</span><a class="headerlink" href="#backend.apis.customer.customer_get_alldata" title="Permalink to this definition">¶</a></dt>
+<dd><p>返回该客服所有数据：总服务时间，总消息数，总会话数，总服务人数，
+今日会话数，平均会话时长，平均消息数</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="backend.apis.customer.customer_get_id">
+<code class="descclassname">backend.apis.customer.</code><code class="descname">customer_get_id</code><span class="sig-paren">(</span><em>request</em><span class="sig-paren">)</span><a class="headerlink" href="#backend.apis.customer.customer_get_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>客服获取自己的CID和EID</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="backend.apis.customer.customer_get_info">
+<code class="descclassname">backend.apis.customer.</code><code class="descname">customer_get_info</code><span class="sig-paren">(</span><em>request</em><span class="sig-paren">)</span><a class="headerlink" href="#backend.apis.customer.customer_get_info" title="Permalink to this definition">¶</a></dt>
+<dd><p>客服获取自己的个人信息</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="backend.apis.customer.customer_login">
+<code class="descclassname">backend.apis.customer.</code><code class="descname">customer_login</code><span class="sig-paren">(</span><em>request</em><span class="sig-paren">)</span><a class="headerlink" href="#backend.apis.customer.customer_login" title="Permalink to this definition">¶</a></dt>
+<dd><p>客服登录</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="backend.apis.customer.customer_login_helper">
+<code class="descclassname">backend.apis.customer.</code><code class="descname">customer_login_helper</code><span class="sig-paren">(</span><em>info</em><span class="sig-paren">)</span><a class="headerlink" href="#backend.apis.customer.customer_login_helper" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="backend.apis.customer.customer_logout">
+<code class="descclassname">backend.apis.customer.</code><code class="descname">customer_logout</code><span class="sig-paren">(</span><em>request</em><span class="sig-paren">)</span><a class="headerlink" href="#backend.apis.customer.customer_logout" title="Permalink to this definition">¶</a></dt>
+<dd><p>客服退出</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="backend.apis.customer.customer_modify_icon">
+<code class="descclassname">backend.apis.customer.</code><code class="descname">customer_modify_icon</code><span class="sig-paren">(</span><em>request</em><span class="sig-paren">)</span><a class="headerlink" href="#backend.apis.customer.customer_modify_icon" title="Permalink to this definition">¶</a></dt>
+<dd><p>客服修改自己的头像,昵称</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="backend.apis.customer.customer_serviced_number">
+<code class="descclassname">backend.apis.customer.</code><code class="descname">customer_serviced_number</code><span class="sig-paren">(</span><em>CID</em><span class="sig-paren">)</span><a class="headerlink" href="#backend.apis.customer.customer_serviced_number" title="Permalink to this definition">¶</a></dt>
+<dd><p>获取客服服务过的人数</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="backend.apis.customer.customer_total_dialogs">
+<code class="descclassname">backend.apis.customer.</code><code class="descname">customer_total_dialogs</code><span class="sig-paren">(</span><em>CID</em><span class="sig-paren">)</span><a class="headerlink" href="#backend.apis.customer.customer_total_dialogs" title="Permalink to this definition">¶</a></dt>
+<dd><p>获取客服总会话数</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="backend.apis.customer.customer_total_messages">
+<code class="descclassname">backend.apis.customer.</code><code class="descname">customer_total_messages</code><span class="sig-paren">(</span><em>CID</em><span class="sig-paren">)</span><a class="headerlink" href="#backend.apis.customer.customer_total_messages" title="Permalink to this definition">¶</a></dt>
+<dd><p>返回客服发送总的消息数</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="backend.apis.customer.customer_total_servicedtime">
+<code class="descclassname">backend.apis.customer.</code><code class="descname">customer_total_servicedtime</code><span class="sig-paren">(</span><em>CID</em><span class="sig-paren">)</span><a class="headerlink" href="#backend.apis.customer.customer_total_servicedtime" title="Permalink to this definition">¶</a></dt>
+<dd><p>返回客服总的服务时间(分钟)</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="backend.apis.customer.jrToJson">
+<code class="descclassname">backend.apis.customer.</code><code class="descname">jrToJson</code><span class="sig-paren">(</span><em>jr</em><span class="sig-paren">)</span><a class="headerlink" href="#backend.apis.customer.jrToJson" title="Permalink to this definition">¶</a></dt>
+<dd><p>将JsonResponse对象转为Json对象</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="backend.apis.customer.reset_password">
+<code class="descclassname">backend.apis.customer.</code><code class="descname">reset_password</code><span class="sig-paren">(</span><em>request</em><span class="sig-paren">)</span><a class="headerlink" href="#backend.apis.customer.reset_password" title="Permalink to this definition">¶</a></dt>
+<dd><p>重置密码，前端发送激活码，新密码</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="backend.apis.customer.reset_password_request">
+<code class="descclassname">backend.apis.customer.</code><code class="descname">reset_password_request</code><span class="sig-paren">(</span><em>request</em><span class="sig-paren">)</span><a class="headerlink" href="#backend.apis.customer.reset_password_request" title="Permalink to this definition">¶</a></dt>
+<dd><p>重置密码请求</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-backend.apis.enterprise">
+<span id="apis-enterprise-module"></span><h2>apis.enterprise module<a class="headerlink" href="#module-backend.apis.enterprise" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
 <dt id="backend.apis.enterprise.UrlValidateJudge">
 <code class="descclassname">backend.apis.enterprise.</code><code class="descname">UrlValidateJudge</code><span class="sig-paren">(</span><em>request</em><span class="sig-paren">)</span><a class="headerlink" href="#backend.apis.enterprise.UrlValidateJudge" title="Permalink to this definition">¶</a></dt>
 <dd><p>判断访问是否含有session</p>
@@ -142,6 +277,11 @@
 <code class="descclassname">backend.apis.enterprise.</code><code class="descname">enterprise_login</code><span class="sig-paren">(</span><em>request</em><span class="sig-paren">)</span><a class="headerlink" href="#backend.apis.enterprise.enterprise_login" title="Permalink to this definition">¶</a></dt>
 <dd><p>企业登录</p>
 </dd></dl>
+
+<dl class="function">
+<dt id="backend.apis.enterprise.enterprise_login_helper">
+<code class="descclassname">backend.apis.enterprise.</code><code class="descname">enterprise_login_helper</code><span class="sig-paren">(</span><em>info</em><span class="sig-paren">)</span><a class="headerlink" href="#backend.apis.enterprise.enterprise_login_helper" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="function">
 <dt id="backend.apis.enterprise.enterprise_logout">
@@ -282,6 +422,80 @@
 </dd></dl>
 
 </div>
+<div class="section" id="module-backend.apis.helper">
+<span id="apis-helper-module"></span><h2>apis.helper module<a class="headerlink" href="#module-backend.apis.helper" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="backend.apis.helper.active_code_check">
+<code class="descclassname">backend.apis.helper.</code><code class="descname">active_code_check</code><span class="sig-paren">(</span><em>active_code</em><span class="sig-paren">)</span><a class="headerlink" href="#backend.apis.helper.active_code_check" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="backend.apis.helper.decrypt">
+<code class="descclassname">backend.apis.helper.</code><code class="descname">decrypt</code><span class="sig-paren">(</span><em>key</em>, <em>string</em><span class="sig-paren">)</span><a class="headerlink" href="#backend.apis.helper.decrypt" title="Permalink to this definition">¶</a></dt>
+<dd><p>字符串解密</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="backend.apis.helper.encrypt">
+<code class="descclassname">backend.apis.helper.</code><code class="descname">encrypt</code><span class="sig-paren">(</span><em>key</em>, <em>string</em><span class="sig-paren">)</span><a class="headerlink" href="#backend.apis.helper.encrypt" title="Permalink to this definition">¶</a></dt>
+<dd><p>字符串加密</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="backend.apis.helper.get_active_code">
+<code class="descclassname">backend.apis.helper.</code><code class="descname">get_active_code</code><span class="sig-paren">(</span><em>email</em><span class="sig-paren">)</span><a class="headerlink" href="#backend.apis.helper.get_active_code" title="Permalink to this definition">¶</a></dt>
+<dd><p>获取激活码</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="backend.apis.helper.isLogin">
+<code class="descclassname">backend.apis.helper.</code><code class="descname">isLogin</code><span class="sig-paren">(</span><em>request</em><span class="sig-paren">)</span><a class="headerlink" href="#backend.apis.helper.isLogin" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="backend.apis.helper.password_add_salt">
+<code class="descclassname">backend.apis.helper.</code><code class="descname">password_add_salt</code><span class="sig-paren">(</span><em>password</em><span class="sig-paren">)</span><a class="headerlink" href="#backend.apis.helper.password_add_salt" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="backend.apis.helper.send_active_email">
+<code class="descclassname">backend.apis.helper.</code><code class="descname">send_active_email</code><span class="sig-paren">(</span><em>email</em>, <em>mySubject</em>, <em>myMessage</em><span class="sig-paren">)</span><a class="headerlink" href="#backend.apis.helper.send_active_email" title="Permalink to this definition">¶</a></dt>
+<dd><p>发送邮件</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-backend.apis.messages">
+<span id="apis-messages-module"></span><h2>apis.messages module<a class="headerlink" href="#module-backend.apis.messages" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="backend.apis.messages.customer_active_message">
+<code class="descclassname">backend.apis.messages.</code><code class="descname">customer_active_message</code><span class="sig-paren">(</span><em>url</em><span class="sig-paren">)</span><a class="headerlink" href="#backend.apis.messages.customer_active_message" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="backend.apis.messages.customer_active_subject">
+<code class="descclassname">backend.apis.messages.</code><code class="descname">customer_active_subject</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#backend.apis.messages.customer_active_subject" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="backend.apis.messages.enterprise_active_message">
+<code class="descclassname">backend.apis.messages.</code><code class="descname">enterprise_active_message</code><span class="sig-paren">(</span><em>url</em><span class="sig-paren">)</span><a class="headerlink" href="#backend.apis.messages.enterprise_active_message" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="backend.apis.messages.enterprise_active_subject">
+<code class="descclassname">backend.apis.messages.</code><code class="descname">enterprise_active_subject</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#backend.apis.messages.enterprise_active_subject" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="backend.apis.messages.reset_password_message">
+<code class="descclassname">backend.apis.messages.</code><code class="descname">reset_password_message</code><span class="sig-paren">(</span><em>url</em><span class="sig-paren">)</span><a class="headerlink" href="#backend.apis.messages.reset_password_message" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-backend.apis">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-backend.apis" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
 
 
           </div>
@@ -289,7 +503,7 @@
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h1 class="logo"><a href="../index.html">Handsome's Doc</a></h1>
+<h1 class="logo"><a href="../index.html">Handsome's Customer Service</a></h1>
 
 
 
@@ -300,14 +514,21 @@
 
 <h3>Navigation</h3>
 <p class="caption"><span class="caption-text">Contents:</span></p>
-<ul>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="models.html">Models</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="api_modules.html">apis</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">apis package</a></li>
+</ul>
+</li>
 </ul>
 
 <div class="relations">
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="api_modules.html">apis</a><ul>
+      <li>Previous: <a href="api_modules.html" title="previous chapter">apis</a></li>
+  </ul></li>
   </ul></li>
 </ul>
 </div>
@@ -333,7 +554,7 @@
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
       |
-      <a href="../_sources/modules/enterprise.rst.txt"
+      <a href="../_sources/modules/apis.rst.txt"
           rel="nofollow">Page source</a>
     </div>
 

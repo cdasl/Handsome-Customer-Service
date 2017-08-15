@@ -3,15 +3,15 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to Handsome's Doc's documentation!
-==========================================
+Welcome to Handsome's Customer Service documentation!
+======================================================
 
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
 
    modules/models
-   modules/enterprise
+   modules/api_modules
 
 
 
