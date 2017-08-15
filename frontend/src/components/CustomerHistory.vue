@@ -23,6 +23,7 @@
 </template>
 <script>
   import Message from './Message'
+  import global_ from './Const'
   export default {
     components: {Message},
     data () {
@@ -82,12 +83,16 @@
           },
           body: JSON.stringify({did: this.dialogDataShow[index]['did']})
         }).then((res) => res.json()).then((res) => {
+          if (res['flag'] === global_.CONSTGET.DIALOGID_NOT_EXIST) {
+            this.$Message.error(global_.CONSTSHOW.DIALOGID_NOT_EXIST)
+            return
+          }
           this.content.splice(0, this.content.length)
           for (let i = 0; i < res['message'].length; ++i) {
             let data = {}
             data['word'] = decodeURI(res['message'][i]['content'])
             // 判断消息是谁发送的
-            data['self'] = (res['message'][i]['sid'] === 'ccid') || res['message'][i]['sid'] === 'robot'
+            data['self'] = res['message'][i]['isCustomer']
             data['time'] = res['message'][i]['date']
             data['src'] = '/static/js/emojiSources/huaji/1.jpg'
             this.content.push(data)
@@ -142,6 +147,11 @@
           'Content-Type': 'application/json'
         }
       }).then((res) => res.json()).then((res) => {
+        if (res['flag'] === global_.CONSTGET.CID_NOT_EXIST) {
+          this.$Message.error(global_.CONSTSHOW.CID_NOT_EXIST)
+          window.location.replace('/customer_login/')
+          return
+        }
         this.dialogData = res['message']
         this.dialogDataShow = this.dialogData.slice(0, Math.min(this.pageSize, this.dialogData.length))
       })

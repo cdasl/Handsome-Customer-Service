@@ -41,6 +41,7 @@
   </div>
 </template>
 <script>
+  import global_ from './Const'
   export default {
     data () {
       return {
@@ -106,7 +107,14 @@
           },
           body: JSON.stringify({icon: this.upload, name: this.formItem['name']})
         }).then((res) => res.json()).then((res) => {
-          console.log(res['flag'])
+          if (res['flag'] === global_.CONSTGET.CID_NOT_EXIST) {
+            this.$Message.error(global_.CONSTSHOW.CID_NOT_EXIST)
+            window.location.replace('/customer_login/')
+          } else if (res['flag'] === global_.CONSTGET.ERROR) {
+            this.$Message.error(global_.CONSTSHOW.ERROR)
+          } else {
+            this.$Message.success('保存成功')
+          }
         })
       }
     },
@@ -120,6 +128,10 @@
           'Content-Type': 'application/json'
         }
       }).then((res) => res.json()).then((res) => {
+        if (res['flag'] === global_.CONSTGET.CID_NOT_EXIST) {
+          this.$Message.error(global_.CONSTSHOW.CID_NOT_EXIST)
+          window.location.replace('/customer_login/')
+        }
         this.formItem['mail'] = res['message']['email']
         this.formItem['name'] = res['message']['name']
         this.formItem['image'] = res['message']['icon']
