@@ -23,7 +23,8 @@
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="prev" title="apis" href="api_modules.html" />
+    <link rel="next" title="Constant Table" href="const_table.html" />
+    <link rel="prev" title="API" href="api_modules.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -41,9 +42,6 @@
             
   <div class="section" id="api-package">
 <h1>API package<a class="headerlink" href="#api-package" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="submodules">
-<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
-</div>
 <div class="section" id="module-backend.apis.customer">
 <span id="apis-customer-module"></span><h2>apis.customer module<a class="headerlink" href="#module-backend.apis.customer" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
@@ -197,6 +195,10 @@
 <dt id="backend.apis.enterprise.enterprise_avgmes_dialogs">
 <code class="descclassname">backend.apis.enterprise.</code><code class="descname">enterprise_avgmes_dialogs</code><span class="sig-paren">(</span><em>EID</em><span class="sig-paren">)</span><a class="headerlink" href="#backend.apis.enterprise.enterprise_avgmes_dialogs" title="Permalink to this definition">¶</a></dt>
 <dd><p>获取企业会话的平均消息数</p>
+<ul class="simple">
+<li><strong>EID</strong> - 企业ID</li>
+</ul>
+<p><strong>返回值</strong>: 平均消息数</p>
 </dd></dl>
 
 <dl class="function">
@@ -422,79 +424,6 @@
 </dd></dl>
 
 </div>
-<div class="section" id="module-backend.apis.helper">
-<span id="apis-helper-module"></span><h2>apis.helper module<a class="headerlink" href="#module-backend.apis.helper" title="Permalink to this headline">¶</a></h2>
-<dl class="function">
-<dt id="backend.apis.helper.active_code_check">
-<code class="descclassname">backend.apis.helper.</code><code class="descname">active_code_check</code><span class="sig-paren">(</span><em>active_code</em><span class="sig-paren">)</span><a class="headerlink" href="#backend.apis.helper.active_code_check" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="backend.apis.helper.decrypt">
-<code class="descclassname">backend.apis.helper.</code><code class="descname">decrypt</code><span class="sig-paren">(</span><em>key</em>, <em>string</em><span class="sig-paren">)</span><a class="headerlink" href="#backend.apis.helper.decrypt" title="Permalink to this definition">¶</a></dt>
-<dd><p>字符串解密</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="backend.apis.helper.encrypt">
-<code class="descclassname">backend.apis.helper.</code><code class="descname">encrypt</code><span class="sig-paren">(</span><em>key</em>, <em>string</em><span class="sig-paren">)</span><a class="headerlink" href="#backend.apis.helper.encrypt" title="Permalink to this definition">¶</a></dt>
-<dd><p>字符串加密</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="backend.apis.helper.get_active_code">
-<code class="descclassname">backend.apis.helper.</code><code class="descname">get_active_code</code><span class="sig-paren">(</span><em>email</em><span class="sig-paren">)</span><a class="headerlink" href="#backend.apis.helper.get_active_code" title="Permalink to this definition">¶</a></dt>
-<dd><p>获取激活码</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="backend.apis.helper.isLogin">
-<code class="descclassname">backend.apis.helper.</code><code class="descname">isLogin</code><span class="sig-paren">(</span><em>request</em><span class="sig-paren">)</span><a class="headerlink" href="#backend.apis.helper.isLogin" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="backend.apis.helper.password_add_salt">
-<code class="descclassname">backend.apis.helper.</code><code class="descname">password_add_salt</code><span class="sig-paren">(</span><em>password</em><span class="sig-paren">)</span><a class="headerlink" href="#backend.apis.helper.password_add_salt" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="backend.apis.helper.send_active_email">
-<code class="descclassname">backend.apis.helper.</code><code class="descname">send_active_email</code><span class="sig-paren">(</span><em>email</em>, <em>mySubject</em>, <em>myMessage</em><span class="sig-paren">)</span><a class="headerlink" href="#backend.apis.helper.send_active_email" title="Permalink to this definition">¶</a></dt>
-<dd><p>发送邮件</p>
-</dd></dl>
-
-</div>
-<div class="section" id="module-backend.apis.messages">
-<span id="apis-messages-module"></span><h2>apis.messages module<a class="headerlink" href="#module-backend.apis.messages" title="Permalink to this headline">¶</a></h2>
-<dl class="function">
-<dt id="backend.apis.messages.customer_active_message">
-<code class="descclassname">backend.apis.messages.</code><code class="descname">customer_active_message</code><span class="sig-paren">(</span><em>url</em><span class="sig-paren">)</span><a class="headerlink" href="#backend.apis.messages.customer_active_message" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="backend.apis.messages.customer_active_subject">
-<code class="descclassname">backend.apis.messages.</code><code class="descname">customer_active_subject</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#backend.apis.messages.customer_active_subject" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="backend.apis.messages.enterprise_active_message">
-<code class="descclassname">backend.apis.messages.</code><code class="descname">enterprise_active_message</code><span class="sig-paren">(</span><em>url</em><span class="sig-paren">)</span><a class="headerlink" href="#backend.apis.messages.enterprise_active_message" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="backend.apis.messages.enterprise_active_subject">
-<code class="descclassname">backend.apis.messages.</code><code class="descname">enterprise_active_subject</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#backend.apis.messages.enterprise_active_subject" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="backend.apis.messages.reset_password_message">
-<code class="descclassname">backend.apis.messages.</code><code class="descname">reset_password_message</code><span class="sig-paren">(</span><em>url</em><span class="sig-paren">)</span><a class="headerlink" href="#backend.apis.messages.reset_password_message" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</div>
-<div class="section" id="module-backend.apis">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-backend.apis" title="Permalink to this headline">¶</a></h2>
-</div>
 </div>
 
 
@@ -516,18 +445,24 @@
 <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="models.html">Models</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="api_modules.html">apis</a><ul class="current">
-<li class="toctree-l2 current"><a class="current reference internal" href="#">API package</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="api_modules.html">API</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">API package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#module-backend.apis.customer">apis.customer module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-backend.apis.enterprise">apis.enterprise module</a></li>
 </ul>
 </li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="const_table.html">Constant Table</a></li>
 </ul>
 
 <div class="relations">
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
-  <li><a href="api_modules.html">apis</a><ul>
-      <li>Previous: <a href="api_modules.html" title="previous chapter">apis</a></li>
+  <li><a href="api_modules.html">API</a><ul>
+      <li>Previous: <a href="api_modules.html" title="previous chapter">API</a></li>
+      <li>Next: <a href="const_table.html" title="next chapter">Constant Table</a></li>
   </ul></li>
   </ul></li>
 </ul>

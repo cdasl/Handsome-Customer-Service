@@ -479,7 +479,11 @@ def enterprise_get_robot_info(request):
     return JsonResponse({'flag': const_table.const.SUCCESS, 'message': robot_info})
 
 def enterprise_avgmes_dialogs(EID):
-    """获取企业会话的平均消息数"""
+    """
+    获取企业会话的平均消息数\n
+    * **EID** - 企业ID\n
+    **返回值**: 平均消息数
+    """
     total_messages = 0
     dialogs = models.Dialog.objects.filter(EID = EID)
     for dialog in dialogs:

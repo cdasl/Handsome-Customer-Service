@@ -7,11 +7,12 @@ Welcome to Handsome's Customer Service documentation!
 ======================================================
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 4
    :caption: Contents:
 
    modules/models
    modules/api_modules
+   modules/const_table
 
 
 
