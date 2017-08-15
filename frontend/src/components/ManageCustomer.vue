@@ -2,6 +2,7 @@
   <div id="app">
     <Input v-model="customerEmail" class="email-input" placeholder="输入邮箱邀请客服" @on-enter="invite"></Input>
     <Button @click="invite">邀请客服</Button>
+    <Input @on-enter="search" placeholder="输入你想查找的客服信息，可以是id、邮箱或者姓名"></Input>
     <span style="margin-left: 5%;">按关键字排序</span>
     <Select v-model="sortKeyWord" @on-change="changeSort" style="width: 200px;">
       <Option v-for="item of sortList" :value="item" :key="item">{{ item }}</Option>
@@ -36,6 +37,9 @@
         customerEmail: '', // 邀请客服输入的邮箱
         customerForm: [
           {
+            'title': '客服ID',
+            'key': 'cid_show'
+          }, {
             'title': '姓名',
             'key': 'name'
           }, {
@@ -254,6 +258,7 @@
       } else if (res['flag'] === global_.CONSTGET.SUCCESS) {
         for (let i = 0; i < res['message'].length; ++i) {
           this.customerData.push({
+            'cid_show': res['message'][i]['cid'].substring(0, 5),
             'name': res['message'][i]['name'],
             'email': res['message'][i]['email'],
             'cid': res['message'][i]['cid'],
