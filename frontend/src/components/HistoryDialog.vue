@@ -72,6 +72,17 @@
             'title': '客服ID',
             'key': 'cid'
           }, {
+            'title': '会话评分',
+            'key': 'feedback',
+            render: (h, params) => {
+              return h('Rate', {
+                props: {
+                  value: params.row['feedback'],
+                  disabled: true
+                }
+              })
+            }
+          }, {
             'title': '操作',
             'key': 'action',
             width: 150,

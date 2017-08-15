@@ -45,6 +45,18 @@
             'title': '状态',
             'key': 'state'
           }, {
+            'title': '用户平均评分',
+            'key': 'avg_feedback',
+            render: (h, params) => {
+              return h('Rate', {
+                props: {
+                  value: params.row['avg_feedback'],
+                  disabled: true,
+                  showText: true
+                }
+              })
+            }
+          }, {
             'title': '服务总人数',
             'key': 'serviced_number'
           }, {
@@ -234,7 +246,6 @@
     },
     async mounted () {
       // 先获取所有客服列表
-      window.alert(global_.CONST.WRONG_PASSWORD)
       let res = await this.fetchBase('/api/get_customers/', {})
       if (res['flag'] === global_.CONSTGET.ERROR) {
         this.$Message.error(global_.CONSTSHOW.ERROR)
@@ -248,7 +259,8 @@
             'cid': res['message'][i]['cid'],
             'state': this.stateMap['' + res['message'][i]['state']],
             'service_number': res['message'][i]['service_number'],
-            'serviced_number': res['message'][i]['serviced_number']
+            'serviced_number': res['message'][i]['serviced_number'],
+            'avg_feedback': res['message'][i]['avg_feedback']
           })
         }
         this.init(true)
