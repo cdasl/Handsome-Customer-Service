@@ -4,7 +4,7 @@
     <Input v-model="formItem.email" placeholder="请输入邮箱" type="text" class="my-input"></Input>
     <Input v-model="formItem.password" placeholder="请输入密码，长度不小于8" type="password" class="my-input"></Input>
     <Input v-model="formItem.password2" placeholder="请确认密码" type="password" class="my-input"></Input>
-    <Input v-model="formItem.name" placeholder="请输入企业名称" class="my-input"></Input>
+    <Input v-model="formItem.name" placeholder="请输入企业名称" class="my-input" @on-enter="submit"></Input>
     <Button type="primary" @click="submit" class="my-input">立即注册</Button>
     <p class="clause">点击立即注册即表示你已阅读并同意<a href="">汉森服务条款</a></p>
     <p class="login">已有账号?<a @click="trans">点击登陆!</a></p>

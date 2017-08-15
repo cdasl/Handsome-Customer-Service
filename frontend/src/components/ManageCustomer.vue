@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <Input v-model="customerEmail" class="email-input" placeholder="输入邮箱邀请客服"></Input>
+    <Input v-model="customerEmail" class="email-input" placeholder="输入邮箱邀请客服" @on-enter="invite"></Input>
     <Button @click="invite">邀请客服</Button>
     <span style="margin-left: 5%;">按关键字排序</span>
     <Select v-model="sortKeyWord" @on-change="changeSort" style="width: 200px;">

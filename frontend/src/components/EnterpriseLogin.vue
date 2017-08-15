@@ -2,7 +2,7 @@
   <div id="app">
     <h3 class="title">企业登录</h3>
     <Input v-model="formItem.email" placeholder="邮箱" type="text" class="my-input"></Input>
-    <Input v-model="formItem.password" placeholder="密码" type="password" class="my-input"></Input>
+    <Input v-model="formItem.password" placeholder="密码" type="password" class="my-input" @on-enter="submit"></Input>
     <Button type="primary" @click="submit" class="my-input">登录</Button><br>
     <p class="signup">没有账户?<a @click="trans">创建一个!</a></p>
     <p class="find-password"><a @click="findEmail">找回密码</a></p>
