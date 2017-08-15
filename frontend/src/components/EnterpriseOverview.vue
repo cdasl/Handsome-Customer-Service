@@ -5,7 +5,7 @@
         <p>总服务时间</p>
       </div><hr>
       <div class="data">
-        <span>{{ statics['totalTime'] }}min</span>
+        <span>{{ statics['totalTime'] }}分钟</span>
       </div>
     </div>
     <div class="item" @click="getChart(1)">
@@ -34,7 +34,7 @@
     </div>
     <div class="item">
       <div class="title">
-        <p>在线客服人数</p>
+        <p>在线客服数</p>
       </div><hr>
       <div class="data">
         <span>{{ statics['totalOnline'] }}人</span>
@@ -53,7 +53,7 @@
         <p>平均会话时长</p>
       </div><hr>
       <div class="data">
-        <span>{{ statics['avgDialogTime'] }}min/次</span>
+        <span>{{ statics['avgDialogTime'] }}分钟/次</span>
       </div>
     </div>
     <div class="item">
@@ -202,13 +202,13 @@
 .data {
   width: 100%;
   height: 13vh;
+  text-align: center;
 }
 .title p {
-  width: 70%;
-  font-size: 1.4em;
+  width: 100%;
+  font-size: 1.2em;
   line-height: 7vh;
-  margin-left: auto;
-  margin-right: auto;
+  text-align: center;
 }
 .item:hover {
   background-color: #ccc;
@@ -216,8 +216,8 @@
 }
 .data span {
   display: block;
-  width: 80%;
-  font-size: 1.8em;
+  width: 100%;
+  font-size: 1.4em;
   font-weight: bold;
   line-height: 13vh;
   margin-left: auto;

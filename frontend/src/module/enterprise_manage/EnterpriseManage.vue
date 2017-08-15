@@ -31,6 +31,11 @@
           <i-button type="text" @click="toggleClick">
             <Icon type="navicon" size="32"></Icon>
           </i-button>
+          <ul class="nav">
+            <li><a @click="goHome">汉森首页</a></li>
+            <li><a @click="goHelp">帮助中心</a></li>
+            <li><a @click="logout">退出登录</a></li>
+          </ui>
         </div>
         <div :class="contentClass">
           <div class="layout-content-main"><div :is="type"></div></div>
@@ -63,7 +68,30 @@
       }
     },
     methods: {
+      goHome () {
+        // 前往首页
+        window.location.href = '/'
+      },
+      goHelp () {
+        // 前往帮助中心
+        window.location.href = '/'
+      },
+      logout () {
+        // 退出登录
+        fetch('/api/enter/logout/', {
+          method: 'post',
+          credentials: 'same-origin',
+          headers: {
+            'X-CSRFToken': this.getCookie('csrftoken'),
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({})
+        })
+        window.location.href = '/enterprise/'
+      },
       toggleClick () {
+        // 调整左侧栏样式
         if (this.spanLeft === 5) {
           this.spanLeft = 2
           this.spanRight = 22
@@ -75,15 +103,31 @@
         }
       },
       select (name) {
+        // 选择显示不同的子组件
         if (name === 'enterprise-setting') {
           this.contentClass = 'layout-content2'
         } else {
           this.contentClass = 'layout-content'
         }
         this.type = name
+      },
+      getCookie (cName) {
+        if (document.cookie.length > 0) {
+          let cStart = document.cookie.indexOf(cName + '=')
+          if (cStart !== -1) {
+            cStart = cStart + cName.length + 1
+            let cEnd = document.cookie.indexOf(';', cStart)
+            if (cEnd === -1) {
+              cEnd = document.cookie.length
+            }
+            return unescape(document.cookie.substring(cStart, cEnd))
+          }
+        }
+        return ''
       }
     },
     created () {
+      // 先验证是否已经登录，防止直接输入网址进入管理界面
       fetch('/api/url_validate/', {
         method: 'post',
         credentials: 'same-origin',
@@ -105,6 +149,19 @@
   }
 </script>
 <style scoped>
+.nav {
+  text-align: right;
+  height: 60px;
+  line-height: 60px;
+  padding-right: 100px;
+  margin-top: -50px;
+  margin-right: 250px;
+}
+.nav li {
+  font-size: 1.2em;
+  display: inline-block;
+  margin-left: 10px;
+}
 .row {
   display: flex;
   height: 100%;
