@@ -3,13 +3,15 @@
   <head>
     <meta charset="utf-8">
     <title>用户</title>
-    <script type="text/javascript" src="//code.jquery.com/jquery-3.2.1.slim.min.js"></script>
-    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.1/socket.io.slim.js"></script>
+    <link rel="shortcut icon" type="image/x-icon" href="/static/img/logo.gif" id="favicon" />
+    <script type="text/javascript" src="/static/js/jquery-3.2.1.slim.min.js"></script>
+    <script type="text/javascript" src="/static/js/socket.io.slim.js"></script>
     <!--接入的地址在django的settings中进行设置，是通过django的路由来实现引入-->
     <!--而在.vue文件中由于webpack的功能可以根据vue所在地址来查找文件-->
     <script type="text/javascript" src="/static/js/wEmoji.config.js"></script>
     <script type="text/javascript" src="/static/js/wEmoji.js"></script>
-    <script type="text/javascript" src="http://html2canvas.hertzen.com/build/html2canvas.js"></script>
+    <script src="/static/js/md5.js"></script>  
+    <script type="text/javascript" src="/static/js/html2canvas.js"></script>
     <link rel="stylesheet" type="text/css" href="/static/css/wEmoji.css">
   <body>
     <div id="user">

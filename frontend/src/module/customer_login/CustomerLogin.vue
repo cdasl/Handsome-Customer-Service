@@ -22,6 +22,7 @@
   </div>
 </template>
 <script>
+  import global_ from '../../components/Const'
   export default {
     data () {
       return {
@@ -95,7 +96,7 @@
           'password': this.formItem.password
         })
         this.reset()
-        if (res['flag'] > 0) {
+        if (res['flag'] === global_.CONSTGET.SUCCESS) {
           this.$Message.success('登陆成功')
           window.location.href = '/customer_manage'
         } else if (res['flag'] === -5) {

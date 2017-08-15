@@ -59,6 +59,7 @@
   </div>
 </template>
 <script>
+  import global_ from './Const'
   export default {
     data () {
       return {
@@ -101,6 +102,14 @@
         },
         body: JSON.stringify({'data': ''})
       }).then((res) => res.json()).then((res) => {
+        if (res['flag'] === global_.CONSTGET.CID_NOT_EXIST) {
+          this.$Message.error(global_.CONSTSHOW.CID_NOT_EXIST)
+          window.location.replace('/customer_login/')
+          return
+        } else if (res['flag'] === global_.CONSTGET.ERROR) {
+          this.$Message.error(global_.CONSTSHOW.ERROR)
+          return
+        }
         this.servicedTime = res['message']['totalTime']
         this.messages = res['message']['totalMessage']
         this.dialogs = res['message']['totalDialog']

@@ -13,8 +13,12 @@ talker_list = {}
 customer_list = {}
 conversation = {}
 starttime = {}
+"""
+talker_list以cid或uid为key存储sid customer_list以cid为key存储uid列表 conversation以uid为key存储聊天内容
+"""
 chatbot = ChatBot('Ron Obvious', trainer = 'chatterbot.trainers.ChatterBotCorpusTrainer')
 chatbot.train("chatterbot.corpus.chinese")
+
 
 def get_mid(msg):
     """获取消息的mid"""
@@ -34,18 +38,18 @@ def user(request):
 def user_message(sid, message):
     global conversation, talker_list, chatbot
     if not message['flag']:
-        sio.emit('my response', {'data': message['data'], 'time': message['time'], 'src': message['src'], 'sid': sid}, room = message['sid'], namespace = '/test')
-        conversation[sid].append({'send': talker_list[sid], 'receive': talker_list[message['sid']], 'time': message['time'], 'data': message['data']})
+        sio.emit('my response', {'data': message['data'], 'time': message['time'], 'src': message['src'], 'uid': message['uid']}, room = talker_list[message['cid']], namespace = '/test')
+        conversation[message['uid']].append({'send': message['uid'], 'receive': message['cid'], 'time': message['time'], 'data': message['data']})
     else:
         sio.emit('my response', {'data': chatbot.get_response(urllib.parse.unquote(message['data'])).text, 'time': time2str(), 'src': '/static/img/robot_icon/1.jpg'}, room = sid, namespace = '/test')
-        conversation[sid].append({'send': talker_list[sid], 'receive': 'robot', 'time': message['time'], 'data': urllib.parse.unquote(message['data'])})
-        conversation[sid].append({'send': 'robot', 'receive': talker_list[sid], 'time': time2str(), 'data': chatbot.get_response(urllib.parse.unquote(message['data'])).text})
+        conversation[message['uid']].append({'send': message['uid'], 'receive': 'robot', 'time': message['time'], 'data': urllib.parse.unquote(message['data'])})
+        conversation[message['uid']].append({'send': 'robot', 'receive': message['uid'], 'time': time2str(), 'data': chatbot.get_response(urllib.parse.unquote(message['data'])).text})
 
 @sio.on('customer message', namespace = '/test')
 def customer_message(sid, message):
     global conversation, talker_list
-    sio.emit('my response', {'data': message['data'], 'time': message['time'], 'src': message['src']}, room = message['sid'], namespace = '/test')
-    conversation[message['sid']].append({'send': talker_list[sid], 'receive': talker_list[message['sid']], 'time': message['time'], 'data': message['data']})
+    sio.emit('my response', {'data': message['data'], 'time': message['time'], 'src': message['src']}, room = talker_list[message['uid']], namespace = '/test')
+    conversation[message['uid']].append({'send': message['cid'], 'receive': message['uid'], 'time': message['time'], 'data': message['data']})
 
 @sio.on('disconnect a user', namespace = '/test')
 def write_message(sid,message):
@@ -53,21 +57,22 @@ def write_message(sid,message):
     endtime = time2str()
     msglist = []
     md5 = hashlib.md5()
-    md5.update((sid + message['sid'] + str(int(time.time()))).encode('utf8'))
+    md5.update((sid + message['uid'] + str(int(time.time()))).encode('utf8'))
     did = md5.hexdigest()
-    for i in conversation[message['sid']]:
+    for i in conversation[message['uid']]:
         mid = get_mid(i)
         msg = Message(MID = mid, SID = i['send'], RID = i['receive'], DID = did, content = i['data'], date = i['time'])
         msglist.append(msg)
     Message.objects.bulk_create(msglist)
-    Dialog.objects.create(DID = did, EID = message['eid'], start_time = starttime[message['sid']], end_time = endtime, UID = talker_list[message['sid']], CID = talker_list[sid])
-    del conversation[message['sid']]
-    del starttime[message['sid']]
-    del talker_list[message['sid']]
-    customer = Customer.objects.get(CID = talker_list[sid])
+    Dialog.objects.create(DID = did, EID = message['eid'], start_time = starttime[message['uid']], end_time = endtime, UID = message['uid'], CID = message['cid'])
+    customer = Customer.objects.get(CID = message['cid'])
     customer.serviced_number += 1
+    customer.service_number -= 1
     customer.save()
-    sio.emit('user disconnected', {'did': did}, room = message['sid'], namespace = '/test')
+    sio.emit('user disconnected', {'did': did}, room = talker_list[message['uid']], namespace = '/test')
+    del conversation[message['uid']]
+    del starttime[message['uid']]
+    del talker_list[message['uid']]
 
 @sio.on('rate', namespace = '/test')
 def rate(sid, message):
@@ -77,39 +82,47 @@ def rate(sid, message):
 
 @sio.on('a user connected', namespace = '/test')
 def user_connect(sid, message):
-    global talker_list
-    md = hashlib.md5()
-    md.update(str(int(time.time())).encode('utf8'))
-    uid = md.hexdigest()
-    talker_list[sid] = uid
-    conversation[sid] = []
-    starttime[sid] = time2str()
-    sio.emit('connected', {'uid': uid})
+    global talker_list, conversation, starttime
+    if message['uid'] in talker_list:
+        sio.disconnect(talker_list[message['uid']], namespace = '/test')
+        sio.emit('old data', {'content': conversation[message['uid']]}, room = sid, namespace = '/test')
+    else:
+        conversation[message['uid']] = []
+        starttime[message['uid']] = time2str()
+    talker_list[message['uid']] = sid
+    sio.emit('connected', {'data': 'connected'})
 
 @sio.on('connect to customer', namespace = '/test')
 def connect_customer(sid, message):
     global customer_list, conversation, talker_list
     num = 100
     target = None
-    for customer_sid in customer_list:
-        if customer_list[customer_sid] < num:
-            target = customer_sid
-            num = customer_list[customer_sid]
+    for cid in customer_list:
+        if len(customer_list[cid]) < num:
+            target = cid
+            num = len(customer_list[cid])
     if target == None:
         sio.emit('no customer online', {'data': 'no customer on line'}, room = sid, namespace = '/test')
     else:
-        sio.emit('connected to customer', {'sid': target}, room = sid, namespace = '/test')
-        sio.emit('new user', {'sid': sid}, room = target, namespace = '/test')
-        customer = Customer.objects.get(CID = talker_list[target])
+        sio.emit('connected to customer', {'cid': target}, room = sid, namespace = '/test')
+        sio.emit('new user', {'uid': message['uid'], 'content': conversation[message['uid']]}, room = talker_list[target], namespace = '/test')
+        customer = Customer.objects.get(CID = target)
         customer.service_number += 1
         customer.save()
-        customer_list[target] += 1
+        customer_list[target].insert(0, message['uid'])
 
 @sio.on('a customer connected', namespace = '/test')
 def customer_connect(sid, message):
-    global talker_list, customer_list
-    talker_list[sid] = message['cid']
-    customer_list[sid] = 0
+    global talker_list, customer_list, conversation
+    if message['cid'] in talker_list:
+        sio.disconnect(talker_list[message['cid']], namespace = '/test')
+        content = []
+        for uid in customer_list[message['cid']]:
+            content.append(conversation[uid])
+        sio.emit('old data', {'list': customer_list[message['cid']], 'content': content}, room = sid, namespace = '/test')
+    else:
+        customer_list[message['cid']] = []
+    talker_list[message['cid']] = sid
     sio.emit('customer connected', {'data': 'connected'}, room = sid, namespace = '/test')
 
 @sio.on('disconnect request', namespace = '/test')
