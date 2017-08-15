@@ -3,7 +3,9 @@
     <Row type="flex" class="row">
       <i-col :span="spanLeft" class="layout-menu-left">
         <Menu active-name="enterprise-overview" theme="dark" width="auto" @on-select="select" :class="leftClass">
-          <div class="layout-logo-left"></div>
+          <div class="m-logo">
+            <i class="logo"></i>
+          </div>
           <Menu-item name="enterprise-overview">
             <Icon type="ios-navigate" :size="iconSize"></Icon>
             <span class="layout-text">主页</span>
@@ -224,13 +226,6 @@
   box-shadow: 0 1px 1px rgba(0,0,0,.1);
   z-index: 100;
 }
-.layout-logo-left {
-  width: 90%;
-  height: 30px;
-  background: #5b6270;
-  border-radius: 3px;
-  margin: 15px auto;
-}
 .layout-ceiling-main a {
   color: #9ba7b5;
 }
@@ -239,5 +234,25 @@
 }
 .ivu-col {
   transition: width .2s ease-in-out;
+}
+.m-logo {
+  position: relative;
+  width: 320px;
+  height: 54px;
+  padding: 0;
+  font-size: 12px;
+  color: #fff;
+  line-height: 30px;
+  background-color: #5294e0;
+}
+.logo {
+  position: relative;
+  left: 16px;
+  display: inline-block;
+  width: 300px;
+  height: 50px;
+  background: url('/static/img/tubiao.gif') no-repeat;
+  background-position: left center;
+  background-size: contain;
 }
 </style>
