@@ -58,9 +58,18 @@ class DialogsListTestCase(TestCase):
         self.etime1 = timezone.now()
         self.etime2 = timezone.now()
         self.etime3 = timezone.now()
-        models.Dialog.objects.create(DID = 'test_did1', EID = 'test_eid1', start_time = self.stime1, end_time = self.etime1)
-        models.Dialog.objects.create(DID = 'test_did2', EID = 'test_eid1', start_time = self.stime2, end_time = self.etime2)
-        models.Dialog.objects.create(DID = 'test_did3', EID = 'test_eid2', start_time = self.stime3, end_time = self.etime3)
+        models.Dialog.objects.create(
+            DID = 'test_did1', EID = 'test_eid1', start_time = self.stime1,
+            end_time = self.etime1, feedback = 5, CID = 'test_cid1'
+        )
+        models.Dialog.objects.create(
+            DID = 'test_did2', EID = 'test_eid1', start_time = self.stime2,
+            end_time = self.etime2, feedback = 4, CID = 'test_cid1'
+        )
+        models.Dialog.objects.create(
+            DID = 'test_did3', EID = 'test_eid2', start_time = self.stime3,
+            end_time = self.etime3, feedback = 1, CID = 'test_cid2'
+        )
 
     def test_dialogs_list(self):
         rf = RequestFactory()
@@ -73,6 +82,8 @@ class DialogsListTestCase(TestCase):
         self.assertEqual(len(result), 2)
         self.assertEqual(result[0]['did'], 'test_did1')
         self.assertEqual(result[1]['did'], 'test_did2')
+        self.assertEqual(result[0]['feedback'], 5)
+        self.assertEqual(result[1]['feedback'], 4)
         del request.session['eid']
         result = jrToJson(enterprise.enterprise_dialogs(request))['flag']
         self.assertEqual(result, const_table.const.EID_NOT_EXIST)
@@ -86,7 +97,7 @@ class ResetPasswordTestCase(TestCase):
             password = 'test_password2', icon = 'test_icon', name = 'test_name2', state = 1,
             service_number = 0, serviced_number = 10, last_login = datetime.datetime.now())
 
-    def test_reset_password_requset(self):
+    def test_reset_password_request(self):
         rf = RequestFactory()
         request = rf.post('api/reset_password/')
         #企业

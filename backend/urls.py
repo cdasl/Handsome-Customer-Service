@@ -22,7 +22,7 @@ from .apis import enterprise, customer
 
 urlpatterns = [
     url(r'^$', api.index, name='index'),
-	url(r'^index.html$', TemplateView.as_view(template_name = 'index.html')),
+    url(r'^index.html$', TemplateView.as_view(template_name = 'index.html')),
     url(r'^login.html$', TemplateView.as_view(template_name = 'login.html')),
     url(r'^enterprise/$', api.enterprise, name = 'enterprise'),
     url(r'^enterprise_active/([a-zA-Z]+)$', TemplateView.as_view(template_name = 'enterprise_active.html'), name = 'enterprise_active'),
@@ -36,6 +36,7 @@ urlpatterns = [
     #enterprise_apis
     url(r'^api/enter/signup/$', enterprise.enterprise_signup, name = 'enter_signup'),
     url(r'^api/enter/login/$', enterprise.enterprise_login, name = 'enter_login'),
+    url(r'^api/enter/logout/$', enterprise.enterprise_logout, name = 'enterprise_logout')
     url(r'^api/enter/reset/$', enterprise.reset_customer_state, name = 'reset_customer_state'),
     url(r'^api/active/$', enterprise.enterprise_active, name = 'active'),    
     url(r'^api/get_customers/$', enterprise.enterprise_get_customers, name = 'get_customers'),
