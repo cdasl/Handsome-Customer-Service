@@ -45,6 +45,7 @@
   </div>
 </template>
 <script>
+  import global_ from '../../components/Const'
   import CustomerTalk from '../../components/CustomerTalk'
   import CustomerSetting from '../../components/CustomerSetting'
   import CustomerHistory from '../../components/CustomerHistory'
@@ -67,7 +68,7 @@
         lists: [],
         currentcontent: [],
         status: '2',
-        sid: '',
+        uid: '',
         cid: '',
         eid: ''
       }
@@ -99,15 +100,20 @@
             'Content-Type': 'application/json'
           }
         }).then((res) => res.json()).then((res) => {
-          window.location.replace('/customer_login/')
+          if (res['flag'] === global_.CONSTGET.CID_NOT_EXIST) {
+            this.$Message.error(global_.CONSTSHOW.CID_NOT_EXIST)
+          } else {
+            this.$Message.success('退出成功')
+            window.location.replace('/customer_login/')
+          }
         })
       },
       swit (item) {
         // 由于switch是js关键字 无法使用
-        this.sid = item
+        this.uid = item
         this.currentcontent = this.content[item]
         for (let i = 0; i < this.lists.length; ++i) {
-          if (this.lists[i]['sid'] === item) {
+          if (this.lists[i]['uid'] === item) {
             this.lists[i]['num'] = 0
             break
           }
@@ -134,25 +140,25 @@
         data['self'] = true
         data['src'] = '/static/js/emojiSources/huaji/1.jpg'
         this.currentcontent.push(data)
-        this.socket.emit('customer message', {data: encodeURI(msg), time: data['time'], sid: this.sid, src: encodeURI(data['src'])})
+        this.socket.emit('customer message', {data: encodeURI(msg), time: data['time'], cid: this.cid, uid: this.uid, src: encodeURI(data['src'])})
       },
       select (name) {
         this.type = name
       },
       close (flag) {
-        this.socket.emit('disconnect a user', {sid: this.sid, eid: this.eid})
+        this.socket.emit('disconnect a user', {uid: this.uid, eid: this.eid, cid: this.cid})
         for (let i = 0; i < this.lists.length; ++i) {
-          if (this.sid === this.lists[i]['sid']) {
+          if (this.uid === this.lists[i]['uid']) {
             this.lists.splice(i, 1)
             break
           }
         }
-        delete this.content[this.sid]
+        delete this.content[this.uid]
         if (this.lists.length !== 0) {
-          this.sid = this.lists[0]['sid']
-          this.currentcontent = this.content[this.sid]
+          this.uid = this.lists[0]['uid']
+          this.currentcontent = this.content[this.uid]
         } else {
-          this.sid = ''
+          this.uid = ''
           this.currentcontent = []
         }
       },
@@ -180,38 +186,41 @@
             'Content-Type': 'application/json'
           }
         }).then((res) => res.json())
-      }
-    },
-    mounted: async function () {
-      if (this.socket === null) {
-          /* global location io: true */
-        this.socket = io.connect('http://' + document.domain + ':' + location.port + '/test')
-        let res = await this.getCid()
-        this.cid = res['message']['cid']
-        this.eid = res['message']['eid']
-        this.socket.emit('a customer connected', {cid: this.cid})
-        this.socket.on('customer connected', (msg) => {
-          console.log(msg['data'])
-        })
+      },
+      getData (msg) {
+        let data = {}
+        data['word'] = decodeURI(msg['data'])
+        data['time'] = msg['time']
+        data['self'] = msg['send'] === 'robot' || msg['send'] === this.cid
+        data['src'] = msg['send'] === 'robot' ? '/static/img/robot_icon/1.jpg' : '/static/js/emojiSources/huaji/1.jpg'
+        return data
+      },
+      newUser () {
         this.socket.on('new user', (msg) => {
           // 将新加入的用户放在列表中的第一位
-          this.lists.unshift({'sid': msg['sid'], 'num': 0})
-          this.sid = msg['sid']
-          this.content[msg['sid']] = []
-          this.currentcontent = this.content[msg['sid']]
+          this.lists.unshift({'uid': msg['uid'], 'num': 0})
+          this.uid = msg['uid']
+          this.content[msg['uid']] = []
+          for (let i = 0; i < msg['content'].length; ++i) {
+            let data = this.getData(msg['content'][i])
+            this.content[msg['uid']].push(data)
+          }
+          this.currentcontent = this.content[msg['uid']]
         })
+      },
+      myResponse () {
         this.socket.on('my response', (msg) => {
           let data = {}
           data['word'] = decodeURI(msg['data'])
           data['time'] = msg['time']
           data['self'] = false
           data['src'] = decodeURI(msg['src'])
-          this.content[msg['sid']].push(data)
+          this.content[msg['uid']].push(data)
           // 生成未读消息数
-          if (this.sid !== msg['sid']) {
+          if (this.uid !== msg['uid']) {
             let i = 0
             for (i = 0; i < this.lists.length; ++i) {
-              if (this.lists[i]['sid'] === msg['sid']) {
+              if (this.lists[i]['uid'] === msg['uid']) {
                 this.lists[i]['num'] += 1
                 console.log(this.lists[i]['num'])
                 break
@@ -219,6 +228,36 @@
             }
           }
         })
+      },
+      oldData () {
+        this.socket.on('old data', (msg) => {
+          for (let i = 0; i < msg['list'].length; ++i) {
+            this.lists.push({'uid': msg['list'][i], 'num': 0})
+            this.content[msg['list'][i]] = []
+            for (let j = 0; j < msg['content'][i].length; ++j) {
+              let data = this.getData(msg['content'][i][j])
+              this.content[msg['list'][i]].push(data)
+            }
+          }
+        })
+      }
+    },
+    mounted: async function () {
+      if (this.socket === null) {
+          /* global location io: true */
+        this.socket = io.connect('http://' + document.domain + ':' + location.port + '/test')
+        let res = await this.getCid()
+        if (res['flag'] === global_.CONSTGET.CID_NOT_EXIST) {
+          this.$Message.error(global_.CONSTSHOW.CID_NOT_EXIST)
+          window.location.replace('/customer_login/')
+          return
+        }
+        this.cid = res['message']['cid']
+        this.eid = res['message']['eid']
+        this.socket.emit('a customer connected', {cid: this.cid})
+        this.oldData()
+        this.newUser()
+        this.myResponse()
       }
     }
   }

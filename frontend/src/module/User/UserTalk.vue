@@ -7,7 +7,6 @@
     <div class="main">
       <message :content="content"></message>
       <text-input @onKeyup="send"></text-input>
-      dfzgdzgfzsdgsdz
       <Button type="primary" class="btn" @click="transfer" v-show="talkToRobot">转接客服</Button>
     </div>
     <Modal v-model="modal" title="本次会话结束，请对客服进行评分" @on-ok="ok" @on-cancel="cancel">
@@ -26,7 +25,7 @@
       return {
         socket: null,
         content: [],
-        sid: '',
+        cid: '',
         timeout: null,
         modal: false,
         value: 0,
@@ -55,7 +54,7 @@
         data['self'] = true
         data['src'] = '/static/js/emojiSources/huaji/10.jpg'
         this.content.push(data)
-        this.socket.emit('user message', {data: encodeURI(message), time: data['time'], sid: this.sid, src: encodeURI(data['src']), flag: this.talkToRobot})
+        this.socket.emit('user message', {data: encodeURI(message), time: data['time'], cid: this.cid, uid: this.uid, src: encodeURI(data['src']), flag: this.talkToRobot})
         clearTimeout(this.timeout)
         this.timeout = setTimeout(() => {
           alert('您已超过5分钟未发送消息')
@@ -81,14 +80,23 @@
         let namespace = '/test'
         /* global location io: true */
         this.socket = io.connect('http://' + document.domain + ':' + location.port + namespace)
+        /* global md5: true */
+        this.uid = md5(this.dateformat(new Date()))
         this.socket.emit('a user connected', {uid: this.uid})
-        this.socket.on('connected', (msg) => {
-          this.uid = msg['uid']
+        this.socket.on('old data', (msg) => {
+          for (let i = 0; i < msg['content'].length; ++i) {
+            let data = {}
+            data['word'] = decodeURI(msg['content'][i]['data'])
+            data['time'] = msg['content'][i]['time']
+            data['self'] = msg['content'][i]['send'] === this.uid
+            data['src'] = '/static/js/emojiSources/huaji/1.jpg'
+            this.content.push(data)
+          }
         })
         this.socket.on('connected to customer', (msg) => {
-          this.sid = msg['sid']
+          this.cid = msg['cid']
           /* global alert: true */
-          alert('connect to customer')
+          alert('connected to customer')
           this.timeout = setTimeout(() => {
             alert('您已超过5分钟未发送消息')
           }, 300000)

@@ -25,7 +25,7 @@
     methods: {
       swit (item, index) {
         this.activeindex = index
-        this.$emit('swit', item['sid'])
+        this.$emit('swit', item['uid'])
       }
     }
   }
