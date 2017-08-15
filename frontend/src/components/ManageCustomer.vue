@@ -119,13 +119,9 @@
             this.$Message.warning(global_.CONSTSHOW.MAILBOX_REGISTERED)
           } else if (res['flag'] === global_.CONSTGET.INVITE_FAILURE) {
             this.$Message.error(global_.CONSTSHOW.INVITE_FAILURE)
-<<<<<<< Updated upstream
           } else if (res['flag'] === global_.CONSTGET.EID_NOT_EXIST) {
             window.location.href = '/enterprise/'
           } else if (res['flag'] === global_.CONSTGET.SUCCESS) {
-=======
-          } else {
->>>>>>> Stashed changes
             this.customerData.push({
               name: res['message']['name'],
               email: res['message']['email'],
@@ -156,13 +152,9 @@
           this.$Message.warning(global_.CONSTSHOW.CUSTOMER_NOT_EXIST)
         } else if (res['flag'] === global_.CONSTGET.FAIL_LOG_OFF) {
           this.$Message.error(global_.CONSTSHOW.FAIL_LOG_OFF)
-<<<<<<< Updated upstream
         } else if (res['flag'] === global_.CONSTGET.EID_NOT_EXIST) {
           window.location.href = '/enterprise/'
         } else if (res['flag'] === global_.CONSTGET.SUCCESS) {
-=======
-        } else {
->>>>>>> Stashed changes
           let i = 0
           for (; i < this.customerData.length; ++i) {
             if (this.customerData[i].cid === this.customerDataShow[index].cid) {
@@ -246,13 +238,9 @@
       let res = await this.fetchBase('/api/get_customers/', {})
       if (res['flag'] === global_.CONSTGET.ERROR) {
         this.$Message.error(global_.CONSTSHOW.ERROR)
-<<<<<<< Updated upstream
       } else if (res['flag'] === global_.CONSTGET.EID_NOT_EXIST) {
         window.location.href = '/enterprise/'
       } else if (res['flag'] === global_.CONSTGET.SUCCESS) {
-=======
-      } else {
->>>>>>> Stashed changes
         for (let i = 0; i < res['message'].length; ++i) {
           this.customerData.push({
             'name': res['message'][i]['name'],
