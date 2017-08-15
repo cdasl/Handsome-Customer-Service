@@ -70,7 +70,7 @@
             'key': 'uid'
           }, {
             'title': '客服ID',
-            'key': 'cid'
+            'key': 'cid_show'
           }, {
             'title': '会话评分',
             'key': 'feedback',
@@ -273,7 +273,15 @@
       // 组件装载完成之后获取历史会话列表
       let res = await this.fetchBase('/api/enter/dialogs/', {})
       if (res['flag'] === global_.CONSTGET.SUCCESS) {
-        this.dialogData = res['message']
+        for (let i = 0; i < res['message'].length; ++i) {
+          this.dialogData.push({
+            'start_time': res['message'][i]['start_time'],
+            'end_time': res['message'][i]['end_time'],
+            'cid': res['message'][i]['cid'],
+            'cid_show': res['message'][i]['cid'].substring(0, 5),
+            'feedback': res['message'][i]['feedback']
+          })
+        }
         this.init(true)
       } else if (res['flag'] === global_.CONSTGET.ERROR) {
         this.$Message.error('历史会话获取失败')
