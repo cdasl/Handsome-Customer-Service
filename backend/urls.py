@@ -36,7 +36,7 @@ urlpatterns = [
     #enterprise_apis
     url(r'^api/enter/signup/$', enterprise.enterprise_signup, name = 'enter_signup'),
     url(r'^api/enter/login/$', enterprise.enterprise_login, name = 'enter_login'),
-    url(r'^api/enter/logout/$', enterprise.enterprise_logout, name = 'enterprise_logout')
+    url(r'^api/enter/logout/$', enterprise.enterprise_logout, name = 'enterprise_logout'),
     url(r'^api/enter/reset/$', enterprise.reset_customer_state, name = 'reset_customer_state'),
     url(r'^api/active/$', enterprise.enterprise_active, name = 'active'),    
     url(r'^api/get_customers/$', enterprise.enterprise_get_customers, name = 'get_customers'),
