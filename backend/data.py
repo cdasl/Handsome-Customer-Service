@@ -1,9 +1,12 @@
+#codeing: utf8
+"""
+    使用说明：此脚本用以在数据库中生成数据。使用方法是先打开shell，python manage.py shell, 然后将此脚本粘贴进去即可。
+"""
 from backend import models
 import time, hashlib, datetime, random, string, math
 
-eid = '61078407c29755d8c080cb31ec09795d'
-cids = ['test_cid5', 'test_cid6', 'test_cid7', 'test_cid8', 'test_cid9',
-        'test_cid10', 'test_cid11', 'test_cid12', 'test_cid13', 'test_cid14', 'test_cid15']
+eid = '3fb9c866c15fa98d47ee47690a6d57c0'
+cids = []
 uids = ['test_uid3', 'test_uid4', 'test_uid5', 'test_uid6', 'test_uid7', 'test_uid8', 'test_uid9',
         'test_uid10', 'test_uid11', 'test_uid12', 'test_uid13', 'test_uid14', 'test_uid15']
 messages = ['你好', '毕竟too young', 'naive', 'excited', '谈笑风生', '比你们不知道高到哪里去了',
@@ -26,6 +29,21 @@ questions = [
 ]
 categories = ['人生', '常见', '技术', '产品', '售后', '运维']
 names = ['库', '里', '汤', '普', '森', '杜', '兰', '特', '格', '林', '科', '尔', '尼', '克', '杨', '麦', '基']
+
+def generate_enter():
+    """随机生成一个企业账号"""
+    email = 'handsome@hs.com'
+    password = 'handsome'
+    salt = ''.join(random.sample(string.ascii_letters + string.digits, 8))
+    md5 = hashlib.md5()
+    md5.update((password + salt).encode('utf8'))
+    final_password = md5.hexdigest()
+    global eid
+    eid = generate_str()
+    models.Enterprise.objects.create(EID = eid, email = email, password = final_password,
+        name = '汉森客服', robot_icon = '/static/img/robot_icon/1.jpg', state = 1,
+        salt = salt, chatbox_type = 1, robot_state = 1)
+
 def generate_name():
     """随机生成名字"""
     return random.choice(names) + random.choice(names)
@@ -37,6 +55,12 @@ def generate_str():
     md5.update((str(int(time.time())) + (random.choice(names)
      + random.choice(names) + random.choice(names) + random.choice(names))).encode('utf8'))
     return md5.hexdigest()
+
+def generate_cid():
+    """随机哈希生成15个客服id"""
+    global cids
+    for i in range(15):
+        cids.append(generate_str())
 
 def generate_email():
     """随机生成email"""
@@ -51,15 +75,16 @@ def generate_messages(uid, cid):
     """给两个人随机生成一段对话，并且生成一个dialog"""
     did = generate_str()
     time1 = datetime.datetime.now()
-    models.Dialog.objects.create(DID = did, EID = eid, start_time = time1 - delta(-4), end_time = time1,
+    start_time = time1 - delta(random.choice([i for i in range(24 * 60)]))
+    models.Dialog.objects.create(DID = did, EID = eid, start_time = start_time, end_time = start_time + delta(random.choice([i for i in range(10)])),
         UID = uid, CID = cid, feedback = random.choice([1, 2, 3, 4, 5]))
     message_length = random.choice([i for i in range(15)])
     for i in range(message_length):
         mid = generate_str()
         content = random.choice(messages)
         sid = random.choice([uid, cid])
-        rid = uid if sid == uid else cid
-        date = time1
+        rid = cid if sid == uid else uid
+        date = start_time + delta(i)
         models.Message.objects.create(MID = mid, SID = sid, RID = rid, content = content, DID = did, date = date)
 
 def generate_question():
@@ -79,7 +104,7 @@ def generate_customer():
         icon = '/static/img/customer_icon/uh_' + str(random.choice([i + 1 for i in range(9)])) + '.gif'
         state = random.choice([i - 1 for i in range(4)])
         serviced_number = random.choice([i for i in range(100)])
-        service_number = random.choice([i for i in range(100)])
+        service_number = random.choice([i for i in range(10)])
         raw_password = 'password'
         salt = 'salt'
         md5 = hashlib.md5()
@@ -96,7 +121,21 @@ def generate_dialog():
         cid = random.choice(cids)
         generate_messages(uid, cid)
 
+def delete_all():
+    """删除数据库中所有数据"""
+    models.Enterprise.objects.all().delete()
+    models.Customer.objects.all().delete()
+    models.Question.objects.all().delete()
+    models.Message.objects.all().delete()
+    models.Dialog.objects.all().delete()
+    models.User.objects.all().delete()
+
+#删除所有
+delete_all()
+#企业
+generate_enter()
 #客服
+generate_cid()
 generate_customer()
 #问题
 generate_question()

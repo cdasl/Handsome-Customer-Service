@@ -278,6 +278,7 @@
             'start_time': res['message'][i]['start_time'],
             'end_time': res['message'][i]['end_time'],
             'cid': res['message'][i]['cid'],
+            'uid': res['message'][i]['uid'],
             'cid_show': res['message'][i]['cid'].substring(0, 5),
             'feedback': res['message'][i]['feedback']
           })
