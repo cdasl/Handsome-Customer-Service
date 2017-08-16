@@ -3,7 +3,8 @@
     <div class="head">
       <Input v-model="customerEmail" class="email-input" placeholder="输入邮箱邀请客服" @on-enter="invite"></Input>
       <Button @click="invite">邀请客服</Button>
-      <Input @on-enter="search" placeholder="输入ID,邮箱,姓名查找客服" class="search-input"></Input>
+      <Input v-model="searchWord" @on-enter="search" placeholder="输入ID,邮箱,姓名查找客服" class="search-input"></Input>
+      <Button @click="search">查询</Button>
       <div class="head-right">
         <Select v-model="sortKeyWord" @on-change="changeSort" style="width:150px;text-align:left;">
           <Option v-for="item of sortList" :value="item" :key="item">{{ item }}</Option>
@@ -19,6 +20,7 @@
     </Row>
     <br>
     <Button type="primary" size="large" @click="exportData(1)"><Icon type="ios-download-outline"></Icon> 导出原始数据</Button>
+    <Button type="primary" size="large" @click="exportData(2)"><Icon type="ios-download-outline"></Icon> 导出排序和过滤后的数据</Button>
     </div>
 </template>
 <script>
@@ -37,6 +39,7 @@
         sortKeyWord: '按关键字排序', // 排序关键字
         sortOrder: '升序', // 升序或降序
         orderList: ['升序', '降序'],
+        searchWord: '', // 搜索客服的关键词
         customerEmail: '', // 邀请客服输入的邮箱
         customerForm: [
           {
@@ -94,7 +97,8 @@
             }
           }
         ], // 客服表格格式
-        customerData: [], // 所有客服数据
+        customerDataAll: [], // 所有客服数据
+        customerData: [], // 所有页面数据
         customerDataShow: [], // 当前页的客服数据
         current: 1, // 当前页码
         pageSize: 10 // 煤业数据条数
@@ -102,11 +106,25 @@
     },
     methods: {
       init (iWantToChangePage) {
-        // 根据传入参数将customerData中数据传给customerDataShow
-        if (iWantToChangePage) {
-          this.current = 1
+        // 根据当前情况将customerDataAll中的数据传给customerData和customerDataShow
+        this.customerData = []
+        if (this.searchWord.trim() === '') {
+          this.customerData = this.customerDataAll
+        } else {
+          for (let i = 0; i < this.customerDataAll.length; ++i) {
+            if (this.customerDataAll[i]['cid_show'].indexOf(this.searchWord) !== -1 ||
+                this.customerDataAll[i]['name'].indexOf(this.searchWord) !== -1 ||
+                this.customerDataAll[i]['email'].indexOf(this.searchWord) !== -1) {
+              this.customerData.push(this.customerDataAll[i])
+            }
+          }
         }
-        this.customerDataShow = this.customerData.slice((this.current - 1) * this.pageSize, Math.min((this.current - 1) * this.pageSize + this.pageSize, this.customerData.length))
+        if (iWantToChangePage) {
+          this.customerDataShow = this.customerData.slice(0, Math.min(this.pageSize, this.customerData.length))
+          this.current = 1
+        } else {
+          this.customerDataShow = this.customerData.slice((this.current - 1) * this.pageSize, Math.min((this.current - 1) * this.pageSize + this.pageSize, this.customerData.length))
+        }
       },
       fetchBase (url, body) {
         return fetch(url, {
@@ -141,7 +159,7 @@
           } else if (res['flag'] === global_.CONSTGET.EID_NOT_EXIST) {
             window.location.href = '/enterprise/'
           } else if (res['flag'] === global_.CONSTGET.SUCCESS) {
-            this.customerData.push({
+            this.customerDataAll.push({
               name: res['message']['name'],
               email: res['message']['email'],
               state: this.stateMap['' + res['message']['state']],
@@ -175,14 +193,19 @@
           window.location.href = '/enterprise/'
         } else if (res['flag'] === global_.CONSTGET.SUCCESS) {
           let i = 0
-          for (; i < this.customerData.length; ++i) {
-            if (this.customerData[i].cid === this.customerDataShow[index].cid) {
+          for (; i < this.customerDataAll.length; ++i) {
+            if (this.customerDataAll[i].cid === this.customerDataShow[index].cid) {
               break
             }
           }
-          this.customerData[i]['state'] = this.customerData[i]['state'] === this.stateMap['-1'] ? this.stateMap['1'] : this.stateMap['-1']
+          this.customerDataAll[i]['state'] = this.customerDataAll[i]['state'] === this.stateMap['-1'] ? this.stateMap['1'] : this.stateMap['-1']
           this.init(false)
         }
+      },
+      search () {
+        // 根据信息查找客服，支持模糊查询
+        this.init(true)
+        this.searchWord = ''
       },
       changeSort () {
         // 排序
@@ -212,14 +235,19 @@
         this.init(true)
       },
       exportData (type) {
+        // 根据传入的type导出不同的数据
         let csv = '\ufeff'
         let keys = []
+        let temp = this.customerDataAll
+        if (type === 2) {
+          temp = this.customerData
+        }
         this.customerForm.forEach(function (item) {
           csv += '"' + item['title'] + '",'
           keys.push(item['key'])
         })
         csv = csv.replace(/,$/, '\n')
-        this.customerData.forEach(function (item) {
+        temp.forEach(function (item) {
           keys.forEach(function (key) {
             csv += '"' + item[key] + '",'
           })
@@ -260,7 +288,7 @@
         window.location.href = '/enterprise/'
       } else if (res['flag'] === global_.CONSTGET.SUCCESS) {
         for (let i = 0; i < res['message'].length; ++i) {
-          this.customerData.push({
+          this.customerDataAll.push({
             'cid_show': res['message'][i]['cid'].substring(0, 5),
             'name': res['message'][i]['name'],
             'email': res['message'][i]['email'],
@@ -282,7 +310,7 @@
   height: 5%;
 }
 .search-input {
-  width: 20%;
+  width: 15%;
   height: 5%;
 }
 .table {
