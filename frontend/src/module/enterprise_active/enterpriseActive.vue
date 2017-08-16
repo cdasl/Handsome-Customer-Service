@@ -35,16 +35,16 @@
       })
       .then((response) => response.json())
       .then((response) => {
-        if (response['message'] === 'success') {
+        if (response['flag'] === 'success') {
           this.success = true
         }
-        if (response['message'] === 'expired') {
+        if (response['flag'] === 'expired') {
           this.expired = true
         }
-        if (response['message'] === 'invalid') {
+        if (response['flag'] === 'invalid') {
           this.invalid = true
         }
-        if (response['message'] === 'succeeded') {
+        if (response['flag'] === 'eid not in request.session') {
           this.succeeded = true
         }
       })

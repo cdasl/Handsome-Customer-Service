@@ -61,7 +61,6 @@ def customer_login_helper(info):
                 return (-1, const_table.const.ACCOUNT_LOGGED_OFF)
         else:
             #密码错误
-            print('777')
             return (-2, const_table.const.WRONG_PASSWORD)
     except Exception:
         #账号错误

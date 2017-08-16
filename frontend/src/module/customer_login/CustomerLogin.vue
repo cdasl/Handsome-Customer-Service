@@ -96,13 +96,13 @@
         if (res['flag'] === global_.CONSTGET.SUCCESS) {
           this.$Message.success('登陆成功')
           window.location.href = '/customer_manage'
-        } else if (res['flag'] === -5) {
+        } else if (res['flag'] === global_.CONSTGET.ACCOUNT_NOT_ACTIVETED) {
           this.$Message.warning('账号未激活')
-        } else if (res['flag'] === -6) {
+        } else if (res['flag'] === global_.CONSTGET.ACCOUNT_LOGGED_OFF) {
           this.$Message.warning('账号已被注销')
-        } else if (res['flag'] === -1) {
+        } else if (res['flag'] === global_.CONSTGET.WRONG_PASSWORD) {
           this.$Message.error('密码错误')
-        } else if (res['flag'] === -7) {
+        } else if (res['flag'] === global_.CONSTGET.WRONG_ACCOUNT) {
           this.$Message.error('账号不存在')
         }
       }
