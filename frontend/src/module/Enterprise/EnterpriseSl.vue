@@ -1,7 +1,6 @@
 <template>
   <div class="app">
     <div class="wrap">
-      <img src="/static/img/logo.jpg" alt="logo.jpg" class="image">
       <div :is="type" @transfer="transfer"></div>
     </div>
   </div>
@@ -31,10 +30,11 @@
 }
 .wrap {
   display: block;
-  width: 40vw;
+  width: 30vw;
   margin-left: auto;
   margin-right: auto;
   margin-top: 20vh;
+  background-color: rgba(255, 255, 255, 1);
 }
 .image {
   display: block;
