@@ -68,6 +68,7 @@
     <Select v-model="chartType" style="width:200px">
       <Option v-for="item in typeList" :value="item.value" :key="item.value">{{ item.label }}</Option>
     </Select>
+    <Button type="primary" size="large" @click="exportData()" style="margin-left:2vw;"><Icon type="ios-download-outline"></Icon>导出统计信息</Button>
     <div>
       <schart :canvasId="canvasId"
         :type="chartType"
@@ -165,6 +166,53 @@
           }
         }
         return ''
+      },
+      exportData () {
+        // 导出统计信息
+        let csv = '\ufeff'
+        let keys = []
+        let items = [
+          {'title': '总服务时间', 'key': 'totalTime'},
+          {'title': '总消息数', 'key': 'totalMessage'},
+          {'title': '总会话数', 'key': 'totalDialog'},
+          {'title': '服务总人数', 'key': 'totalServiced'},
+          {'title': '在线客服数', 'key': 'totalOnline'},
+          {'title': '今日会话数', 'key': 'todayDialog'},
+          {'title': '平均会话时长', 'key': 'avgDialogTime'},
+          {'title': '会话平均消息数', 'key': 'avgMessages'}
+        ]
+        let statics = [{
+          'totalTime': this.statics['totalTime'],
+          'totalMessage': this.statics['totalMessage'],
+          'totalDialog': this.statics['totalDialog'],
+          'totalServiced': this.statics['totalServiced'],
+          'totalOnline': this.statics['totalOnline'],
+          'todayDialog': this.statics['todayDialog'],
+          'avgDialogTime': this.statics['avgDialogTime'],
+          'avgMessages': this.statics['avgMessages']
+        }]
+        items.forEach(function (item) {
+          csv += '"' + item['title'] + '",'
+          keys.push(item['key'])
+        })
+        csv = csv.replace(/,$/, '\n')
+        statics.forEach(function (item) {
+          keys.forEach(function (key) {
+            csv += '"' + item[key] + '",'
+          })
+          csv = csv.replace(/,$/, '\n')
+        })
+        csv = csv.replace(/"null"/g, '""')
+        var blob = new window.Blob([csv], {
+          type: 'text/csv,charset=UTF-8'
+        })
+        let csvUrl = window.URL.createObjectURL(blob)
+        let a = document.createElement('a')
+        a.download = '统计信息.csv'
+        a.href = csvUrl
+        document.body.appendChild(a)
+        a.click()
+        document.body.removeChild(a)
       }
     },
     async mounted () {
