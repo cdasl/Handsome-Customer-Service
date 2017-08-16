@@ -1,13 +1,15 @@
 <template>
   <div id="app">
-    <h3 class="title">企业注册</h3>
-    <Input v-model="formItem.email" placeholder="请输入邮箱" type="text" class="my-input"></Input>
-    <Input v-model="formItem.password" placeholder="请输入密码，长度不小于8" type="password" class="my-input"></Input>
-    <Input v-model="formItem.password2" placeholder="请确认密码" type="password" class="my-input"></Input>
-    <Input v-model="formItem.name" placeholder="请输入企业名称" class="my-input" @on-enter="submit"></Input>
-    <Button type="primary" @click="submit" class="my-input">立即注册</Button>
-    <p class="clause">点击立即注册即表示你已阅读并同意<a href="">汉森服务条款</a></p>
-    <p class="login">已有账号?<a @click="trans">点击登陆!</a></p>
+    <div class="container">
+      <h3 class="title">企业注册</h3>
+      <Input v-model="formItem.email" placeholder="请输入邮箱" type="text" class="my-input"></Input>
+      <Input v-model="formItem.password" placeholder="请输入密码，长度不小于8" type="password" class="my-input"></Input>
+      <Input v-model="formItem.password2" placeholder="请确认密码" type="password" class="my-input"></Input>
+      <Input v-model="formItem.name" placeholder="请输入企业名称" class="my-input" @on-enter="submit"></Input>
+      <Button type="primary" @click="submit" class="btn">立即注册</Button><br>
+      <p class="login">已有账号?<a @click="trans">点击登录!</a></p>
+      <p class="clause">点击立即注册即表示你已阅读并同意<a href="">汉森服务条款</a></p>  
+    </div>
   </div>
 </template>
 <script>
@@ -102,33 +104,52 @@
   }
 </script>
 <style scoped>
-.app {
+#app {
   width: 100%;
 }
 .title {
-  margin-left: 5vw;
+  margin-left: 9%;
   margin-bottom: 2vh;
   font-size: 1.5em;
-  color: white;
+}
+.container {
+  display: block;
+  width: 80%;
+  margin-left: auto;
+  margin-right: auto;
+  padding-top: 2vh;
 }
 .my-input {
-  width: 75%;
+  display: block;
+  width: 20vw;
   height: 30%;
-  margin-left: 5vw;
+  margin-left: auto;
+  margin-right: auto;
   margin-bottom: 2vh;
+  border-color: blue;
+}
+.btn {
+  display: block;
+  width: 20vw;
+  height: 30%;
+  margin-left: auto;
+  margin-right: auto;
+  border-color: blue;
+  font-size: 1.4em;
 }
 .clause {
-  width: 45%;
+  width: 90%;
   height: 15%;
   font-size: 1em;
-  margin-left: auto;
-  margin-right: auto;
+  margin: 0;
+  padding-left: 9%;
 }
 .login {
-  width: 32%;
-  height: 15%;
-  font-size: 1.4em;
-  margin-left: auto;
-  margin-right: auto;
+  display: inline-block;
+  width: 50%;
+  font-size: 1.2em;
+  margin: 0;
+  margin-bottom: 2vh;
+  padding-left: 9%;
 }
 </style>

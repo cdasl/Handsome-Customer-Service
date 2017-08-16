@@ -6,16 +6,49 @@
 <link rel="shortcut icon" type="image/x-icon" href="/static/img/logo.gif" id="favicon" />
 <style>
   body {
+    position: relative;
     background-size: 100vw 100vh;
     background-image: url('/static/img/background.jpg');
+  }
+  .footer {
+    display: block;
+    width: 100vw;
+    height: 5vh;
+    position: fixed;
+    bottom: 0;
+    background-color: rgba(50, 50, 50, 0.7);
+    text-align: right;
+    font-size: 1.2em;
+  }
+  .footer span {
+    color: #2d8cf0;;
+    line-height: 5vh;
+    margin-right: 3vw;
+  }
+  .footer a {
+    line-height: 5vh;
+    margin-right: 3vw;
   }
 </style>
 </head>
 <body>
-    <div class="wrapper">
-      <div id="enterprise">
-        <enterprise-sl></enterprise-sl>
-      </div>
+  <script>
+    function goHelp() {
+      window.location.href = '/'
+    }
+    function goHome () {
+      window.location.href = '/'
+    }
+  </script>  
+  <div class="wrapper">
+    <div id="enterprise">
+      <enterprise-sl></enterprise-sl>
     </div>
+    <div class="footer">
+      <span>©2017 Handsome</span>
+      <a onclick="goHelp()">帮助文档</a>
+      <a onclick="goHome()">返回首页</a>
+    </div>
+  </div>
 </body>
 </html>

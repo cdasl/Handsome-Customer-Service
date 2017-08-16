@@ -1,11 +1,13 @@
 <template>
   <div id="app">
-    <h3 class="title">企业登录</h3>
-    <Input v-model="formItem.email" placeholder="邮箱" type="text" class="my-input"></Input>
-    <Input v-model="formItem.password" placeholder="密码" type="password" class="my-input" @on-enter="submit"></Input>
-    <Button type="primary" @click="submit" class="my-input">登录</Button><br>
-    <p class="signup">没有账户?<a @click="trans">创建一个!</a></p>
-    <p class="find-password"><a @click="findEmail">找回密码</a></p>
+    <div class="container">
+      <h3 class="title">企业登录</h3>
+      <Input v-model="formItem.email" placeholder="邮箱" type="text" class="enter-input"></Input>
+      <Input v-model="formItem.password" placeholder="密码" type="password" class="enter-input" @on-enter="submit"></Input>
+      <Button type="primary" @click="submit" class="btn">登录</Button><br>
+      <p class="signup">没有账户?<a @click="trans">创建一个!</a></p>
+      <p class="find-password"><a @click="findEmail">找回密码</a></p>
+    </div>
     <Modal
       v-model="findback.modal"
       title="找回密码"
@@ -115,36 +117,55 @@
   }
 </script>
 <style scoped>
-.app {
+#app {
   width: 100%;
 }
-.title {
-  margin-left: 5vw;
-  margin-bottom: 2vh;
-  font-size: 1.5em;
-  color: white;
+.container {
+  display: block;
+  width: 80%;
+  margin-left: auto;
+  margin-right: auto;
+  padding-top: 2vh;
 }
-.my-input {
-  width: 75%;
-  height: 30%;
-  margin-left: 5vw;
+.title {
+  margin-left: 9%;
   margin-bottom: 2vh;
+  margin-top: 2vh;
+  font-size: 1.5em;
+}
+.enter-input {
+  display: block;
+  width: 20vw;
+  height: 30%;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 2vh;
+  border-color: blue;
+}
+.btn {
+  display: block;
+  width: 20vw;
+  height: 30%;
+  margin-left: auto;
+  margin-right: auto;
+  border-color: blue;
+  font-size: 1.4em;
 }
 .signup {
-  display: inline;
+  display: inline-block;
   width: 50%;
-  font-size: 1.4em;
-  padding-left: 5vw;
+  font-size: 1.2em;
   margin: 0;
   margin-bottom: 2vh;
+  padding-left: 9%;
 }
 .find-password {
   display: inline-block;
-  width: 50%;
-  font-size: 1.4em;
+  width: 40%;
+  font-size: 1.2em;
   text-align: right;
-  padding-right: 3vw;
   margin: 0;
   margin-bottom: 2vh;
+  text-align: right;
 }
 </style>
