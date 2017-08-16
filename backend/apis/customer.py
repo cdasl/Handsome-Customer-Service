@@ -61,7 +61,6 @@ def customer_login_helper(info):
                 return (-1, const_table.const.ACCOUNT_LOGGED_OFF)
         else:
             #密码错误
-            print('777')
             return (-2, const_table.const.WRONG_PASSWORD)
     except Exception:
         #账号错误
@@ -69,7 +68,8 @@ def customer_login_helper(info):
 
 @ensure_csrf_cookie
 def customer_login(request):
-    """客服登录\n
+    """
+    客服登录\n
     * **request** - 前端发送的请求,包含邮箱和密码\n
     **返回值**:包含成功/失败消息的JsonResponse
     """
