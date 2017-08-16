@@ -68,7 +68,8 @@ def customer_login_helper(info):
 
 @ensure_csrf_cookie
 def customer_login(request):
-    """客服登录\n
+    """
+    客服登录\n
     * **request** - 前端发送的请求,包含邮箱和密码\n
     **返回值**:包含成功/失败消息的JsonResponse
     """
