@@ -5,8 +5,17 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  
+  <!-- Licensed under the Apache 2.0 License -->
+  <link rel="stylesheet" type="text/css" href="../_static/fonts/open-sans/stylesheet.css" />
+  <!-- Licensed under the SIL Open Font License -->
+  <link rel="stylesheet" type="text/css" href="../_static/fonts/source-serif-pro/source-serif-pro.css" />
+  <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap.min.css" />
+  <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
     <title>API package &#8212; Handsome&#39;s Customer Service 1.0 documentation</title>
-    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
@@ -25,25 +34,107 @@
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Constant Table" href="const_table.html" />
     <link rel="prev" title="API" href="api_modules.html" />
+  
    
-  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
-  
-  
-  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
   </head>
   <body>
-  
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="const_table.html" title="Constant Table"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="api_modules.html" title="API"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Handsome&#39;s Customer Service 1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="api_modules.html" accesskey="U">API</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="container-wrapper">
 
-    <div class="document">
-      <div class="documentwrapper">
-        <div class="bodywrapper">
-          <div class="body" role="main">
+      <div id="mobile-toggle">
+        <a href="#"><span class="glyphicon glyphicon-align-justify" aria-hidden="true"></span></a>
+      </div>
+  <div id="left-column">
+    <div class="sphinxsidebar"><a href="
+    ../index.html" class="text-logo">Handsome's Customer Service</a>
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <h2>Table Of Contents</h2>
+  </div>
+  <div class="sidebar-toc">
+    
+    
+      <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="models.html">Models</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="api_modules.html">API</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">API package</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="const_table.html">Constant Table</a></li>
+</ul>
+
+    
+  </div>
+</div>
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <h2>Contents</h2>
+    <div class="sidebar-localtoc">
+      <ul>
+<li><a class="reference internal" href="#">API package</a><ul>
+<li><a class="reference internal" href="#module-backend.apis.customer">Customer APIs</a></li>
+<li><a class="reference internal" href="#module-backend.apis.enterprise">Enterprise APIs</a></li>
+</ul>
+</li>
+</ul>
+
+    </div>
+  </div>
+</div>
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <div id="main-search">
+      <form class="form-inline" action="../search.html" method="GET" role="form">
+        <div class="input-group">
+          <input name="q" type="text" class="form-control" placeholder="Search...">
+        </div>
+        <input type="hidden" name="check_keywords" value="yes" />
+        <input type="hidden" name="area" value="default" />
+      </form>
+    </div>
+  </div>
+</div>
+      
+    </div>
+  </div>
+        <div id="right-column">
+          
+          <div role="navigation" aria-label="breadcrumbs navigation">
+            <ol class="breadcrumb">
+              <li><a href="../index.html">Docs</a></li>
+              
+                <li><a href="api_modules.html">API</a></li>
+              
+              <li>API package</li>
+            </ol>
+          </div>
+          
+          <div class="document clearer body">
             
   <div class="section" id="api-package">
 <h1>API package<a class="headerlink" href="#api-package" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="module-backend.apis.customer">
-<span id="apis-customer-module"></span><h2>apis.customer module<a class="headerlink" href="#module-backend.apis.customer" title="Permalink to this headline">¶</a></h2>
+<span id="customer-apis"></span><h2>Customer APIs<a class="headerlink" href="#module-backend.apis.customer" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="backend.apis.customer.customer_avgmes_dialogs">
 <code class="descclassname">backend.apis.customer.</code><code class="descname">customer_avgmes_dialogs</code><span class="sig-paren">(</span><em>CID</em><span class="sig-paren">)</span><a class="headerlink" href="#backend.apis.customer.customer_avgmes_dialogs" title="Permalink to this definition">¶</a></dt>
@@ -124,7 +215,7 @@
 <ul class="simple">
 <li><strong>request</strong> - 前端发送的请求,session中有cid</li>
 </ul>
-<p><strong>返回值</strong>:包含成功/失败消息和以上所有数据的JsonResponse</p>
+<p><strong>返回值</strong>:包含成功/失败消息和以上所有的数据的JsonResponse</p>
 </dd></dl>
 
 <dl class="function">
@@ -250,23 +341,35 @@
 
 </div>
 <div class="section" id="module-backend.apis.enterprise">
-<span id="apis-enterprise-module"></span><h2>apis.enterprise module<a class="headerlink" href="#module-backend.apis.enterprise" title="Permalink to this headline">¶</a></h2>
+<span id="enterprise-apis"></span><h2>Enterprise APIs<a class="headerlink" href="#module-backend.apis.enterprise" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="backend.apis.enterprise.UrlValidateJudge">
 <code class="descclassname">backend.apis.enterprise.</code><code class="descname">UrlValidateJudge</code><span class="sig-paren">(</span><em>request</em><span class="sig-paren">)</span><a class="headerlink" href="#backend.apis.enterprise.UrlValidateJudge" title="Permalink to this definition">¶</a></dt>
-<dd><p>判断访问是否含有session</p>
+<dd><p>判断request中是否含有session’</p>
+<ul class="simple">
+<li><strong>request</strong> - 前端发送的请求</li>
+</ul>
+<p><strong>返回值</strong>: 包含成功/失败信息的JsonResponse</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="backend.apis.enterprise.customer_avg_feedback">
 <code class="descclassname">backend.apis.enterprise.</code><code class="descname">customer_avg_feedback</code><span class="sig-paren">(</span><em>CID</em><span class="sig-paren">)</span><a class="headerlink" href="#backend.apis.enterprise.customer_avg_feedback" title="Permalink to this definition">¶</a></dt>
 <dd><p>返回客服所有会话的平均评分</p>
+<ul class="simple">
+<li><strong>CIDt</strong> - 客服的ID</li>
+</ul>
+<p><strong>返回值</strong>: 客服的平均评分</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="backend.apis.enterprise.enterprise_active">
 <code class="descclassname">backend.apis.enterprise.</code><code class="descname">enterprise_active</code><span class="sig-paren">(</span><em>request</em><span class="sig-paren">)</span><a class="headerlink" href="#backend.apis.enterprise.enterprise_active" title="Permalink to this definition">¶</a></dt>
 <dd><p>企业激活</p>
+<ul class="simple">
+<li><strong>request</strong> - 前端发送的请求，包含激活码</li>
+</ul>
+<p><strong>返回值</strong>: 包含成功/失败信息的JsonResponse</p>
 </dd></dl>
 
 <dl class="function">
@@ -276,55 +379,87 @@
 <ul class="simple">
 <li><strong>EID</strong> - 企业ID</li>
 </ul>
-<p><strong>返回值</strong>: 平均消息数</p>
+<p><strong>返回值</strong>: 包含成功/失败信息和机器人信息的JsonResponse</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="backend.apis.enterprise.enterprise_avgtime_dialogs">
 <code class="descclassname">backend.apis.enterprise.</code><code class="descname">enterprise_avgtime_dialogs</code><span class="sig-paren">(</span><em>EID</em><span class="sig-paren">)</span><a class="headerlink" href="#backend.apis.enterprise.enterprise_avgtime_dialogs" title="Permalink to this definition">¶</a></dt>
-<dd><p>获取客服会话平均时间</p>
+<dd><p>获取客服平均会话时间</p>
+<ul class="simple">
+<li><strong>EID</strong> - 企业ID</li>
+</ul>
+<p><strong>返回值</strong>: 包含成功/失败信息和平均会话分钟数的JsonResponse</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="backend.apis.enterprise.enterprise_changepassword">
 <code class="descclassname">backend.apis.enterprise.</code><code class="descname">enterprise_changepassword</code><span class="sig-paren">(</span><em>request</em><span class="sig-paren">)</span><a class="headerlink" href="#backend.apis.enterprise.enterprise_changepassword" title="Permalink to this definition">¶</a></dt>
-<dd><p>修改密码</p>
+<dd><p>企业修改密码</p>
+<ul class="simple">
+<li><strong>request</strong> - 前端发送的请求，包含旧密码和session</li>
+</ul>
+<p><strong>返回值</strong>: 包含成功/失败信息的JsonResponse</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="backend.apis.enterprise.enterprise_delete_question">
 <code class="descclassname">backend.apis.enterprise.</code><code class="descname">enterprise_delete_question</code><span class="sig-paren">(</span><em>request</em><span class="sig-paren">)</span><a class="headerlink" href="#backend.apis.enterprise.enterprise_delete_question" title="Permalink to this definition">¶</a></dt>
 <dd><p>企业删除问题</p>
+<ul class="simple">
+<li><strong>request</strong> - 前端发送的请求，包含session和问题ID</li>
+</ul>
+<p><strong>返回值</strong>: 包含成功/失败信息的JsonResponse</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="backend.apis.enterprise.enterprise_dialog_messages">
 <code class="descclassname">backend.apis.enterprise.</code><code class="descname">enterprise_dialog_messages</code><span class="sig-paren">(</span><em>request</em><span class="sig-paren">)</span><a class="headerlink" href="#backend.apis.enterprise.enterprise_dialog_messages" title="Permalink to this definition">¶</a></dt>
 <dd><p>获取企业某个会话的内容</p>
+<ul class="simple">
+<li><strong>request</strong> - 前端发送的请求，包含对话ID</li>
+</ul>
+<p><strong>返回值</strong>: 包含成功/失败信息和会话内容的JsonResponse</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="backend.apis.enterprise.enterprise_dialogs">
 <code class="descclassname">backend.apis.enterprise.</code><code class="descname">enterprise_dialogs</code><span class="sig-paren">(</span><em>request</em><span class="sig-paren">)</span><a class="headerlink" href="#backend.apis.enterprise.enterprise_dialogs" title="Permalink to this definition">¶</a></dt>
-<dd><p>获取企业全部会话列表</p>
+<dd><p>企业获取全部会话列表</p>
+<ul class="simple">
+<li><strong>request</strong> - 前端发送的请求，包含session</li>
+</ul>
+<p><strong>返回值</strong>: 包含成功/失败信息和会话列表信息的JsonResponse</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="backend.apis.enterprise.enterprise_dialogs_oneday">
 <code class="descclassname">backend.apis.enterprise.</code><code class="descname">enterprise_dialogs_oneday</code><span class="sig-paren">(</span><em>request</em><span class="sig-paren">)</span><a class="headerlink" href="#backend.apis.enterprise.enterprise_dialogs_oneday" title="Permalink to this definition">¶</a></dt>
 <dd><p>获取企业所有客服24小时内各时间段会话总数</p>
+<ul class="simple">
+<li><strong>request</strong> - 前端发送的请求，包含session</li>
+</ul>
+<p><strong>返回值</strong>: 包含成功/失败信息和24小时内会话总数的JsonResponse</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="backend.apis.enterprise.enterprise_dialogs_total_oneday">
 <code class="descclassname">backend.apis.enterprise.</code><code class="descname">enterprise_dialogs_total_oneday</code><span class="sig-paren">(</span><em>EID</em><span class="sig-paren">)</span><a class="headerlink" href="#backend.apis.enterprise.enterprise_dialogs_total_oneday" title="Permalink to this definition">¶</a></dt>
 <dd><p>获取企业最近24小时会话总数</p>
+<ul class="simple">
+<li><strong>EID</strong> - 企业ID</li>
+</ul>
+<p><strong>返回值</strong>: 包含成功/失败信息和24小时会话总数的JsonResponse</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="backend.apis.enterprise.enterprise_get_all_question">
 <code class="descclassname">backend.apis.enterprise.</code><code class="descname">enterprise_get_all_question</code><span class="sig-paren">(</span><em>request</em><span class="sig-paren">)</span><a class="headerlink" href="#backend.apis.enterprise.enterprise_get_all_question" title="Permalink to this definition">¶</a></dt>
-<dd><p>返回企业所有问题</p>
+<dd><p>获得企业所有问题</p>
+<ul class="simple">
+<li><strong>request</strong> - 前端发送的请求，包含session</li>
+</ul>
+<p><strong>返回值</strong>: 包含成功/失败信息和所有问题的JsonResponse</p>
 </dd></dl>
 
 <dl class="function">
@@ -332,47 +467,80 @@
 <code class="descclassname">backend.apis.enterprise.</code><code class="descname">enterprise_get_alldata</code><span class="sig-paren">(</span><em>request</em><span class="sig-paren">)</span><a class="headerlink" href="#backend.apis.enterprise.enterprise_get_alldata" title="Permalink to this definition">¶</a></dt>
 <dd><p>企业获取所有数据：总服务时间，总消息数，总会话数，总服务人数，
 在线客服人数，今日会话数，平均会话时长，平均消息数</p>
+<ul class="simple">
+<li><strong>request</strong> - 前端发送的请求，包含session</li>
+</ul>
+<p><strong>返回值</strong>: 包含成功/失败信息和所有信息的JsonResponse</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="backend.apis.enterprise.enterprise_get_customers">
 <code class="descclassname">backend.apis.enterprise.</code><code class="descname">enterprise_get_customers</code><span class="sig-paren">(</span><em>request</em><span class="sig-paren">)</span><a class="headerlink" href="#backend.apis.enterprise.enterprise_get_customers" title="Permalink to this definition">¶</a></dt>
-<dd><p>获取客服人员列表</p>
+<dd><p>企业获取客服人员列表</p>
+<ul class="simple">
+<li><strong>request</strong> - 前端发送的请求，包含session</li>
+</ul>
+<p><strong>返回值</strong>: 包含成功/失败信息和客服列表信息的JsonResponse</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="backend.apis.enterprise.enterprise_get_robot_info">
 <code class="descclassname">backend.apis.enterprise.</code><code class="descname">enterprise_get_robot_info</code><span class="sig-paren">(</span><em>request</em><span class="sig-paren">)</span><a class="headerlink" href="#backend.apis.enterprise.enterprise_get_robot_info" title="Permalink to this definition">¶</a></dt>
-<dd><p>返回机器人信息</p>
+<dd><p>企业返回机器人信息</p>
+<ul class="simple">
+<li><strong>request</strong> - 前端发送的请求，包含session</li>
+</ul>
+<p><strong>返回值</strong>: 包含成功/失败信息和机器人信息的JsonResponse</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="backend.apis.enterprise.enterprise_invite">
 <code class="descclassname">backend.apis.enterprise.</code><code class="descname">enterprise_invite</code><span class="sig-paren">(</span><em>request</em><span class="sig-paren">)</span><a class="headerlink" href="#backend.apis.enterprise.enterprise_invite" title="Permalink to this definition">¶</a></dt>
-<dd><p>邀请客服</p>
+<dd><p>企业邀请客服加入</p>
+<ul class="simple">
+<li><strong>request</strong> - 前端发送的请求，包含客服的邮箱和session</li>
+</ul>
+<p><strong>返回值</strong>: 包含成功/失败信息和客服信息的JsonResponse</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="backend.apis.enterprise.enterprise_login">
 <code class="descclassname">backend.apis.enterprise.</code><code class="descname">enterprise_login</code><span class="sig-paren">(</span><em>request</em><span class="sig-paren">)</span><a class="headerlink" href="#backend.apis.enterprise.enterprise_login" title="Permalink to this definition">¶</a></dt>
 <dd><p>企业登录</p>
+<ul class="simple">
+<li><strong>request</strong> - 前端发送的请求，包含邮箱，密码</li>
+</ul>
+<p><strong>返回值</strong>: 包含成功/失败信息的JsonResponse</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="backend.apis.enterprise.enterprise_login_helper">
 <code class="descclassname">backend.apis.enterprise.</code><code class="descname">enterprise_login_helper</code><span class="sig-paren">(</span><em>info</em><span class="sig-paren">)</span><a class="headerlink" href="#backend.apis.enterprise.enterprise_login_helper" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>企业登录预处理</p>
+<ul class="simple">
+<li><strong>info</strong> - 包含登录信息的字典</li>
+</ul>
+<p><strong>返回值</strong>: 包含成功/失败信息的列表</p>
+</dd></dl>
 
 <dl class="function">
 <dt id="backend.apis.enterprise.enterprise_logout">
 <code class="descclassname">backend.apis.enterprise.</code><code class="descname">enterprise_logout</code><span class="sig-paren">(</span><em>request</em><span class="sig-paren">)</span><a class="headerlink" href="#backend.apis.enterprise.enterprise_logout" title="Permalink to this definition">¶</a></dt>
-<dd><p>企业退出</p>
+<dd><p>企业退出登录</p>
+<ul class="simple">
+<li><strong>request</strong> - 前端发送的请求，包含session</li>
+</ul>
+<p><strong>返回值</strong>: 包含成功/失败信息的JsonResponse</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="backend.apis.enterprise.enterprise_message_number_oneday">
 <code class="descclassname">backend.apis.enterprise.</code><code class="descname">enterprise_message_number_oneday</code><span class="sig-paren">(</span><em>request</em><span class="sig-paren">)</span><a class="headerlink" href="#backend.apis.enterprise.enterprise_message_number_oneday" title="Permalink to this definition">¶</a></dt>
 <dd><p>获取企业近24小时各时间段的消息数</p>
+<ul class="simple">
+<li><strong>request</strong> - 前端发送的请求，包含session</li>
+</ul>
+<p><strong>返回值</strong>: 包含成功/失败信息和24小时内消息数的JsonResponse</p>
 </dd></dl>
 
 <dl class="function">
@@ -384,121 +552,202 @@
 <dl class="function">
 <dt id="backend.apis.enterprise.enterprise_online_customers">
 <code class="descclassname">backend.apis.enterprise.</code><code class="descname">enterprise_online_customers</code><span class="sig-paren">(</span><em>request</em><span class="sig-paren">)</span><a class="headerlink" href="#backend.apis.enterprise.enterprise_online_customers" title="Permalink to this definition">¶</a></dt>
-<dd><p>获取在线客服人员列表</p>
+<dd><p>企业获取在线客服人员列表</p>
+<ul class="simple">
+<li><strong>request</strong> - 前端发送的请求，包含session</li>
+</ul>
+<p><strong>返回值</strong>: 包含成功/失败信息和在线客服信息的JsonResponse</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="backend.apis.enterprise.enterprise_serviced_number_oneday">
 <code class="descclassname">backend.apis.enterprise.</code><code class="descname">enterprise_serviced_number_oneday</code><span class="sig-paren">(</span><em>request</em><span class="sig-paren">)</span><a class="headerlink" href="#backend.apis.enterprise.enterprise_serviced_number_oneday" title="Permalink to this definition">¶</a></dt>
-<dd><p>获取所有客服最近24小时各时间段服务的总人数</p>
+<dd><p>所有客服24小时内各时间段服务的总人数</p>
+<ul class="simple">
+<li><strong>request</strong> - 前端发送的请求，包含session</li>
+</ul>
+<p><strong>返回值</strong>: 包含成功/失败信息和24小时内服务总人数的JsonResponse</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="backend.apis.enterprise.enterprise_set_chatbox_type">
 <code class="descclassname">backend.apis.enterprise.</code><code class="descname">enterprise_set_chatbox_type</code><span class="sig-paren">(</span><em>request</em><span class="sig-paren">)</span><a class="headerlink" href="#backend.apis.enterprise.enterprise_set_chatbox_type" title="Permalink to this definition">¶</a></dt>
-<dd><p>设置聊天窗口弹出方式</p>
+<dd><p>企业设置聊天窗口弹出方式</p>
+<ul class="simple">
+<li><strong>request</strong> - 前端发送的请求，包含session和聊天窗口类型</li>
+</ul>
+<p><strong>返回值</strong>: 包含成功/失败信息的JsonResponse</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="backend.apis.enterprise.enterprise_set_robot_message">
 <code class="descclassname">backend.apis.enterprise.</code><code class="descname">enterprise_set_robot_message</code><span class="sig-paren">(</span><em>request</em><span class="sig-paren">)</span><a class="headerlink" href="#backend.apis.enterprise.enterprise_set_robot_message" title="Permalink to this definition">¶</a></dt>
-<dd><p>设置企业机器人名字，头像</p>
+<dd><p>企业设置机器人名字，头像</p>
+<ul class="simple">
+<li><strong>request</strong> - 前端发送的请求，包含session，机器人头像和名字</li>
+</ul>
+<p><strong>返回值</strong>: 包含成功/失败信息的JsonResponse</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="backend.apis.enterprise.enterprise_set_robot_question">
 <code class="descclassname">backend.apis.enterprise.</code><code class="descname">enterprise_set_robot_question</code><span class="sig-paren">(</span><em>request</em><span class="sig-paren">)</span><a class="headerlink" href="#backend.apis.enterprise.enterprise_set_robot_question" title="Permalink to this definition">¶</a></dt>
 <dd><p>企业设置机器人问题，答案，类别</p>
+<ul class="simple">
+<li><strong>request</strong> - 前端发送的请求，包含session，问题，答案，类别</li>
+</ul>
+<p><strong>返回值</strong>: 包含成功/失败信息和问题ID的JsonResponse</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="backend.apis.enterprise.enterprise_set_robot_state">
 <code class="descclassname">backend.apis.enterprise.</code><code class="descname">enterprise_set_robot_state</code><span class="sig-paren">(</span><em>request</em><span class="sig-paren">)</span><a class="headerlink" href="#backend.apis.enterprise.enterprise_set_robot_state" title="Permalink to this definition">¶</a></dt>
 <dd><p>企业设置机器人状态</p>
+<ul class="simple">
+<li><strong>request</strong> - 前端发送的请求，包含session</li>
+</ul>
+<p><strong>返回值</strong>: 包含成功/失败信息JsonResponse</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="backend.apis.enterprise.enterprise_setuser_message">
 <code class="descclassname">backend.apis.enterprise.</code><code class="descname">enterprise_setuser_message</code><span class="sig-paren">(</span><em>request</em><span class="sig-paren">)</span><a class="headerlink" href="#backend.apis.enterprise.enterprise_setuser_message" title="Permalink to this definition">¶</a></dt>
 <dd><p>企业将用户信息传给系统</p>
+<ul class="simple">
+<li><strong>request</strong> - 前端发送的请求，包含session和用户ID</li>
+</ul>
+<p><strong>返回值</strong>: 包含成功/失败信息的JsonResponse</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="backend.apis.enterprise.enterprise_signup">
 <code class="descclassname">backend.apis.enterprise.</code><code class="descname">enterprise_signup</code><span class="sig-paren">(</span><em>request</em><span class="sig-paren">)</span><a class="headerlink" href="#backend.apis.enterprise.enterprise_signup" title="Permalink to this definition">¶</a></dt>
 <dd><p>企业注册</p>
+<ul class="simple">
+<li><strong>request</strong> - 前端发送的请求，包含邮箱，密码，企业名称</li>
+</ul>
+<p><strong>返回值</strong>: 包含成功/失败信息的JsonResponse</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="backend.apis.enterprise.enterprise_total_dialogs">
 <code class="descclassname">backend.apis.enterprise.</code><code class="descname">enterprise_total_dialogs</code><span class="sig-paren">(</span><em>EID</em><span class="sig-paren">)</span><a class="headerlink" href="#backend.apis.enterprise.enterprise_total_dialogs" title="Permalink to this definition">¶</a></dt>
 <dd><p>获取企业发送的总会话数</p>
+<ul class="simple">
+<li><strong>EID</strong> - 企业ID</li>
+</ul>
+<p><strong>返回值</strong>: 包含成功/失败信息和总会话数的JsonResponse</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="backend.apis.enterprise.enterprise_total_messages">
 <code class="descclassname">backend.apis.enterprise.</code><code class="descname">enterprise_total_messages</code><span class="sig-paren">(</span><em>EID</em><span class="sig-paren">)</span><a class="headerlink" href="#backend.apis.enterprise.enterprise_total_messages" title="Permalink to this definition">¶</a></dt>
 <dd><p>获取企业发送的总消息数</p>
+<ul class="simple">
+<li><strong>EID</strong> - 企业ID</li>
+</ul>
+<p><strong>返回值</strong>: 包含成功/失败信息和总消息数的JsonResponse</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="backend.apis.enterprise.enterprise_total_service_number">
 <code class="descclassname">backend.apis.enterprise.</code><code class="descname">enterprise_total_service_number</code><span class="sig-paren">(</span><em>EID</em><span class="sig-paren">)</span><a class="headerlink" href="#backend.apis.enterprise.enterprise_total_service_number" title="Permalink to this definition">¶</a></dt>
 <dd><p>获取企业服务过的总人数</p>
+<ul class="simple">
+<li><strong>EID</strong> - 企业ID</li>
+</ul>
+<p><strong>返回值</strong>: 包含成功/失败信息和服务总人数的JsonResponse</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="backend.apis.enterprise.enterprise_total_servicetime">
 <code class="descclassname">backend.apis.enterprise.</code><code class="descname">enterprise_total_servicetime</code><span class="sig-paren">(</span><em>EID</em><span class="sig-paren">)</span><a class="headerlink" href="#backend.apis.enterprise.enterprise_total_servicetime" title="Permalink to this definition">¶</a></dt>
-<dd><p>获取企业总的服务时间，返回的是分钟</p>
+<dd><p>获取企业总的服务时间</p>
+<ul class="simple">
+<li><strong>EID</strong> - 企业ID</li>
+</ul>
+<p><strong>返回值</strong>: 包含成功/失败信息和服务分钟数的JsonResponse</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="backend.apis.enterprise.inquire_customer_info">
 <code class="descclassname">backend.apis.enterprise.</code><code class="descname">inquire_customer_info</code><span class="sig-paren">(</span><em>request</em><span class="sig-paren">)</span><a class="headerlink" href="#backend.apis.enterprise.inquire_customer_info" title="Permalink to this definition">¶</a></dt>
-<dd><p>根据客服ID查询客服信息</p>
+<dd><p>企业根据客服ID查询客服信息</p>
+<ul class="simple">
+<li><strong>request</strong> - 前端发送的请求，包含需要查询的客服ID</li>
+</ul>
+<p><strong>返回值</strong>: 包含成功/失败信息和某个客服信息的JsonResponse</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="backend.apis.enterprise.jrToJson">
 <code class="descclassname">backend.apis.enterprise.</code><code class="descname">jrToJson</code><span class="sig-paren">(</span><em>jr</em><span class="sig-paren">)</span><a class="headerlink" href="#backend.apis.enterprise.jrToJson" title="Permalink to this definition">¶</a></dt>
 <dd><p>将JsonResponse对象转为Json对象</p>
+<ul class="simple">
+<li><strong>jr</strong> - JsonResponse对象</li>
+</ul>
+<p><strong>返回值</strong>: 对应的Json对象</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="backend.apis.enterprise.messages_between_chatters">
 <code class="descclassname">backend.apis.enterprise.</code><code class="descname">messages_between_chatters</code><span class="sig-paren">(</span><em>request</em><span class="sig-paren">)</span><a class="headerlink" href="#backend.apis.enterprise.messages_between_chatters" title="Permalink to this definition">¶</a></dt>
 <dd><p>根据聊天者ID获取聊天内容</p>
+<ul class="simple">
+<li><strong>request</strong> - 前端发送的请求，包含聊天双方ID</li>
+</ul>
+<p><strong>返回值</strong>: 包含成功/失败信息和聊天内容的JsonResponse</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="backend.apis.enterprise.reset_customer_state">
 <code class="descclassname">backend.apis.enterprise.</code><code class="descname">reset_customer_state</code><span class="sig-paren">(</span><em>request</em><span class="sig-paren">)</span><a class="headerlink" href="#backend.apis.enterprise.reset_customer_state" title="Permalink to this definition">¶</a></dt>
-<dd><p>改变客服激活与否的状态</p>
+<dd><p>企业改变客服激活与否的状态</p>
+<ul class="simple">
+<li><strong>request</strong> - 前端发送的请求，包含客服ID</li>
+</ul>
+<p><strong>返回值</strong>: 包含成功/失败信息和返回信息的JsonResponse</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="backend.apis.enterprise.reset_password">
 <code class="descclassname">backend.apis.enterprise.</code><code class="descname">reset_password</code><span class="sig-paren">(</span><em>request</em><span class="sig-paren">)</span><a class="headerlink" href="#backend.apis.enterprise.reset_password" title="Permalink to this definition">¶</a></dt>
-<dd><p>重置密码，前端发送激活码，新密码</p>
+<dd><p>重置密码</p>
+<ul class="simple">
+<li><strong>request</strong> - 前端发送的请求，包含激活码和新密码</li>
+</ul>
+<p><strong>返回值</strong>: 包含成功/失败信息的JsonResponse</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="backend.apis.enterprise.reset_password_request">
 <code class="descclassname">backend.apis.enterprise.</code><code class="descname">reset_password_request</code><span class="sig-paren">(</span><em>request</em><span class="sig-paren">)</span><a class="headerlink" href="#backend.apis.enterprise.reset_password_request" title="Permalink to this definition">¶</a></dt>
-<dd><p>重置密码请求</p>
+<dd><p>发送重置密码的请求</p>
+<ul class="simple">
+<li><strong>request</strong> - 前端发送的请求，包含需要重置的企业邮箱</li>
+</ul>
+<p><strong>返回值</strong>: 包含成功/失败信息和修改者的JsonResponse</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="backend.apis.enterprise.set_customer_message">
 <code class="descclassname">backend.apis.enterprise.</code><code class="descname">set_customer_message</code><span class="sig-paren">(</span><em>email</em>, <em>EID</em><span class="sig-paren">)</span><a class="headerlink" href="#backend.apis.enterprise.set_customer_message" title="Permalink to this definition">¶</a></dt>
 <dd><p>设置客服默认信息</p>
+<ul class="simple">
+<li><strong>email</strong> - 客服的邮箱</li>
+<li><strong>EID</strong> - 客服所在企业的ID</li>
+</ul>
+<p><strong>返回值</strong>: 包含成功/失败信息和客服信息的JsonResponse</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="backend.apis.enterprise.signup_init">
 <code class="descclassname">backend.apis.enterprise.</code><code class="descname">signup_init</code><span class="sig-paren">(</span><em>info</em><span class="sig-paren">)</span><a class="headerlink" href="#backend.apis.enterprise.signup_init" title="Permalink to this definition">¶</a></dt>
 <dd><p>初始化注册信息</p>
+<ul class="simple">
+<li><strong>info</strong> - 含有注册信息的字典</li>
+</ul>
+<p><strong>返回值</strong>: 填充完整的注册信息的字典</p>
 </dd></dl>
 
 </div>
@@ -506,73 +755,49 @@
 
 
           </div>
-        </div>
-      </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper">
-<h1 class="logo"><a href="../index.html">Handsome's Customer Service</a></h1>
-
-
-
-
-
-
-
-
-<h3>Navigation</h3>
-<p class="caption"><span class="caption-text">Contents:</span></p>
-<ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="models.html">Models</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="api_modules.html">API</a><ul class="current">
-<li class="toctree-l2 current"><a class="current reference internal" href="#">API package</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#module-backend.apis.customer">apis.customer module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#module-backend.apis.enterprise">apis.enterprise module</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="const_table.html">Constant Table</a></li>
-</ul>
-
-<div class="relations">
-<h3>Related Topics</h3>
-<ul>
-  <li><a href="../index.html">Documentation overview</a><ul>
-  <li><a href="api_modules.html">API</a><ul>
-      <li>Previous: <a href="api_modules.html" title="previous chapter">API</a></li>
-      <li>Next: <a href="const_table.html" title="next chapter">Constant Table</a></li>
-  </ul></li>
-  </ul></li>
-</ul>
-</div>
-<div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
-    <form class="search" action="../search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
-    </form>
-</div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
-        </div>
-      </div>
-      <div class="clearer"></div>
-    </div>
-    <div class="footer">
-      &copy;2017, Handsome.
-      
-      |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.3</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
-      
-      |
-      <a href="../_sources/modules/API.rst.txt"
-          rel="nofollow">Page source</a>
-    </div>
-
+            
+  <div class="footer-relations">
     
-
+      <div class="pull-left">
+        <a class="btn btn-default" href="api_modules.html" title="previous chapter (use the left arrow)">API</a>
+      </div>
     
+      <div class="pull-right">
+        <a class="btn btn-default" href="const_table.html" title="next chapter (use the right arrow)">Constant Table</a>
+      </div>
+    </div>
+    <div class="clearer"></div>
+  
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="const_table.html" title="Constant Table"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="api_modules.html" title="API"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Handsome&#39;s Customer Service 1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="api_modules.html" >API</a> &#187;</li> 
+      </ul>
+    </div>
+<script type="text/javascript">
+  $("#mobile-toggle a").click(function () {
+    $("#left-column").toggle();
+  });
+</script>
+<script type="text/javascript" src="../_static/js/bootstrap.js"></script>
+  <div class="footer">
+    &copy; Copyright 2017, Handsome. Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
   </body>
 </html>

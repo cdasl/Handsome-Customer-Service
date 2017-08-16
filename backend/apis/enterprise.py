@@ -13,11 +13,19 @@ import datetime, time
 import random
 
 def jrToJson(jr):
-    """将JsonResponse对象转为Json对象"""
+    """
+    将JsonResponse对象转为Json对象\n
+    * **jr** - JsonResponse对象\n
+    **返回值**: 对应的Json对象\n
+    """
     return json.loads(jr.content.decode('utf8'))
 
 def signup_init(info):
-    """初始化注册信息"""
+    """
+    初始化注册信息\n
+    * **info** - 含有注册信息的字典\n
+    **返回值**: 填充完整的注册信息的字典\n
+    """
     md5 = hashlib.md5()
     md5.update(str(int(time.time())).encode('utf8'))
     salt = ''.join(random.sample(string.ascii_letters + string.digits, 8))
@@ -38,7 +46,11 @@ def signup_init(info):
 
 @ensure_csrf_cookie
 def enterprise_changepassword(request):
-    """修改密码"""
+    """
+    企业修改密码\n
+    * **request** - 前端发送的请求，包含旧密码和session\n
+    **返回值**: 包含成功/失败信息的JsonResponse\n
+    """
     if hasattr(request, 'body'):
         info = json.loads(request.body.decode('utf8'))
     if hasattr(request, 'session') and 'eid' in request.session:
@@ -64,7 +76,11 @@ def enterprise_changepassword(request):
 
 @ensure_csrf_cookie
 def enterprise_signup(request):
-    """企业注册"""
+    """
+    企业注册\n
+    * **request** - 前端发送的请求，包含邮箱，密码，企业名称\n
+    **返回值**: 包含成功/失败信息的JsonResponse\n
+    """
     info = json.loads(request.body.decode('utf8'))
     email = info['email']
     #检查email是否已经存在
@@ -86,6 +102,11 @@ def enterprise_signup(request):
         return JsonResponse({'flag': const_table.const.FAIL_SIGN_UP})
 
 def enterprise_login_helper(info):
+    """
+    企业登录预处理\n
+    * **info** - 包含登录信息的字典\n
+    **返回值**: 包含成功/失败信息的列表\n
+    """
     try:
         email = info['email']
         password = info['password']
@@ -112,7 +133,11 @@ def enterprise_login_helper(info):
 
 @ensure_csrf_cookie
 def enterprise_login(request):
-    """企业登录"""
+    """
+    企业登录\n
+    * **request** - 前端发送的请求，包含邮箱，密码\n
+    **返回值**: 包含成功/失败信息的JsonResponse\n
+    """
     info = json.loads(request.body.decode('utf8'))
     code = enterprise_login_helper(info)
     if code[0] < 1:
@@ -124,7 +149,11 @@ def enterprise_login(request):
 
 @ensure_csrf_cookie
 def enterprise_logout(request):
-    """企业退出"""
+    """
+    企业退出登录\n
+    * **request** - 前端发送的请求，包含session\n
+    **返回值**: 包含成功/失败信息的JsonResponse\n
+    """
     EID = 'eid'
     if hasattr(request, 'body'):
         info = json.loads(request.body.decode('utf8'))
@@ -137,7 +166,11 @@ def enterprise_logout(request):
 
 @csrf_exempt
 def enterprise_active(request):
-    """企业激活"""
+    """
+    企业激活\n
+    * **request** - 前端发送的请求，包含激活码\n
+    **返回值**: 包含成功/失败信息的JsonResponse\n
+    """
     info = json.loads(request.body.decode("utf8"))
     active_code = info['active_code']
     decrypt_str = helper.decrypt(9, active_code)
@@ -161,7 +194,11 @@ def enterprise_active(request):
 
 @ensure_csrf_cookie
 def enterprise_invite(request):
-    """邀请客服"""
+    """
+    企业邀请客服加入\n
+    * **request** - 前端发送的请求，包含客服的邮箱和session\n
+    **返回值**: 包含成功/失败信息和客服信息的JsonResponse\n
+    """
     EID = 'test_eid'
     info = json.loads(request.body.decode('utf8'))
     if hasattr(request, 'session') and 'eid' in request.session:
@@ -181,7 +218,12 @@ def enterprise_invite(request):
         return JsonResponse({'flag': const_table.const.INVITE_FAILURE})
 
 def set_customer_message(email, EID):
-    """ 设置客服默认信息"""
+    """
+    设置客服默认信息\n
+    * **email** - 客服的邮箱\n
+    * **EID** - 客服所在企业的ID\n
+    **返回值**: 包含成功/失败信息和客服信息的JsonResponse\n
+    """
     md5 = hashlib.md5()
     md5.update(str(int(time.time())).encode('utf8'))
     CID = md5.hexdigest()
@@ -202,7 +244,11 @@ def set_customer_message(email, EID):
 
 @ensure_csrf_cookie
 def reset_password_request(request):
-    """重置密码请求"""
+    """
+    发送重置密码的请求\n
+    * **request** - 前端发送的请求，包含需要重置的企业邮箱\n
+    **返回值**: 包含成功/失败信息和修改者的JsonResponse\n
+    """
     info = json.loads(request.body.decode('utf8'))
     email = info['email']
     valid_enterprise = models.Enterprise.objects.filter(email = email)
@@ -223,7 +269,11 @@ def reset_password_request(request):
 
 @ensure_csrf_cookie
 def reset_password(request):
-    """重置密码，前端发送激活码，新密码"""
+    """
+    重置密码\n
+    * **request** - 前端发送的请求，包含激活码和新密码\n
+    **返回值**: 包含成功/失败信息的JsonResponse\n
+    """
     info = json.loads(request.body.decode('utf8'))
     tip = helper.active_code_check(info['active_code'])
     if tip == -8:
@@ -248,7 +298,11 @@ def reset_password(request):
 
 @ensure_csrf_cookie
 def reset_customer_state(request):
-    """改变客服激活与否的状态"""
+    """
+    企业改变客服激活与否的状态\n
+    * **request** - 前端发送的请求，包含客服ID\n
+    **返回值**: 包含成功/失败信息和返回信息的JsonResponse\n
+    """
     info = json.loads(request.body.decode('utf8'))
     CID = info['cid']
     #检查是否存在该客服
@@ -269,7 +323,11 @@ def reset_customer_state(request):
         return JsonResponse({'flag': const_table.const.FAIL_LOG_OFF})
 
 def customer_avg_feedback(CID):
-    """返回客服所有会话的平均评分"""
+    """
+    返回客服所有会话的平均评分\n
+    * **CIDt** - 客服的ID\n
+    **返回值**: 客服的平均评分\n
+    """
     dialogs = models.Dialog.objects.filter(CID = CID)
     if(len(dialogs) == 0):
         return 0
@@ -281,7 +339,11 @@ def customer_avg_feedback(CID):
 
 @ensure_csrf_cookie
 def enterprise_get_customers(request):
-    """获取客服人员列表"""
+    """
+    企业获取客服人员列表\n
+    * **request** - 前端发送的请求，包含session\n
+    **返回值**: 包含成功/失败信息和客服列表信息的JsonResponse\n
+    """
     EID = 'eid'
     if hasattr(request, 'body'):
         info = json.loads(request.body.decode('utf8'))
@@ -300,7 +362,11 @@ def enterprise_get_customers(request):
     
 @ensure_csrf_cookie
 def inquire_customer_info(request):
-    """根据客服ID查询客服信息"""
+    """
+    企业根据客服ID查询客服信息\n
+    * **request** - 前端发送的请求，包含需要查询的客服ID\n
+    **返回值**: 包含成功/失败信息和某个客服信息的JsonResponse\n
+    """
     info = json.loads(request.body.decode('utf8'))
     CID = info['cid']
     #检查是否存在该客服
@@ -324,7 +390,11 @@ def inquire_customer_info(request):
 
 @ensure_csrf_cookie
 def enterprise_online_customers(request):
-    """获取在线客服人员列表"""
+    """
+    企业获取在线客服人员列表\n
+    * **request** - 前端发送的请求，包含session\n
+    **返回值**: 包含成功/失败信息和在线客服信息的JsonResponse\n
+    """
     EID = 'eid'
     if hasattr(request, 'body'):
         info = json.loads(request.body.decode('utf8'))
@@ -339,7 +409,11 @@ def enterprise_online_customers(request):
     return JsonResponse({'flag': const_table.const.SUCCESS, 'message': online_list})
 
 def enterprise_total_servicetime(EID):
-    """获取企业总的服务时间，返回的是分钟"""
+    """
+    获取企业总的服务时间\n
+    * **EID** - 企业ID\n
+    **返回值**: 包含成功/失败信息和服务分钟数的JsonResponse\n
+    """
     total = 0
     times = models.Dialog.objects.filter(EID = EID)
     for t in times:
@@ -348,7 +422,11 @@ def enterprise_total_servicetime(EID):
     return JsonResponse({'flag': const_table.const.SUCCESS, 'message': total})
 
 def enterprise_total_messages(EID):
-    """获取企业发送的总消息数"""
+    """
+    获取企业发送的总消息数\n
+    * **EID** - 企业ID\n
+    **返回值**: 包含成功/失败信息和总消息数的JsonResponse\n
+    """
     total = 0
     dialogs = models.Dialog.objects.filter(EID = EID)
     for dialog in dialogs:
@@ -356,12 +434,20 @@ def enterprise_total_messages(EID):
     return JsonResponse({'flag': const_table.const.SUCCESS, 'message': total})
 
 def enterprise_total_dialogs(EID):
-    """获取企业发送的总会话数"""
+    """
+    获取企业发送的总会话数\n
+    * **EID** - 企业ID\n
+    **返回值**: 包含成功/失败信息和总会话数的JsonResponse\n
+    """
     return JsonResponse({'flag': const_table.const.SUCCESS, 'message': len(models.Dialog.objects.filter(EID = EID))})
 
 @ensure_csrf_cookie
 def enterprise_dialogs(request):
-    """获取企业全部会话列表"""
+    """
+    企业获取全部会话列表\n
+    * **request** - 前端发送的请求，包含session\n
+    **返回值**: 包含成功/失败信息和会话列表信息的JsonResponse\n
+    """
     EID = 'eid'
     if hasattr(request, 'session') and 'eid' in request.session:
         EID = request.session['eid']
@@ -375,7 +461,11 @@ def enterprise_dialogs(request):
     return JsonResponse({'flag': const_table.const.SUCCESS, 'message': dialogs_list})
 
 def enterprise_total_service_number(EID):
-    """获取企业服务过的总人数"""
+    """
+    获取企业服务过的总人数\n
+    * **EID** - 企业ID\n
+    **返回值**: 包含成功/失败信息和服务总人数的JsonResponse\n
+    """
     totalserviced = []
     dialogs = models.Dialog.objects.filter(EID = EID)
     for dialog in dialogs:
@@ -384,7 +474,11 @@ def enterprise_total_service_number(EID):
 
 @ensure_csrf_cookie
 def enterprise_dialog_messages(request):
-    """获取企业某个会话的内容"""
+    """
+    获取企业某个会话的内容\n
+    * **request** - 前端发送的请求，包含对话ID\n
+    **返回值**: 包含成功/失败信息和会话内容的JsonResponse\n
+    """
     info = json.loads(request.body.decode('utf8'))
     DID = info['did']
     #检查是否存在该did
@@ -399,7 +493,11 @@ def enterprise_dialog_messages(request):
 
 @ensure_csrf_cookie
 def messages_between_chatters(request):
-    """根据聊天者ID获取聊天内容"""
+    """
+    根据聊天者ID获取聊天内容\n
+    * **request** - 前端发送的请求，包含聊天双方ID\n
+    **返回值**: 包含成功/失败信息和聊天内容的JsonResponse\n
+    """
     info = json.loads(request.body.decode('utf8'))
     SID = info['sid']
     RID = info['rid']
@@ -418,7 +516,11 @@ def messages_between_chatters(request):
     return JsonResponse({'flag': const_table.const.SUCCESS, 'message': messages_list})
 
 def enterprise_avgtime_dialogs(EID):
-    """获取客服会话平均时间"""
+    """
+    获取客服平均会话时间\n
+    * **EID** - 企业ID\n
+    **返回值**: 包含成功/失败信息和平均会话分钟数的JsonResponse\n
+    """
     totaltime = 0
     times = models.Dialog.objects.filter(EID = EID)
     for t in times:
@@ -430,7 +532,11 @@ def enterprise_avgtime_dialogs(EID):
 
 @ensure_csrf_cookie
 def enterprise_set_robot_message(request):
-    """设置企业机器人名字，头像"""
+    """
+    企业设置机器人名字，头像\n
+    * **request** - 前端发送的请求，包含session，机器人头像和名字\n
+    **返回值**: 包含成功/失败信息的JsonResponse\n
+    """
     EID = 'eid'
     if hasattr(request, 'body'):
         info = json.loads(request.body.decode('utf8'))
@@ -447,7 +553,11 @@ def enterprise_set_robot_message(request):
 
 @ensure_csrf_cookie
 def enterprise_set_robot_state(request):
-    """企业设置机器人状态"""
+    """
+    企业设置机器人状态\n
+    * **request** - 前端发送的请求，包含session\n
+    **返回值**: 包含成功/失败信息JsonResponse\n
+    """
     EID = 'eid'
     if hasattr(request, 'body'):
         info = json.loads(request.body.decode('utf8'))
@@ -464,7 +574,11 @@ def enterprise_set_robot_state(request):
 
 @ensure_csrf_cookie
 def enterprise_get_robot_info(request):
-    """返回机器人信息"""
+    """
+    企业返回机器人信息\n
+    * **request** - 前端发送的请求，包含session\n
+    **返回值**: 包含成功/失败信息和机器人信息的JsonResponse\n
+    """
     EID = 'eid'
     if hasattr(request, 'body'):
         info = json.loads(request.body.decode('utf8'))
@@ -482,7 +596,7 @@ def enterprise_avgmes_dialogs(EID):
     """
     获取企业会话的平均消息数\n
     * **EID** - 企业ID\n
-    **返回值**: 平均消息数
+    **返回值**: 包含成功/失败信息和机器人信息的JsonResponse\n
     """
     total_messages = 0
     dialogs = models.Dialog.objects.filter(EID = EID)
@@ -494,7 +608,11 @@ def enterprise_avgmes_dialogs(EID):
 
 @ensure_csrf_cookie
 def enterprise_set_chatbox_type(request):
-    """设置聊天窗口弹出方式"""
+    """
+    企业设置聊天窗口弹出方式\n
+    * **request** - 前端发送的请求，包含session和聊天窗口类型\n
+    **返回值**: 包含成功/失败信息的JsonResponse\n
+    """
     EID = 'eid'
     if hasattr(request, 'body'):
         info = json.loads(request.body.decode('utf8'))
@@ -511,7 +629,11 @@ def enterprise_set_chatbox_type(request):
 
 @ensure_csrf_cookie
 def enterprise_setuser_message(request):
-    """企业将用户信息传给系统"""
+    """
+    企业将用户信息传给系统\n
+    * **request** - 前端发送的请求，包含session和用户ID\n
+    **返回值**: 包含成功/失败信息的JsonResponse\n
+    """
     EID = 'eid'
     if hasattr(request, 'body'):
         info = json.loads(request.body.decode('utf8'))
@@ -527,7 +649,11 @@ def enterprise_setuser_message(request):
 
 @ensure_csrf_cookie
 def enterprise_message_number_oneday(request):
-    """获取企业近24小时各时间段的消息数"""
+    """
+    获取企业近24小时各时间段的消息数\n
+    * **request** - 前端发送的请求，包含session\n
+    **返回值**: 包含成功/失败信息和24小时内消息数的JsonResponse\n
+    """
     EID = 'eid'
     if hasattr(request, 'body'):
         info = json.loads(request.body.decode('utf8'))
@@ -552,7 +678,11 @@ def enterprise_message_number_oneday(request):
 
 @ensure_csrf_cookie
 def enterprise_serviced_number_oneday(request):
-    """获取所有客服最近24小时各时间段服务的总人数"""
+    """
+    所有客服24小时内各时间段服务的总人数\n
+    * **request** - 前端发送的请求，包含session\n
+    **返回值**: 包含成功/失败信息和24小时内服务总人数的JsonResponse\n
+    """
     if hasattr(request, 'body'):
         info = json.loads(request.body.decode('utf8'))
     if hasattr(request, 'session') and 'eid' in request.session:
@@ -576,7 +706,11 @@ def enterprise_serviced_number_oneday(request):
 
 @ensure_csrf_cookie
 def enterprise_dialogs_oneday(request):
-    """获取企业所有客服24小时内各时间段会话总数"""
+    """
+    获取企业所有客服24小时内各时间段会话总数\n
+    * **request** - 前端发送的请求，包含session\n
+    **返回值**: 包含成功/失败信息和24小时内会话总数的JsonResponse\n
+    """
     EID = 'eid'
     if hasattr(request, 'body'):
         info = json.loads(request.body.decode('utf8'))
@@ -598,7 +732,11 @@ def enterprise_dialogs_oneday(request):
     return JsonResponse({'flag': const_table.const.SUCCESS, 'message': total})
 
 def enterprise_dialogs_total_oneday(EID):
-    """获取企业最近24小时会话总数"""
+    """
+    获取企业最近24小时会话总数\n
+    * **EID** - 企业ID\n
+    **返回值**: 包含成功/失败信息和24小时会话总数的JsonResponse\n
+    """
     total = 0
     nowtime = datetime.datetime.now()
     dialogs = models.Dialog.objects.filter(EID = EID)
@@ -612,8 +750,10 @@ def enterprise_dialogs_total_oneday(EID):
 @ensure_csrf_cookie
 def enterprise_get_alldata(request):
     """
-        企业获取所有数据：总服务时间，总消息数，总会话数，总服务人数，
-        在线客服人数，今日会话数，平均会话时长，平均消息数
+    企业获取所有数据：总服务时间，总消息数，总会话数，总服务人数，
+    在线客服人数，今日会话数，平均会话时长，平均消息数\n
+    * **request** - 前端发送的请求，包含session\n
+    **返回值**: 包含成功/失败信息和所有信息的JsonResponse\n
     """
     if hasattr(request, 'body'):
         info = json.loads(request.body.decode('utf8'))
@@ -638,7 +778,11 @@ def enterprise_get_alldata(request):
 
 @ensure_csrf_cookie
 def enterprise_set_robot_question(request):
-    """企业设置机器人问题，答案，类别"""
+    """
+    企业设置机器人问题，答案，类别\n
+    * **request** - 前端发送的请求，包含session，问题，答案，类别\n
+    **返回值**: 包含成功/失败信息和问题ID的JsonResponse\n
+    """
     EID = 'eid'
     if hasattr(request, 'body'):
         info = json.loads(request.body.decode('utf8'))
@@ -659,7 +803,11 @@ def enterprise_set_robot_question(request):
 
 @ensure_csrf_cookie
 def enterprise_get_all_question(request):
-    """返回企业所有问题"""
+    """
+    获得企业所有问题\n
+    * **request** - 前端发送的请求，包含session\n
+    **返回值**: 包含成功/失败信息和所有问题的JsonResponse\n
+    """
     EID = 'eid'
     if hasattr(request, 'body'):
         info = json.loads(request.body.decode('utf8'))
@@ -681,7 +829,11 @@ def enterprise_get_all_question(request):
 
 @csrf_exempt
 def UrlValidateJudge(request):
-    """判断访问是否含有session"""
+    """
+    判断request中是否含有session'\n
+    * **request** - 前端发送的请求\n
+    **返回值**: 包含成功/失败信息的JsonResponse\n
+    """
     EID = 'eid'
     if hasattr(request, 'body'):
         info = json.loads(request.body.decode('utf8'))
@@ -697,7 +849,11 @@ def UrlValidateJudge(request):
 
 @ensure_csrf_cookie
 def enterprise_delete_question(request):
-    """企业删除问题"""
+    """
+    企业删除问题\n
+    * **request** - 前端发送的请求，包含session和问题ID\n
+    **返回值**: 包含成功/失败信息的JsonResponse\n
+    """
     EID = 'eid'
     if hasattr(request, 'body'):
         info = json.loads(request.body.decode('utf8'))
@@ -716,6 +872,11 @@ def enterprise_delete_question(request):
 @ensure_csrf_cookie
 def enterprise_modify_question(request):
     """企业修改问题"""
+    """
+    企业修改问题\n
+    * **request** - 前端发送的请求，包含session，需要修改的问题ID，修改的内容\n
+    **返回值**: 包含成功/失败信息的JsonResponse\n
+    """
     EID = 'eid'
     if hasattr(request, 'body'):
         info = json.loads(request.body.decode('utf8'))
