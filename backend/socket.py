@@ -11,6 +11,7 @@ sio = socketio.Server(async_mode = async_mode)
 thread = None
 talker_list = {}
 customer_list = {}
+enterprise_list = {}
 conversation = {}
 starttime = {}
 """
@@ -74,6 +75,11 @@ def write_message(sid,message):
     del starttime[message['uid']]
     del talker_list[message['uid']]
 
+@sio.on('user disconnect', namespace = '/test')
+def user_disconnect(sid,message):
+    sio.emit('user disconnected', {'uid': message['uid']}, room = talker_list[message['cid']], namespace = '/test')
+    sio.disconnect(sid, namespace = '/test')
+
 @sio.on('rate', namespace = '/test')
 def rate(sid, message):
     dialog = Dialog.objects.get(DID = message['did'])
@@ -94,10 +100,13 @@ def user_connect(sid, message):
 
 @sio.on('connect to customer', namespace = '/test')
 def connect_customer(sid, message):
-    global customer_list, conversation, talker_list
+    global customer_list, conversation, talker_list, enterprise_list
     num = 100
     target = None
-    for cid in customer_list:
+    if message['eid'] not in enterprise_list:
+        sio.emit('no customer online', {'data': 'no customer on line'}, room = sid, namespace = '/test')
+        return
+    for cid in enterprise_list[message['eid']]:
         if len(customer_list[cid]) < num:
             target = cid
             num = len(customer_list[cid])
@@ -113,7 +122,7 @@ def connect_customer(sid, message):
 
 @sio.on('a customer connected', namespace = '/test')
 def customer_connect(sid, message):
-    global talker_list, customer_list, conversation
+    global talker_list, customer_list, conversation, enterprise_list
     if message['cid'] in talker_list:
         sio.disconnect(talker_list[message['cid']], namespace = '/test')
         content = []
@@ -121,6 +130,9 @@ def customer_connect(sid, message):
             content.append(conversation[uid])
         sio.emit('old data', {'list': customer_list[message['cid']], 'content': content}, room = sid, namespace = '/test')
     else:
+        if message['eid'] not in enterprise_list:
+            enterprise_list[message['eid']] = []
+        enterprise_list[message['eid']].append(message['cid'])
         customer_list[message['cid']] = []
     talker_list[message['cid']] = sid
     sio.emit('customer connected', {'data': 'connected'}, room = sid, namespace = '/test')

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="container">
     <div class="wrapper" v-show="emoji"></div>
     <div class="text">
       <textarea placeholder="按 Ctrl + Enter 发送" v-model="content" @keyup="onKeyup"></textarea>
@@ -121,11 +121,15 @@
           },
           autoInit: true
         })
+        this.emoji = false
       }
     }
   }
 </script>
 <style type="text/css" scoped>
+.container {
+  position: relative;
+}
 .text {
   height: 160px;
   border-top: solid 1px #ddd;
@@ -142,13 +146,14 @@
 }
 .wrapper {
   position: absolute;
-  bottom: 33%;
+  top: -150%;
   height: 200px;
   left: 0;
+  background-color: whitesmoke;
 }
 .icon {
   position: absolute;
-  bottom: 25%;
+  top: -20%;
   left: 0;
   z-index: 10;
 }
