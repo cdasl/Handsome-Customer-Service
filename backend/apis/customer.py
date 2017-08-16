@@ -347,7 +347,7 @@ def customer_get_alldata(request):
     """返回该客服所有数据：总服务时间，总消息数，总会话数，总服务人数，
        今日会话数，平均会话时长，平均消息数\n
     * **request** - 前端发送的请求,session中有cid\n
-    **返回值**:包含成功/失败消息和以上所有数据的JsonResponse
+    **返回值**:包含成功/失败消息和以上所有的数据的JsonResponse
     """
     CID = 'cid1'
     if hasattr(request, 'body'):
