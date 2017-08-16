@@ -1,23 +1,93 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="utf-8">
-<title>HANDSOME</title>
-<link rel="shortcut icon" type="image/x-icon" href="/static/img/logo.gif" id="favicon" />
-<style>
-	h1 {
-		text-align: center;
-	}
-  a {
-    display: block;
-    text-decoration: none;
-    text-align: center;
-  }
-</style>
+  <meta charset="utf-8">
+  <title>首页</title>
+  <link rel="shortcut icon" type="image/x-icon" href="/static/img/logo.gif" id="favicon" />
+  <link rel="stylesheet" type="text/css" href="/static/css/index.css">
 </head>
 <body>
-  <h1>HANDSOME</h1>
-  <a href="/enterprise/">你点我试试！?！?</a>
-  <!-- built files will be auto injected -->
+  <div id="navigator">
+    <img id="logo" src="/static/img/index_img/logo2.jpg">
+    <nav>
+      <ul>
+        <li><a href="/enterprise/" target="_blank">企业注册/登录</a></li>
+        <li><a href="/customer_login/" target="_blank">客服登录</a></li>
+        <li><a href="/static/html/doc.html" target="_blank">文档中心</a></li>
+      </ul>
+    </nav>
+  </div>
+  <img id="firstimg" src="/static/img/index_img/first.jpg">
+  <div class="intro" id="customer">
+    <img class="icon" src="/static/img/index_img/dialogIcon.jpg">
+    <h2>在线客服</h2>
+    <p>
+      支持文字、表情、图片的发送，为用户考虑周到，提升服务满意度
+    </p>
+    <img class="pic" src="/static/img/index_img/now.jpg" width="70%">
+  </div>
+  <div class="intro" id="data">
+    <img class="icon" src="/static/img/index_img/managerIcon.jpg">
+    <h2>数据管理</h2>
+    <p>
+      数据报表细致全面，现场状态随时掌握，客服管理实现系统化
+    </p>
+    <img class="pic" src="/static/img/index_img/main.jpg" width="70%">
+  </div>
+  <div class="intro" id="robot">
+    <img class="icon" src="/static/img/index_img/robotIcon.jpg">
+    <h2>机器人</h2>
+    <p>
+      智能机器人快速匹配知识库中答案，解决常见问题，服务质量和效率成倍提升
+    </p>
+    <img class="pic" src="/static/img/index_img/knowledge.jpg" width="70%">
+  </div>
+  <div id="use">
+    <h2>使用流程</h2>
+    <img class="how" src="/static/img/index_img/signup.jpg" width="15%">
+    <img class="how" src="/static/img/index_img/login.jpg" width="15%">
+    <img class="how" src="/static/img/index_img/enter.jpg" width="15%">
+  </div>
+  <div id="foot">
+    <table id="last">
+      <tr>
+        <th>产品介绍</th>
+        <th>登录注册</th>
+        <th>帮助文档</th>
+        <th>联系我们</th>
+      </tr>
+      <tr>
+        <td class="td1"><a href="#customer">在线客服</a></td>
+        <td class="td1">
+          <a href="/enterprise/" target="_blank">企业注册/登录</a>
+        </td>
+        <td class="td1">
+          <a href="/static/html/doc.html" target="_blank">文档中心</a>
+        </td>
+        <td>邮箱: handsome@hs.com</td>
+      </tr>
+      <tr>
+        <td class="td1"><a href="#data">数据管理</a></td>
+        <td class="td1">
+          <a href="/customer_login/" target="_blank">客服登录</a>
+        </td>
+        <td class="td1">
+          <a href="/static/html/enter_use/enter_use.html" target="_blank">企业使用</a>
+        </td>
+        <td>电话: 10086</td>
+      </tr>
+      <tr>
+        <td class="td1"><a href="#robot">机器人</a></td>
+        <td class="td1"></td>
+        <td class="td1">
+          <a href="/static/html/customer_use/customer_use.html" target="_blank">客服使用</a>
+        </td>
+        <td>地址: 南开大学泰达学院</td>
+      </tr>
+    </table>
+  </div>
+  <footer>
+    沪ICP备12038052号-4&nbsp&nbsp&nbsp&nbsp 京公网安备 11010802023178号&nbsp&nbsp© 2017 Handsome
+  </footer>
 </body>
 </html>

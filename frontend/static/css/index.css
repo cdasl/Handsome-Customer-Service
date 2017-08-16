@@ -1,0 +1,80 @@
+body {
+  margin: 0;
+}
+#logo {
+  display: block;
+  float: left;
+  height: 50px;
+}
+nav {
+  float: right;
+  background-color: white;
+  margin-right: 0;
+  width: 325px;
+}
+#navigator {
+  padding-left: 5%;
+  padding-right: 5%;
+}
+#firstimg {
+  padding-left: 5%;
+  padding-right: 5%;
+  width: 90%;
+}
+li {
+  display: inline-block;
+  padding-left: 5%;
+}
+a {
+  color: #999;
+  text-decoration: none;
+}
+a:hover {
+  color: #5188a6;
+  text-decoration: none;
+}
+h2,h3,p {
+  font-weight: lighter;
+}
+.intro{
+  text-align: center;
+}
+.icon {
+  padding-top: 5%;
+  width: 5%;
+  height: 6%;
+}
+.pic {
+  padding-top: 5%;
+}
+#use {
+  text-align:center;
+}
+.how {
+  padding-right: 5%;
+  padding-left: 5%;
+}
+#last {
+  width: 100%;
+  background-color: lightgray;
+  padding-bottom: 5%;
+  padding-top: 2%;
+  padding-left: 10%;
+}
+th {
+  width: 25%;
+  font-weight: lighter;
+  text-align: left;
+}
+td {
+  width: 25%;
+  font-weight: lighter;
+  color: #999;
+}
+footer {
+  padding-top: 0.5%;
+  padding-bottom: 0.5%;
+  background-color: gray;
+  text-align: center;
+  font-size: 10px;
+}
