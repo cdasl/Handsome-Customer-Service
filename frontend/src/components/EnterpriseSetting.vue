@@ -2,18 +2,18 @@
   <div class="app">
     <div class="psw">
       <h4 class="title">1.修改密码</h4>
-      <Form v-model="password" :label-width="80">
+      <Form :model="password" class="form" label-position="left" :label-width="80">
         <Form-item label="原密码">
-          <Input v-model="password.old" class="my-input" type="password"></Input>
+          <Input v-model="password.old" class="enter-input" type="password"></Input>
         </Form-item>
         <Form-item label="新密码">
-          <Input v-model="password.new" class="my-input" type="password"></Input>
+          <Input v-model="password.new" class="enter-input" type="password"></Input>
         </Form-item>
         <Form-item label="确认新密码">
-          <Input v-model="password.newConfirm" class="my-input" type="password"></Input>
+          <Input v-model="password.newConfirm" class="enter-input" type="password"></Input>
         </Form-item>
-          <Button @click="resetPassword" type="primary" class="btn">修改</Button>
         <Form-item>
+          <Button @click="resetPassword" type="primary">修改</Button>
         </Form-item>
       </Form>
     </div>
@@ -21,10 +21,16 @@
     <div class="pop-up">
       <h4 class="title">2.接入代码</h4>
       <p class="legend">请将以下代码添加到你网站的 HTML 源代码中，放在&lt;/body&gt;标签之前 </p><br>
-      <Select v-model="popType" style="width:200px" @on-change="changeTypePop">
-        <Option v-for="item in types" :value="item.value" :key="item.value">{{ item.label }}</Option>
-      </Select><br>
-      <textarea cols="60" rows="5" v-model="innerCode" readonly class="text-area"></textarea>
+      <Form class="form" label-position="left" :label-width="80">
+        <Form-item label="接入方式">
+          <Select v-model="popType" class="enter-input" @on-change="changeTypePop">
+            <Option v-for="item in types" :value="item.value" :key="item.value">{{ item.label }}</Option>
+          </Select>
+        </Form-item>
+        <Form-item>
+          <textarea class="enter-input" row="80" v-model="innerCode" readonly></textarea>
+        </Form-item>
+      </Form>
     </div>
     <img src="/static/img/split.jpg/" class="split" alt="分割线">
     <div class="robot">
@@ -35,26 +41,21 @@
           <span slot="close">关</span>
         </i-switch>
       </div>
-      <Form :label-width="80" class="left" v-if="showRobot">
+      <Form :label-width="80" class="form" v-if="showRobot" label-position="left">
         <Form-item label="机器人昵称">
-          <Input v-model="robotName" class="robot-name"></Input>
+          <Input v-model="robotName" class="enter-input"></Input>
         </Form-item>
-        <div class="wrap">
-          <div class="left">
-            <h4 class="sub-title">头像系列1</h4>
-            <Select v-model="iconSrc" @on-change="changeIcon" class="icon-select">
-              <Option v-for="item in iconList1" :value="item" :key="item">{{ item }}</Option>
-            </Select>
-            <h4 class="sub-title">头像系列2</h4>
-            <Select v-model="iconSrc" @on-change="changeIcon" class="icon-select">
-              <Option v-for="item in iconList2" :value="item" :key="item">{{ item }}</Option>
-            </Select>
-          </div>
-          <div class="right">
-            <img :src="imgSrc" class="preview">
-          </div>
-        </div>
-        <Button type="primary" @click="submit" class="btn">确认</Button>
+        <Form-item label="选择头像">
+          <Select v-model="iconSrc" @on-change="changeIcon" class="enter-input">
+            <Option v-for="item in iconList1" :value="item" :key="item">{{ item }}</Option>
+          </Select>
+        </Form-item>
+        <Form-item>
+          <img :src="imgSrc" class="preview">
+        </Form-item>
+        <Form-item>
+          <Button type="primary" @click="submit">确认</Button>
+        </Form-item>
       </Form>
     </div>
   </div>
@@ -65,8 +66,8 @@
     data () {
       return {
         showRobot: false, // 显示机器人信息
-        iconList1: ['1.jpg', '2.jpg', '3.jpg', '4.jpg', '5.jpg', '6.jpg', '7.jpg', '8.jpg', '9.jpg'],
-        iconList2: ['10.jpg', '11.jpg', '12.jpg', '13.jpg', '14.jpg', '15.jpg'],
+        iconList1: ['1.jpg', '2.jpg', '3.jpg', '4.jpg', '5.jpg', '6.jpg', '7.jpg', '8.jpg', '9.jpg',
+          '10.jpg', '11.jpg', '12.jpg', '13.jpg', '14.jpg', '15.jpg'],
         imgSrc: '', // 机器人头像地址，真正地址
         iconSrc: '', // 机器人头像地址，表示上述简写
         robotName: '',
@@ -232,7 +233,7 @@
   width: 100%;
   height: 30%;
 }
-.my-input {
+.enter-input {
   width: 30%;
 }
 .robot-name {
@@ -266,8 +267,6 @@
 }
 .robot-switch {
   margin-top: 2vh;
-}
-.btn {
   margin-left: 30px;
 }
 .text-area {
@@ -276,7 +275,7 @@
 .wrap {
   display: block;
   width: 100vw;
-  height: 20vh;
+  height: 30vh;
   margin-bottom: 4vh;
 }
 .left {
@@ -290,12 +289,15 @@
   height: 100%;
 }
 .preview {
-  width: 40%;
-  height: 100%;
+  width: 7vw;
+  height: 15vh;
 }
 .split {
   display: block;
   width: 100%;
   height: 5vh;
+}
+.form {
+  margin-left: 30px;
 }
 </style>
