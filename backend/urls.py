@@ -80,4 +80,6 @@ urlpatterns = [
     url(r'^api/customer/get_info/$', customer.customer_get_info),
     url(r'^api/customer/get_id/$', customer.customer_get_id),
     url(r'^api/url_validate/$', enterprise.UrlValidateJudge),
+    #404
+    url(r'',  TemplateView.as_view(template_name = '404.html')),
 ]
