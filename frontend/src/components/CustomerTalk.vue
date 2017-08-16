@@ -13,7 +13,7 @@
     <div class="userinfo">
       <user-info></user-info>
       <div class="buttongroup">
-        <Button type="primary" class="button">转接</Button>
+        <Button type="primary" class="button" @click="transfer">转接</Button>
         <Button type="primary" class="button" @click="close">结束会话</Button>
       </div>
     </div>
@@ -44,6 +44,9 @@
       },
       close () {
         this.$emit('close', true)
+      },
+      transfer () {
+        this.$emit('transfer', true)
       }
     }
   }

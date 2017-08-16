@@ -3,7 +3,7 @@
     <ul>
         <li v-for="(item,index) in lists" @click="swit(item, index)" :class="{ active: index === activeindex }">
           <Badge :count="item.num">
-            <img class="avatar" width="30" height="30">
+            <img class="avatar" width="30" height="30" src="/static/img/customer_icon/uh_1.gif">
             <p class="name">联系人</p>
           </Badge>
         </li>

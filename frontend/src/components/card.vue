@@ -1,23 +1,17 @@
 <template>
-<div id="card">
+<div class="card">
   <header>
-    <img class="avatar" width="40" height="40">
+    <img class="avatar" width="40" height="40" src="/static/img/background.jpg">
     <p class="name">名字</p>
   </header>
-  <footer>
-    <input type="text" placeholder="请输入问题" class="search">
-  </footer>
 </div>
 </template>
 <script>
 </script>
-<style scoped lang="less">
+<style scoped lang="less" scoped>
 .card {
   padding: 12px;
   border-bottom: solid 1px #24272C;
-  footer {
-    margin-top: 10px;
-  }
   .avatar, .name {
     vertical-align: middle;
   }
@@ -28,18 +22,6 @@
     display: inline-block;
     margin: 0 0 0 15px;
     font-size: 16px;
-  }
-  .search {
-    padding: 0 10px;
-    width: 100%;
-    font-size: 12px;
-    color: #fff;
-    height: 30px;
-    line-height: 30px;
-    border: solid 1px #3a3a3a;
-    border-radius: 4px;
-    outline: none;
-    background-color: #26292E;
   }
 }
 </style>

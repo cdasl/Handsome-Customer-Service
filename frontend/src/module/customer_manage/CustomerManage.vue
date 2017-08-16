@@ -31,17 +31,22 @@
           <i-button type="text" @click="toggleClick">
             <Icon type="navicon" size="32"></Icon>
           </i-button>
-          <i-select v-model="status" class="select">
-            <i-option value="2">在线</i-option>
-            <i-option value="3">休息</i-option>
+          <i-select v-model="status" class="select" @on-change="changeStatus">
+            <i-option value="2">休息</i-option>
+            <i-option value="3">工作</i-option>
           </i-select>
           <Button type="text" class="logout" @click="logout">退出</Button>
         </div>
         <div class="layout-content">
-          <div class="layout-content-main" :is="type" @send="send" @swit="swit" @close="close" :content="currentcontent" :lists="lists"></div>
+          <div class="layout-content-main" :is="type" @send="send" @swit="swit" @close="close" @transfer="transferCustomer" :content="currentcontent" :lists="lists"></div>
         </div>
       </i-col>
     </Row>
+    <Modal v-model="show" width="40vw">
+      <Select v-model="selected">
+        <Option v-for="item in customerList" :key="item.cid" :value="item.cid">{{item.name}}</Option>
+      </Select>
+    </Modal>
   </div>
 </template>
 <script>
@@ -70,7 +75,21 @@
         status: '2',
         uid: '',
         cid: '',
-        eid: ''
+        eid: '',
+        name: '',
+        icon: '/static/img/customer_icon/uh_1.gif',
+        show: false,
+        selected: '',
+        customerList: [
+          {
+            name: '小明',
+            cid: 'ccc'
+          },
+          {
+            name: '小光',
+            cid: 'ddd'
+          }
+        ]
       }
     },
     computed: {
@@ -119,6 +138,20 @@
           }
         }
       },
+      transferCustomer () {
+        this.show = true
+      },
+      changeStatus (curvalue) {
+        if (curvalue === 2) {
+          if (this.lists.length !== 0) {
+            /* global alert: true */
+            alert('还有客户在线，不可以休息')
+            this.status = '3'
+          }
+        } else {
+          this.connectServer()
+        }
+      },
       dateformat (date) {
         let seperator1 = '-'
         let seperator2 = ':'
@@ -138,7 +171,7 @@
         data['word'] = msg
         data['time'] = this.dateformat(new Date())
         data['self'] = true
-        data['src'] = '/static/js/emojiSources/huaji/1.jpg'
+        data['src'] = this.icon
         this.currentcontent.push(data)
         this.socket.emit('customer message', {data: encodeURI(msg), time: data['time'], cid: this.cid, uid: this.uid, src: encodeURI(data['src'])})
       },
@@ -176,8 +209,8 @@
         }
         return ''
       },
-      getCid () {
-        return fetch('/api/customer/get_id/', {
+      getInfo () {
+        return fetch('/api/customer/get_info/', {
           method: 'post',
           credentials: 'same-origin',
           headers: {
@@ -192,7 +225,11 @@
         data['word'] = decodeURI(msg['data'])
         data['time'] = msg['time']
         data['self'] = msg['send'] === 'robot' || msg['send'] === this.cid
-        data['src'] = msg['send'] === 'robot' ? '/static/img/robot_icon/1.jpg' : '/static/js/emojiSources/huaji/1.jpg'
+        if (data['self']) {
+          data['src'] = msg['send'] === 'robot' ? '/static/img/robot_icon/1.jpg' : '/static/js/emojiSources/huaji/1.jpg'
+        } else {
+          data['src'] = '/static/img/customer_icon/uh_1.gif'
+        }
         return data
       },
       newUser () {
@@ -240,25 +277,49 @@
             }
           }
         })
+      },
+      userDisconnected () {
+        this.socket.on('user disconnected', (msg) => {
+          this.socket.emit('disconnect a user', {uid: msg['uid'], eid: this.eid, cid: this.cid})
+          for (let i = 0; i < this.lists.length; ++i) {
+            if (msg['uid'] === this.lists[i]['uid']) {
+              this.lists.splice(i, 1)
+              break
+            }
+          }
+          delete this.content[msg['uid']]
+          if (this.lists.length !== 0) {
+            this.uid = this.lists[0]['uid']
+            this.currentcontent = this.content[this.uid]
+          } else {
+            this.uid = ''
+            this.currentcontent = []
+          }
+        })
+      },
+      connectServer () {
+        if (this.socket === null) {
+          /* global location io: true */
+          this.socket = io.connect('http://' + document.domain + ':' + location.port + '/test')
+          this.socket.emit('a customer connected', {cid: this.cid, eid: this.eid, name: this.name})
+          this.oldData()
+          this.newUser()
+          this.myResponse()
+          this.userDisconnected()
+        }
       }
     },
     mounted: async function () {
-      if (this.socket === null) {
-          /* global location io: true */
-        this.socket = io.connect('http://' + document.domain + ':' + location.port + '/test')
-        let res = await this.getCid()
-        if (res['flag'] === global_.CONSTGET.CID_NOT_EXIST) {
-          this.$Message.error(global_.CONSTSHOW.CID_NOT_EXIST)
-          window.location.replace('/customer_login/')
-          return
-        }
-        this.cid = res['message']['cid']
-        this.eid = res['message']['eid']
-        this.socket.emit('a customer connected', {cid: this.cid})
-        this.oldData()
-        this.newUser()
-        this.myResponse()
+      let res = await this.getInfo()
+      if (res['flag'] === global_.CONSTGET.CID_NOT_EXIST) {
+        this.$Message.error(global_.CONSTSHOW.CID_NOT_EXIST)
+        window.location.replace('/customer_login/')
+        return
       }
+      this.cid = res['message']['cid']
+      this.eid = res['message']['eid']
+      this.name = res['message']['name']
+      this.icon = res['message']['icon']
     }
   }
 </script>
@@ -279,7 +340,7 @@
   padding: 10px 15px 0;
 }
 .layout-content {
-  min-height: 1080px;
+  min-height: 100vh;
   margin: 15px;
   overflow: auto;
   background: #fff;
@@ -328,12 +389,12 @@
 .select {
   position: absolute;
   right: 10%;
-  width: 7%;
-  top: 1.5%;
+  width: 10%;
+  top: 1.2%;
 }
 .logout {
   position: absolute;
   right: 0;
-  top: 1.5%;
+  top: 1.3%;
 }
 </style>
