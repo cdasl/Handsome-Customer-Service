@@ -11,7 +11,7 @@
     <Select v-model="sortOrder" @on-change="changeSort" style="width: 200px;">
       <Option v-for="item of orderList" :value="item" :key="item">{{ item }}</Option>
     </Select>
-    <Row>
+    <Row class="table">
         <Table border :columns="questionForm" :data="questionDataShow" ref="table"></Table>
         <Page :total="questionData.length" @on-change="changePage" :page-size="pageSize"></Page>
     </Row>
@@ -395,5 +395,8 @@
   .message {
     height: ~'calc(100% - 160px)';
   }
+}
+.table {
+  margin-top: 2vh;
 }
 </style>

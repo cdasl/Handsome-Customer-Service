@@ -10,7 +10,7 @@
     <Select v-model="sortOrder" @on-change="changeSort" style="width: 200px;">
       <Option v-for="item of orderList" :value="item" :key="item">{{ item }}</Option>
     </Select>
-    <Row>
+    <Row class="table">
         <Table border :columns="customerForm" :data="customerDataShow" ref="table"></Table>
         <Page :total="customerData.length" @on-change="changePage" :page-size="pageSize"></Page>
     </Row>
@@ -284,5 +284,8 @@
   color: #999;
   padding-top: 15px;
   padding-bottom: 15px;
+}
+.table {
+  margin-top: 2vh;
 }
 </style>
