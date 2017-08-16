@@ -1,7 +1,7 @@
 API package
 ============
 
-apis\.customer module
+Customer APIs
 ---------------------
 
 .. automodule:: backend.apis.customer
@@ -9,7 +9,7 @@ apis\.customer module
     :undoc-members:
     :show-inheritance:
 
-apis\.enterprise module
+Enterprise APIs
 -----------------------
 
 .. automodule:: backend.apis.enterprise
