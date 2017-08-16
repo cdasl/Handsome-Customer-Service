@@ -84,7 +84,7 @@ def customer_logout(request):
     else:
         return JsonResponse({'flag': const_table.const.CID_NOT_EXIST})
     models.Customer.objects.filter(CID = CID).update(state = 1)
-    del request.session
+    del request.session['cid']
     return JsonResponse({'flag': const_table.const.SUCCESS, 'message': ''})
 
 @ensure_csrf_cookie
@@ -98,7 +98,7 @@ def customer_get_info(request):
     customer = models.Customer.objects.get(CID = CID)
     info = {'cid': customer.CID, 'eid': customer.EID, 'email': customer.email, 'state': customer.state, 
     'name': customer.name, 'serviced_number': customer.serviced_number, 'service_number': customer.service_number, 
-    'last_login': customer.last_login}
+    'last_login': customer.last_login, 'icon': customer.icon}
     return JsonResponse({'flag': const_table.const.SUCCESS, 'message': info})
 
 @ensure_csrf_cookie
@@ -110,7 +110,7 @@ def customer_get_id(request):
     else:
         return JsonResponse({'flag': const_table.const.CID_NOT_EXIST})
     customer = models.Customer.objects.get(CID = CID)
-    id_list = {'cid': customer.CID, 'eid': customer.EID}
+    id_list = {'cid': customer.CID, 'eid': customer.EID, 'icon': customer.icon}
     return JsonResponse({'flag': const_table.const.SUCCESS, 'message': id_list})
 
 @ensure_csrf_cookie
