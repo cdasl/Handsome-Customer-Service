@@ -48,67 +48,113 @@
 <dt id="backend.apis.customer.customer_avgmes_dialogs">
 <code class="descclassname">backend.apis.customer.</code><code class="descname">customer_avgmes_dialogs</code><span class="sig-paren">(</span><em>CID</em><span class="sig-paren">)</span><a class="headerlink" href="#backend.apis.customer.customer_avgmes_dialogs" title="Permalink to this definition">¶</a></dt>
 <dd><p>获取客服平均消息数</p>
+<ul class="simple">
+<li><strong>CID</strong> - 客服的id</li>
+</ul>
+<p><strong>返回值</strong>:包含成功/失败消息和当前客服平均消息数的JsonResponse</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="backend.apis.customer.customer_avgtime_dialogs">
 <code class="descclassname">backend.apis.customer.</code><code class="descname">customer_avgtime_dialogs</code><span class="sig-paren">(</span><em>CID</em><span class="sig-paren">)</span><a class="headerlink" href="#backend.apis.customer.customer_avgtime_dialogs" title="Permalink to this definition">¶</a></dt>
 <dd><p>获取客服会话平均时间</p>
+<ul class="simple">
+<li><strong>CID</strong> - 客服的id</li>
+</ul>
+<p><strong>返回值</strong>:包含成功/失败消息和当前客服会话的平均时间的JsonResponse</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="backend.apis.customer.customer_change_onlinestate">
 <code class="descclassname">backend.apis.customer.</code><code class="descname">customer_change_onlinestate</code><span class="sig-paren">(</span><em>request</em><span class="sig-paren">)</span><a class="headerlink" href="#backend.apis.customer.customer_change_onlinestate" title="Permalink to this definition">¶</a></dt>
 <dd><p>客服改变在线状态</p>
+<ul class="simple">
+<li><strong>request</strong> - 前端发送的请求,session中有cid</li>
+</ul>
+<p><strong>返回值</strong>:包含成功/失败消息的JsonResponse</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="backend.apis.customer.customer_chatted">
 <code class="descclassname">backend.apis.customer.</code><code class="descname">customer_chatted</code><span class="sig-paren">(</span><em>request</em><span class="sig-paren">)</span><a class="headerlink" href="#backend.apis.customer.customer_chatted" title="Permalink to this definition">¶</a></dt>
 <dd><p>获取与某位客服聊过天所有用户</p>
+<ul class="simple">
+<li><strong>request</strong> - 前端发送的请求,session中有cid</li>
+</ul>
+<p><strong>返回值</strong>: 包含成功/失败消息和与某位客服聊过天所有用户列表的JsonResponse</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="backend.apis.customer.customer_dialog_messages">
 <code class="descclassname">backend.apis.customer.</code><code class="descname">customer_dialog_messages</code><span class="sig-paren">(</span><em>request</em><span class="sig-paren">)</span><a class="headerlink" href="#backend.apis.customer.customer_dialog_messages" title="Permalink to this definition">¶</a></dt>
 <dd><p>获取客服某个会话内容</p>
+<ul class="simple">
+<li><strong>request</strong> - 前端发送的请求, session中有cid</li>
+</ul>
+<p><strong>返回值</strong>:包含成功/失败消息的JsonResponse</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="backend.apis.customer.customer_dialogs">
 <code class="descclassname">backend.apis.customer.</code><code class="descname">customer_dialogs</code><span class="sig-paren">(</span><em>request</em><span class="sig-paren">)</span><a class="headerlink" href="#backend.apis.customer.customer_dialogs" title="Permalink to this definition">¶</a></dt>
 <dd><p>获取客服所有会话列表</p>
+<ul class="simple">
+<li><strong>request</strong> - 前端发送的请求,session中有cid</li>
+</ul>
+<p><strong>返回值</strong>:包含成功/失败消息的JsonResponse</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="backend.apis.customer.customer_dialogs_oneday">
 <code class="descclassname">backend.apis.customer.</code><code class="descname">customer_dialogs_oneday</code><span class="sig-paren">(</span><em>CID</em><span class="sig-paren">)</span><a class="headerlink" href="#backend.apis.customer.customer_dialogs_oneday" title="Permalink to this definition">¶</a></dt>
 <dd><p>获取客服最近24小时会话数</p>
+<ul class="simple">
+<li><strong>CID</strong> - 客服的id</li>
+</ul>
+<p><strong>返回值</strong>:包含成功/失败消息和当前客服最近24小时会话数的JsonResponse</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="backend.apis.customer.customer_get_alldata">
 <code class="descclassname">backend.apis.customer.</code><code class="descname">customer_get_alldata</code><span class="sig-paren">(</span><em>request</em><span class="sig-paren">)</span><a class="headerlink" href="#backend.apis.customer.customer_get_alldata" title="Permalink to this definition">¶</a></dt>
-<dd><p>返回该客服所有数据：总服务时间，总消息数，总会话数，总服务人数，
-今日会话数，平均会话时长，平均消息数</p>
+<dd><dl class="docutils">
+<dt>返回该客服所有数据：总服务时间，总消息数，总会话数，总服务人数，</dt>
+<dd>今日会话数，平均会话时长，平均消息数</dd>
+</dl>
+<ul class="simple">
+<li><strong>request</strong> - 前端发送的请求,session中有cid</li>
+</ul>
+<p><strong>返回值</strong>:包含成功/失败消息和以上所有数据的JsonResponse</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="backend.apis.customer.customer_get_id">
 <code class="descclassname">backend.apis.customer.</code><code class="descname">customer_get_id</code><span class="sig-paren">(</span><em>request</em><span class="sig-paren">)</span><a class="headerlink" href="#backend.apis.customer.customer_get_id" title="Permalink to this definition">¶</a></dt>
-<dd><p>客服获取自己的CID和EID</p>
+<dd><p>客服获取自己的CID、EID和头像</p>
+<ul class="simple">
+<li><strong>request</strong> - 前端发送的请求,session中有cid</li>
+</ul>
+<p><strong>返回值</strong>:包含成功/失败消息和客服自己的CID、EID和头像的JsonResponse</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="backend.apis.customer.customer_get_info">
 <code class="descclassname">backend.apis.customer.</code><code class="descname">customer_get_info</code><span class="sig-paren">(</span><em>request</em><span class="sig-paren">)</span><a class="headerlink" href="#backend.apis.customer.customer_get_info" title="Permalink to this definition">¶</a></dt>
 <dd><p>客服获取自己的个人信息</p>
+<ul class="simple">
+<li><strong>request</strong> - 前端发送的请求,session中有cid</li>
+</ul>
+<p><strong>返回值</strong>:包含成功/失败消息和客服个人信息的JsonResponse</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="backend.apis.customer.customer_login">
 <code class="descclassname">backend.apis.customer.</code><code class="descname">customer_login</code><span class="sig-paren">(</span><em>request</em><span class="sig-paren">)</span><a class="headerlink" href="#backend.apis.customer.customer_login" title="Permalink to this definition">¶</a></dt>
 <dd><p>客服登录</p>
+<ul class="simple">
+<li><strong>request</strong> - 前端发送的请求,包含邮箱和密码</li>
+</ul>
+<p><strong>返回值</strong>:包含成功/失败消息的JsonResponse</p>
 </dd></dl>
 
 <dl class="function">
@@ -120,36 +166,60 @@
 <dt id="backend.apis.customer.customer_logout">
 <code class="descclassname">backend.apis.customer.</code><code class="descname">customer_logout</code><span class="sig-paren">(</span><em>request</em><span class="sig-paren">)</span><a class="headerlink" href="#backend.apis.customer.customer_logout" title="Permalink to this definition">¶</a></dt>
 <dd><p>客服退出</p>
+<ul class="simple">
+<li><strong>request</strong> - 前端发送的请求,session中有cid</li>
+</ul>
+<p><strong>返回值</strong>:包含成功/失败消息的JsonResponse</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="backend.apis.customer.customer_modify_icon">
 <code class="descclassname">backend.apis.customer.</code><code class="descname">customer_modify_icon</code><span class="sig-paren">(</span><em>request</em><span class="sig-paren">)</span><a class="headerlink" href="#backend.apis.customer.customer_modify_icon" title="Permalink to this definition">¶</a></dt>
 <dd><p>客服修改自己的头像,昵称</p>
+<ul class="simple">
+<li><strong>request</strong> - 前端发送的请求,session中有cid</li>
+</ul>
+<p><strong>返回值</strong>:包含成功/失败消息的JsonResponse</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="backend.apis.customer.customer_serviced_number">
 <code class="descclassname">backend.apis.customer.</code><code class="descname">customer_serviced_number</code><span class="sig-paren">(</span><em>CID</em><span class="sig-paren">)</span><a class="headerlink" href="#backend.apis.customer.customer_serviced_number" title="Permalink to this definition">¶</a></dt>
 <dd><p>获取客服服务过的人数</p>
+<ul class="simple">
+<li><strong>CID</strong> - 客服的id</li>
+</ul>
+<p><strong>返回值</strong>:包含成功/失败消息和当前客服服务过的人数的JsonResponse</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="backend.apis.customer.customer_total_dialogs">
 <code class="descclassname">backend.apis.customer.</code><code class="descname">customer_total_dialogs</code><span class="sig-paren">(</span><em>CID</em><span class="sig-paren">)</span><a class="headerlink" href="#backend.apis.customer.customer_total_dialogs" title="Permalink to this definition">¶</a></dt>
 <dd><p>获取客服总会话数</p>
+<ul class="simple">
+<li><strong>CID</strong> - 客服的id</li>
+</ul>
+<p><strong>返回值</strong>:包含成功/失败消息和当前客服总会话数的JsonResponse</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="backend.apis.customer.customer_total_messages">
 <code class="descclassname">backend.apis.customer.</code><code class="descname">customer_total_messages</code><span class="sig-paren">(</span><em>CID</em><span class="sig-paren">)</span><a class="headerlink" href="#backend.apis.customer.customer_total_messages" title="Permalink to this definition">¶</a></dt>
 <dd><p>返回客服发送总的消息数</p>
+<ul class="simple">
+<li><strong>CID</strong> - 客服的id</li>
+</ul>
+<p><strong>返回值</strong>:包含成功/失败消息和当前客服发送的总消息数的JsonResponse</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="backend.apis.customer.customer_total_servicedtime">
 <code class="descclassname">backend.apis.customer.</code><code class="descname">customer_total_servicedtime</code><span class="sig-paren">(</span><em>CID</em><span class="sig-paren">)</span><a class="headerlink" href="#backend.apis.customer.customer_total_servicedtime" title="Permalink to this definition">¶</a></dt>
 <dd><p>返回客服总的服务时间(分钟)</p>
+<ul class="simple">
+<li><strong>CID</strong> - 客服的id</li>
+</ul>
+<p><strong>返回值</strong>:包含成功/失败消息和当前客服总服务时间的JsonResponse</p>
 </dd></dl>
 
 <dl class="function">
@@ -161,13 +231,21 @@
 <dl class="function">
 <dt id="backend.apis.customer.reset_password">
 <code class="descclassname">backend.apis.customer.</code><code class="descname">reset_password</code><span class="sig-paren">(</span><em>request</em><span class="sig-paren">)</span><a class="headerlink" href="#backend.apis.customer.reset_password" title="Permalink to this definition">¶</a></dt>
-<dd><p>重置密码，前端发送激活码，新密码</p>
+<dd><p>找回密码，前端发送激活码，新密码</p>
+<ul class="simple">
+<li><strong>request</strong> - 前端发送的请求,包含激活码</li>
+</ul>
+<p><strong>返回值</strong>:包含成功/失败消息的JsonResponse</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="backend.apis.customer.reset_password_request">
 <code class="descclassname">backend.apis.customer.</code><code class="descname">reset_password_request</code><span class="sig-paren">(</span><em>request</em><span class="sig-paren">)</span><a class="headerlink" href="#backend.apis.customer.reset_password_request" title="Permalink to this definition">¶</a></dt>
-<dd><p>重置密码请求</p>
+<dd><p>找回密码请求</p>
+<ul class="simple">
+<li><strong>request</strong> - 前端发送的请求，包含email</li>
+</ul>
+<p><strong>返回值</strong>:包含成功/失败消息的JsonResponse</p>
 </dd></dl>
 
 </div>
