@@ -1,15 +1,18 @@
 <template>
   <div id="app">
-    <Input v-model="customerEmail" class="email-input" placeholder="输入邮箱邀请客服" @on-enter="invite"></Input>
-    <Button @click="invite">邀请客服</Button>
-    <Input @on-enter="search" placeholder="输入你想查找的客服信息，可以是id、邮箱或者姓名"></Input>
-    <span style="margin-left: 5%;">按关键字排序</span>
-    <Select v-model="sortKeyWord" @on-change="changeSort" style="width: 200px;">
-      <Option v-for="item of sortList" :value="item" :key="item">{{ item }}</Option>
-    </Select>
-    <Select v-model="sortOrder" @on-change="changeSort" style="width: 200px;">
-      <Option v-for="item of orderList" :value="item" :key="item">{{ item }}</Option>
-    </Select>
+    <div class="head">
+      <Input v-model="customerEmail" class="email-input" placeholder="输入邮箱邀请客服" @on-enter="invite"></Input>
+      <Button @click="invite">邀请客服</Button>
+      <Input @on-enter="search" placeholder="输入ID,邮箱,姓名查找客服" class="search-input"></Input>
+      <div class="head-right">
+        <Select v-model="sortKeyWord" @on-change="changeSort" style="width:150px;text-align:left;">
+          <Option v-for="item of sortList" :value="item" :key="item">{{ item }}</Option>
+        </Select>
+        <Select v-model="sortOrder" @on-change="changeSort" style="width:150px;text-align:left;">
+          <Option v-for="item of orderList" :value="item" :key="item">{{ item }}</Option>
+        </Select>
+      </div>
+    </div>
     <Row class="table">
         <Table border :columns="customerForm" :data="customerDataShow" ref="table"></Table>
         <Page :total="customerData.length" @on-change="changePage" :page-size="pageSize"></Page>
@@ -30,8 +33,8 @@
           '2': '休息中',
           '3': '工作中'
         },
-        sortList: ['', '状态', '服务总人数', '当前服务人数'], // 排序的所有关键字
-        sortKeyWord: '', // 排序关键字
+        sortList: ['按关键字排序', '状态', '服务总人数', '当前服务人数'], // 排序的所有关键字
+        sortKeyWord: '按关键字排序', // 排序关键字
         sortOrder: '升序', // 升序或降序
         orderList: ['升序', '降序'],
         customerEmail: '', // 邀请客服输入的邮箱
@@ -190,7 +193,7 @@
           key = 'serviced_number'
         } else if (this.sortKeyWord === '当前服务人数') {
           key = 'service_number'
-        } else if (this.sortKeyWord === '') {
+        } else if (this.sortKeyWord === '按关键字排序') {
           return
         }
         let num = 1
@@ -275,17 +278,32 @@
 </script>
 <style scoped>
 .email-input {
-  width: 30%;
+  width: 15%;
   height: 5%;
 }
-.legend {
-  font-size: 12px;
-  line-height: 1;
-  color: #999;
-  padding-top: 15px;
-  padding-bottom: 15px;
+.search-input {
+  width: 20%;
+  height: 5%;
 }
 .table {
   margin-top: 2vh;
+}
+.head {
+  display: block;
+  width: 100%;
+}
+.head-left {
+  display: inline-block;
+  width: 35%;
+}
+.head-right {
+  display: inline-block;
+  position: absolute;
+  right: 28px;
+  width: 55%;
+  text-align: right;
+}
+.head-right span {
+  text-align: left;
 }
 </style>

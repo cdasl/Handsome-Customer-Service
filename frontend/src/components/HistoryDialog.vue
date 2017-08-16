@@ -1,12 +1,16 @@
 <template>
   <div id="app">
-    <span>按关键字排序</span>
-    <Select v-model="sortKeyWord" @on-change="changeSort" style="width: 200px;">
-      <Option v-for="item of sortList" :value="item" :key="item">{{ item }}</Option>
-    </Select>
-    <Select v-model="sortOrder" @on-change="changeSort" style="width: 200px;">
-      <Option v-for="item of orderList" :value="item" :key="item">{{ item }}</Option>
-    </Select>
+    <div class="head">
+      <div class="head-left"></div>
+      <div class="head-right">
+        <Select v-model="sortKeyWord" @on-change="changeSort" style="width:150px;text-align:left;">
+          <Option v-for="item of sortList" :value="item" :key="item">{{ item }}</Option>
+        </Select>
+        <Select v-model="sortOrder" @on-change="changeSort" style="width:150px;text-align:left;">
+          <Option v-for="item of orderList" :value="item" :key="item">{{ item }}</Option>
+        </Select>
+      </div>    
+    </div>
     <Row class="table">
         <Table border :columns="dialogForm" :data="dialogDataShow" ref="table"></Table>
         <Page :total="dialogData.length" @on-change="changePage" :page-size="pageSize"></Page>
@@ -36,8 +40,8 @@
     components: {Message},
     data () {
       return {
-        sortList: ['', '开始时间', '结束时间', '用户ID', '客服ID'], // 排序的所有关键字
-        sortKeyWord: '', // 排序关键字
+        sortList: ['按关键字排序', '开始时间', '结束时间', '用户ID', '客服ID'], // 排序的所有关键字
+        sortKeyWord: '按关键字排序', // 排序关键字
         sortOrder: '升序', // 升序或降序
         orderList: ['升序', '降序'],
         customerForm: [
@@ -210,7 +214,7 @@
           key = 'cid'
         } else if (this.sortKeyWord === '用户ID') {
           key = 'uid'
-        } else if (this.sortKeyWord === '') {
+        } else if (this.sortKeyWord === '按关键字排序') {
           return
         }
         let num = 1
@@ -331,6 +335,21 @@
   height: calc(100% - 160px);
 }
 .table {
-  margin-top: 2vh;
+  margin-top: 4vh;
+}
+.head {
+  display: block;
+  width: 100%;
+}
+.head-left {
+  display: inline-block;
+  width: 35%;
+}
+.head-right {
+  display: inline-block;
+  position: absolute;
+  right: 28px;
+  width: 55%;
+  text-align: right;
 }
 </style>
