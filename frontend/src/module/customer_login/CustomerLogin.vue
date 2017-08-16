@@ -1,23 +1,20 @@
 <template>
   <div class="app">
     <div class="wrap">
-      <img src="/static/img/logo.jpg" alt="logo.jpg" class="image">
-      <div id="login">
-        <h3 class="title">客服登录</h3>
-        <Input v-model="formItem.email" placeholder="邮箱" type="text" class="my-input"></Input>
-        <Input v-model="formItem.password" placeholder="密码" type="password" class="my-input" @on-enter="submit"></Input>
-        <Button type="primary" @click="submit" class="my-input">登录</Button><br>
-        <p class="signup"><a></a></p>
-        <p class="find-password"><a @click="findEmail">找回密码</a></p>
-        <Modal
-        v-model="findback.modal"
-        title="找回密码"
+      <h3 class="title">客服登录</h3>
+      <Input v-model="formItem.email" placeholder="邮箱" type="text" class="customer-input"></Input>
+      <Input v-model="formItem.password" placeholder="密码" type="password" class="customer-input"></Input>
+      <Button type="primary" @click="submit" class="btn">登录</Button><br>
+      <p class="signup"><a></a></p>
+      <p class="find-password"><a @click="findEmail">找回密码</a></p>
+      <Modal
+       v-model="findback.modal"
+       title="找回密码"
         @on-ok="ok"
         @on-cancel="cancel">
         <p>请输入邮箱</p>
         <Input v-model="findback.email"></Input>
-        </Modal>
-      </div>
+      </Modal>
     </div>
   </div>
 </template>
@@ -112,59 +109,59 @@
     }
   }
 </script>
-<style lang="">
+<style lang="" scoped>
 .app {
-  display: block;
-  width: 100vw;
-  height: 100vh;
-  background: linear-gradient(to bottom, white, blue);
+  width: 100%;
 }
 .wrap {
   display: block;
-  width: 40vw;
+  width: 30vw;
   margin-left: auto;
   margin-right: auto;
+  padding-top: 2vh;
   margin-top: 20vh;
-  background-color: white;
-  border: 1px solid black;
-}
-.image {
-  display: block;
-  margin-left: 5vw;
-  margin-bottom: 2vh;
-  margin-top: 2vh;
-  width: 7vw;
-  height: 5vh;
-}
-.login {
-  width: 100%;
+  background-color: rgba(255, 255, 255, 1);
 }
 .title {
-  margin-left: 5vw;
+  margin-left: 17%;
   margin-bottom: 2vh;
+  margin-top: 2vh;
   font-size: 1.5em;
 }
-.my-input {
-  width: 75%;
+.customer-input {
+  display: block;
+  width: 20vw;
   height: 30%;
-  margin-left: 5vw;
+  margin-left: auto;
+  margin-right: auto;
   margin-bottom: 2vh;
+  border-color: blue;
+}
+.btn {
+  display: block;
+  width: 20vw;
+  height: 30%;
+  margin-left: auto;
+  margin-right: auto;
+  border-color: blue;
+  font-size: 1.4em;
 }
 .signup {
-  display: inline;
+  display: inline-block;
   width: 50%;
-  font-size: 1.4em;
-  padding-left: 5vw;
+  font-size: 1.2em;
   margin: 0;
   margin-bottom: 2vh;
+  padding-left: 9%;
 }
 .find-password {
   display: inline-block;
-  width: 50%;
-  font-size: 1.4em;
+  width: 45%;
+  font-size: 1.2em;
   text-align: right;
-  padding-right: 3vw;
+  padding-right: 3.6vw;
   margin: 0;
   margin-bottom: 2vh;
+  text-align: right;
 }
 </style>
