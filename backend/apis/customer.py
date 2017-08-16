@@ -61,6 +61,7 @@ def customer_login_helper(info):
                 return (-1, const_table.const.ACCOUNT_LOGGED_OFF)
         else:
             #密码错误
+            print('777')
             return (-2, const_table.const.WRONG_PASSWORD)
     except Exception:
         #账号错误
@@ -344,8 +345,10 @@ def customer_modify_icon(request):
 
 @ensure_csrf_cookie
 def customer_get_alldata(request):
-    """返回该客服所有数据：总服务时间，总消息数，总会话数，总服务人数，
-       今日会话数，平均会话时长，平均消息数\n
+    """
+    返回该客服所有数据：\n
+    总服务时间，总消息数，总会话数，总服务人数，\n
+    今日会话数，平均会话时长，平均消息数\n
     * **request** - 前端发送的请求,session中有cid\n
     **返回值**:包含成功/失败消息和以上所有的数据的JsonResponse
     """
