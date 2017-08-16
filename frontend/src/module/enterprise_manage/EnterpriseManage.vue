@@ -3,9 +3,7 @@
     <Row type="flex" class="row">
       <i-col :span="spanLeft" class="layout-menu-left">
         <Menu active-name="enterprise-overview" theme="dark" width="auto" @on-select="select" :class="leftClass">
-          <div class="m-logo">
-            <i class="logo"></i>
-          </div>
+          <div class="layout-logo-left"></div>
           <Menu-item name="enterprise-overview">
             <Icon type="ios-navigate" :size="iconSize"></Icon>
             <span class="layout-text">主页</span>
@@ -143,8 +141,6 @@
       .then((res) => {
         if (res['flag'] === global_.CONSTGET.ERROR || res['flag'] === global_.CONSTGET.EID_NOT_EXIST) {
           window.location.href = '/enterprise/'
-        } else {
-          console.log('成功')
         }
       })
     }
@@ -207,6 +203,13 @@
 .layout-menu-left {
   background: #464c5b;
   position: relative;
+}
+.layout-logo-left {
+  width: 90%;
+  height: 30px;
+  background: #5b6270;
+  border-radius: 3px;
+  margin: 15px auto;
 }
 .my-fixed {
   position: fixed;

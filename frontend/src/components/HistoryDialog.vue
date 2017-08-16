@@ -139,7 +139,7 @@
       async showCustomerInfo (index) {
         // 根据客服id获取客服信息
         let res = await this.fetchBase('/api/enter/customer_info/', {
-          'cid': this.dialogDataShow[index].cid
+          'cid': this.dialogDataShow[index]['cid']
         })
         if (res['flag'] === global_.CONSTGET.SUCCESS) {
           this.customerData = [{
@@ -159,19 +159,19 @@
       async showDialog (index) {
         // 根据会话id获取会话内容
         let res = await this.fetchBase('/api/enter/dialog_message/', {
-          'did': this.dialogDataShow[index].did
+          'did': this.dialogDataShow[index]['did']
         })
         if (res['flag'] === global_.CONSTGET.DIALOGID_NOT_EXIST) {
           this.$Message.warning(global_.CONSTSHOW.DIALOGID_NOT_EXIST)
         } else if (res['flag'] === global_.CONSTGET.SUCCESS) {
           this.content = []
           for (let i = 0; i < res['message'].length; ++i) {
-            if (res['message'][i]['sid'] === this.dialogDataShow[index].cid) {
+            if (res['message'][i]['sid'] === this.dialogDataShow[index]['cid']) {
               this.content.push({
                 'word': res['message'][i]['content'],
                 'time': res['message'][i]['date'],
                 'self': true,
-                'src': this.customerData[0].icon
+                'src': this.customerData[0]['icon']
               })
             } else {
               this.content.push({
@@ -182,11 +182,11 @@
               })
             }
           }
+          this.show = true
+          this.customerID = this.dialogDataShow[index]['cid']
         } else if (res['flag'] === global_.CONSTGET.EID_NOT_EXIST) {
           window.location.href = '/enterprise/'
         }
-        this.customerID = this.dialogDataShow[index].cid
-        this.show = true
       },
       ok () {
         this.$Message.success('ok')
@@ -278,6 +278,7 @@
             'start_time': res['message'][i]['start_time'],
             'end_time': res['message'][i]['end_time'],
             'cid': res['message'][i]['cid'],
+            'did': res['message'][i]['did'],
             'uid': res['message'][i]['uid'],
             'cid_show': res['message'][i]['cid'].substring(0, 5),
             'feedback': res['message'][i]['feedback']
