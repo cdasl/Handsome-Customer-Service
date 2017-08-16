@@ -62,7 +62,8 @@
                 props: {
                   value: params.row['avg_feedback'],
                   disabled: true,
-                  showText: true
+                  showText: true,
+                  allowHalf: true
                 }
               })
             }
