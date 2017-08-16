@@ -27,11 +27,13 @@
         content: [],
         cid: '',
         timeout: null,
+        disconnect: null,
         modal: false,
         value: 0,
         did: '',
         talkToRobot: true,
-        uid: 'connect'
+        uid: 'connect',
+        eid: 'eeid'
       }
     },
     methods: {
@@ -44,7 +46,7 @@
         this.socket.emit('disconnect request')
       },
       transfer () {
-        this.socket.emit('connect to customer', {uid: this.uid})
+        this.socket.emit('connect to customer', {uid: this.uid, eid: this.eid})
         this.talkToRobot = false
       },
       send (message) {
@@ -55,10 +57,17 @@
         data['src'] = '/static/js/emojiSources/huaji/10.jpg'
         this.content.push(data)
         this.socket.emit('user message', {data: encodeURI(message), time: data['time'], cid: this.cid, uid: this.uid, src: encodeURI(data['src']), flag: this.talkToRobot})
-        clearTimeout(this.timeout)
-        this.timeout = setTimeout(() => {
-          alert('您已超过5分钟未发送消息')
-        }, 300000)
+        if (!this.talkToRobot) {
+          clearTimeout(this.timeout)
+          clearTimeout(this.disconnect)
+          this.timeout = setTimeout(() => {
+            alert('您已超过5分钟未发送消息')
+          }, 300000)
+          this.disconnect = setTimeout(() => {
+            alert('您已经断开连接')
+            this.socket.emit('user disconnect', {cid: this.cid, uid: this.uid})
+          }, 120000)
+        }
       },
       dateformat: function (date) {
         let seperator1 = '-'
@@ -73,16 +82,8 @@
         }
         var currentdate = date.getFullYear() + seperator1 + month + seperator1 + strDate + ' ' + date.getHours() + seperator2 + date.getMinutes() + seperator2 + date.getSeconds()
         return currentdate
-      }
-    },
-    mounted: function () {
-      if (this.socket === null) {
-        let namespace = '/test'
-        /* global location io: true */
-        this.socket = io.connect('http://' + document.domain + ':' + location.port + namespace)
-        /* global md5: true */
-        this.uid = md5(this.dateformat(new Date()))
-        this.socket.emit('a user connected', {uid: this.uid})
+      },
+      oldData () {
         this.socket.on('old data', (msg) => {
           for (let i = 0; i < msg['content'].length; ++i) {
             let data = {}
@@ -93,6 +94,8 @@
             this.content.push(data)
           }
         })
+      },
+      connectedToCustomer () {
         this.socket.on('connected to customer', (msg) => {
           this.cid = msg['cid']
           /* global alert: true */
@@ -100,10 +103,13 @@
           this.timeout = setTimeout(() => {
             alert('您已超过5分钟未发送消息')
           }, 300000)
+          this.disconnect = setTimeout(() => {
+            alert('您已经断开连接')
+            this.socket.emit('user disconnect', {cid: this.cid, uid: this.uid})
+          }, 120000)
         })
-        this.socket.on('no customer online', (msg) => {
-          alert('都下班还来干嘛！！')
-        })
+      },
+      myResponse () {
         this.socket.on('my response', (msg) => {
           let data = {}
           data['word'] = decodeURI(msg['data'])
@@ -112,8 +118,26 @@
           data['src'] = decodeURI(msg['src'])
           this.content.push(data)
         })
+      }
+    },
+    mounted: function () {
+      if (this.socket === null) {
+        let namespace = '/test'
+        /* global location io: true */
+        this.socket = io.connect('http://' + document.domain + ':' + location.port + namespace)
+        /* global md5: true */
+        this.uid = md5(this.dateformat(new Date()))
+        this.socket.emit('a user connected', {uid: this.uid})
+        this.oldData()
+        this.connectedToCustomer()
+        this.myResponse()
+        this.socket.on('no customer online', (msg) => {
+          alert('都下班还来干嘛！！')
+        })
         this.socket.on('user disconnected', (msg) => {
           this.did = msg['did']
+          clearTimeout(this.timeout)
+          clearTimeout(this.disconnect)
           this.modal = true
         })
       }

@@ -5,7 +5,7 @@
       <div id="login">
         <h3 class="title">客服登录</h3>
         <Input v-model="formItem.email" placeholder="邮箱" type="text" class="my-input"></Input>
-        <Input v-model="formItem.password" placeholder="密码" type="password" class="my-input"></Input>
+        <Input v-model="formItem.password" placeholder="密码" type="password" class="my-input" @on-enter="submit"></Input>
         <Button type="primary" @click="submit" class="my-input">登录</Button><br>
         <p class="signup"><a></a></p>
         <p class="find-password"><a @click="findEmail">找回密码</a></p>
