@@ -57,7 +57,7 @@ def enterprise_changepassword(request):
         EID = request.session['eid']
     else:
         return JsonResponse({'flag': const_table.const.EID_NOT_EXIST})
-    obj = models.Enterprise.objects.get(EID =EID)
+    obj = models.Enterprise.objects.get(EID = EID)
     salt = obj.salt
     md5 = hashlib.md5()
     md5.update((info['old'] + salt).encode('utf8'))
@@ -69,7 +69,7 @@ def enterprise_changepassword(request):
     md5.update((info['new'] + salt).encode('utf8'))
     password = md5.hexdigest()
     try:
-        models.Enterprise.objects.filter(EID =EID).update(salt = salt, password = password)
+        models.Enterprise.objects.filter(EID = EID).update(salt = salt, password = password)
         return JsonResponse({'flag': const_table.const.SUCCESS, 'message': ''})
     except Exception:
         return JsonResponse({'flag': const_table.const.FAIL_MODIFY})
@@ -403,7 +403,7 @@ def enterprise_online_customers(request):
     else:
         return JsonResponse({'flag': const_table.const.EID_NOT_EXIST})
     online_list = []
-    customers = models.Customer.objects.filter(EID = EID, state = 2)
+    customers = models.Customer.objects.filter(EID = EID, state = 3)
     for customer in customers:
         online_list.append({'cid': customer.CID, 'name': customer.name})
     return JsonResponse({'flag': const_table.const.SUCCESS, 'message': online_list})

@@ -55,7 +55,7 @@
           'email': this.findback.email
         })
         this.findback.email = ''
-        if (res['message'] === 'enterprise_reset') {
+        if (res['flag'] === global_.CONSTGET.SUCCESS) {
           this.$Message.warning('已发送一封邮件给您，请注意查看')
         } else {
           this.$Message.warning('发生错误')
@@ -94,16 +94,16 @@
         })
         this.reset()
         if (res['flag'] === global_.CONSTGET.SUCCESS) {
-          this.$Message.success('登陆成功')
+          this.$Message.success('登陆成功!')
           window.location.href = '/customer_manage'
-        } else if (res['flag'] === -5) {
-          this.$Message.warning('账号未激活')
-        } else if (res['flag'] === -6) {
-          this.$Message.warning('账号已被注销')
-        } else if (res['flag'] === -1) {
-          this.$Message.error('密码错误')
-        } else if (res['flag'] === -7) {
-          this.$Message.error('账号不存在')
+        } else if (res['flag'] === global_.CONSTGET.ACCOUNT_NOT_ACTIVETED) {
+          this.$Message.warning('账号未激活!')
+        } else if (res['flag'] === global_.CONSTGET.ACCOUNT_LOGGED_OFF) {
+          this.$Message.warning('账号已被注销!')
+        } else if (res['flag'] === global_.CONSTGET.WRONG_PASSWORD) {
+          this.$Message.error('密码错误!')
+        } else if (res['flag'] === global_.CONSTGET.WRONG_ACCOUNT) {
+          this.$Message.error('账号不存在!')
         }
       }
     }

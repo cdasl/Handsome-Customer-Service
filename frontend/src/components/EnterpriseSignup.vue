@@ -143,6 +143,7 @@
   font-size: 1em;
   margin: 0;
   padding-left: 9%;
+  padding-bottom: 2vh;
 }
 .login {
   display: inline-block;
