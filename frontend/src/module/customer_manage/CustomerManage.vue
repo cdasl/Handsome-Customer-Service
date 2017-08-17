@@ -38,11 +38,11 @@
           <Button type="text" class="logout" @click="logout">退出</Button>
         </div>
         <div class="layout-content">
-          <div class="layout-content-main" :is="type" @send="send" @swit="swit" @close="close" @transfer="transferCustomer" :content="currentcontent" :lists="lists"></div>
+          <div class="layout-content-main" :is="type" @send="send" @swit="swit" @close="close" @transfer="transferCustomer" :content="currentcontent" :lists="lists" :name="name" :icon="icon"></div>
         </div>
       </i-col>
     </Row>
-    <Modal v-model="show" width="40vw">
+    <Modal v-model="show" width="40vw" @on-ok="ok">
       <Select v-model="selected">
         <Option v-for="item in customerList" :key="item.cid" :value="item.cid">{{item.name}}</Option>
       </Select>
@@ -138,15 +138,47 @@
           }
         }
       },
-      transferCustomer () {
-        this.show = true
+      getCustomerList () {
+        return fetch('/api/customer/get_other_online/', {
+          method: 'post',
+          credentials: 'same-origin',
+          headers: {
+            'X-CSRFToken': this.getCookie('csrftoken'),
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({data: ''})
+        }).then((res) => res.json())
+      },
+      async transferCustomer () {
+        let res = await this.getCustomerList()
+        if (res['message'].length === 0) {
+          /* global alert: true */
+          alert('当前没有其他客服在线')
+        } else {
+          this.customerList = res['message']
+          this.show = true
+        }
+      },
+      getTransferCustomer () {
+        this.socket.on('transfer customer', (msg) => {
+          this.lists.unshift({'uid': msg['uid'], 'num': 0})
+          this.uid = msg['uid']
+          this.content[msg['uid']] = []
+          for (let i = 0; i < msg['content'].length; ++i) {
+            let data = this.getData(msg['content'][i])
+            this.content[msg['uid']].push(data)
+          }
+          this.currentcontent = this.content[msg['uid']]
+        })
       },
       changeStatus (curvalue) {
-        if (curvalue === 2) {
+        if (curvalue === '2') {
           if (this.lists.length !== 0) {
-            /* global alert: true */
             alert('还有客户在线，不可以休息')
-            this.status = '3'
+            this.socket.emit('continue work', {data: 'true'})
+          } else {
+            this.socket.emit('customer rest', {cid: this.cid, eid: this.eid})
           }
         } else {
           this.connectServer()
@@ -178,8 +210,13 @@
       select (name) {
         this.type = name
       },
-      close (flag) {
-        this.socket.emit('disconnect a user', {uid: this.uid, eid: this.eid, cid: this.cid})
+      ok () {
+        if (this.selected !== '' && this.uid !== '') {
+          this.socket.emit('transfer customer', {uid: this.uid, fromcid: this.cid, targetcid: this.selected})
+          this.deleteUser()
+        }
+      },
+      deleteUser () {
         for (let i = 0; i < this.lists.length; ++i) {
           if (this.uid === this.lists[i]['uid']) {
             this.lists.splice(i, 1)
@@ -194,6 +231,10 @@
           this.uid = ''
           this.currentcontent = []
         }
+      },
+      close (flag) {
+        this.socket.emit('disconnect a user', {uid: this.uid, eid: this.eid, cid: this.cid})
+        this.deleteUser()
       },
       getCookie (cName) {
         if (document.cookie.length > 0) {
@@ -224,9 +265,9 @@
         let data = {}
         data['word'] = decodeURI(msg['data'])
         data['time'] = msg['time']
-        data['self'] = msg['send'] === 'robot' || msg['send'] === this.cid
+        data['self'] = msg['send'] !== this.uid
         if (data['self']) {
-          data['src'] = msg['send'] === 'robot' ? '/static/img/robot_icon/1.jpg' : '/static/js/emojiSources/huaji/1.jpg'
+          data['src'] = msg['send'] === 'robot' ? '/static/img/robot_icon/1.jpg' : this.icon
         } else {
           data['src'] = '/static/img/customer_icon/uh_1.gif'
         }
@@ -276,43 +317,39 @@
               this.content[msg['list'][i]].push(data)
             }
           }
+          this.status = '3'
         })
       },
       userDisconnected () {
         this.socket.on('user disconnected', (msg) => {
           this.socket.emit('disconnect a user', {uid: msg['uid'], eid: this.eid, cid: this.cid})
-          for (let i = 0; i < this.lists.length; ++i) {
-            if (msg['uid'] === this.lists[i]['uid']) {
-              this.lists.splice(i, 1)
-              break
-            }
-          }
-          delete this.content[msg['uid']]
-          if (this.lists.length !== 0) {
-            this.uid = this.lists[0]['uid']
-            this.currentcontent = this.content[this.uid]
-          } else {
-            this.uid = ''
-            this.currentcontent = []
-          }
+          this.deleteUser()
         })
       },
       connectServer () {
         if (this.socket === null) {
           /* global location io: true */
           this.socket = io.connect('http://' + document.domain + ':' + location.port + '/test')
-          this.socket.emit('a customer connected', {cid: this.cid, eid: this.eid, name: this.name})
+          this.socket.emit('a customer connected', {cid: this.cid, eid: this.eid})
           this.oldData()
           this.newUser()
           this.myResponse()
           this.userDisconnected()
+          this.getTransferCustomer()
+          this.socket.on('continue work', (msg) => {
+            this.status = '3'
+          })
         }
       }
     },
-    mounted: async function () {
+    created: async function () {
       let res = await this.getInfo()
       if (res['flag'] === global_.CONSTGET.CID_NOT_EXIST) {
         this.$Message.error(global_.CONSTSHOW.CID_NOT_EXIST)
+        window.location.replace('/customer_login/')
+        return
+      }
+      if (res['message']['state'] === 1) {
         window.location.replace('/customer_login/')
         return
       }
@@ -320,6 +357,7 @@
       this.eid = res['message']['eid']
       this.name = res['message']['name']
       this.icon = res['message']['icon']
+      this.status = (res['message']['state']).toString()
     }
   }
 </script>

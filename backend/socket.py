@@ -135,7 +135,46 @@ def customer_connect(sid, message):
         enterprise_list[message['eid']].append(message['cid'])
         customer_list[message['cid']] = []
     talker_list[message['cid']] = sid
+    obj = Customer.objects.get(CID = message['cid'])
+    obj.state = 3
+    obj.save()
     sio.emit('customer connected', {'data': 'connected'}, room = sid, namespace = '/test')
+
+@sio.on('continue work', namespace = '/test')
+def continue_work(sid, message):
+    sio.emit('continue work', {'data': True}, room = sid, namespace = '/test')
+
+@sio.on('transfer customer', namespace = '/test')
+def transfer_customer(sid, message):
+    global customer_list, conversation
+    for i in range(len(customer_list[message['fromcid']])):
+        if customer_list[message['fromcid']] == message['uid']:
+            del customer_list[message['fromcid']][i]
+            break
+    obj = Customer.objects.get(CID = message['fromcid'])
+    obj.service_number -= 1
+    obj.save()
+    content = conversation[message['uid']]
+    customer_list[message['targetcid']].insert(0, message['uid'])
+    obj = Customer.objects.get(CID = message['targetcid'])
+    obj.service_number += 1
+    obj.save()
+    sio.emit('transfer customer', {'content': content, 'uid': message['uid']}, room = talker_list[message['targetcid']], namespace = '/test')
+    sio.emit('transfer customer', {'cid': message['targetcid']}, room = talker_list[message['uid']], namespace = '/test')
+
+@sio.on('customer rest', namespace = '/test')
+def customer_rest(sid, message):
+    global talker_list, customer_list, enterprise_list
+    del talker_list[message['cid']]
+    del customer_list[message['cid']]
+    for i in range(len(enterprise_list[message['eid']])):
+        if enterprise_list[message['eid']][i] == message['cid']:
+            del enterprise_list[message['eid']][i]
+            break
+    obj = Customer.objects.get(CID = message['cid'])
+    obj.state = 2
+    obj.save()
+    sio.disconnect(sid, namespace = '/test')
 
 @sio.on('disconnect request', namespace = '/test')
 def disconnect_request(sid):

@@ -118,6 +118,12 @@
           data['src'] = decodeURI(msg['src'])
           this.content.push(data)
         })
+      },
+      beTransfered () {
+        this.socket.on('transfer customer', (msg) => {
+          this.cid = msg['cid']
+          alert('您已被转接')
+        })
       }
     },
     mounted: function () {
@@ -131,6 +137,7 @@
         this.oldData()
         this.connectedToCustomer()
         this.myResponse()
+        this.beTransfered()
         this.socket.on('no customer online', (msg) => {
           alert('都下班还来干嘛！！')
         })

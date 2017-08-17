@@ -35,7 +35,7 @@
         <Input v-model="passwordItem.confirm" class="input" placeholder="确认新密码">
       </Form-item>
       <Form-item>
-        <Button type="primary">提交</Button>
+        <Button type="primary" @click="submit">提交</Button>
       </Form-item>
     </Form>
   </div>
@@ -116,6 +116,38 @@
             this.$Message.success('保存成功')
           }
         })
+      },
+      reset () {
+        this.passwordItem.oldpassword = ''
+        this.passwordItem.newpassword = ''
+        this.passwordItem.confirm = ''
+      },
+      submit () {
+        if (this.passwordItem.newpassword !== this.passwordItem.confirm) {
+          this.$Message.warning('两次输入的密码不一致')
+        } else if (this.passwordItem.newpassword.trim().length < 8) {
+          this.$Message.warning('密码长度不能小于8')
+        } else {
+          fetch('/api/customer/modify_password/', {
+            method: 'post',
+            credentials: 'same-origin',
+            headers: {
+              'X-CSRFToken': this.getCookie('csrftoken'),
+              'Accept': 'application/json',
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({old: this.passwordItem.oldpassword, new: this.passwordItem.newpassword})
+          }).then((res) => res.json()).then((res) => {
+            if (res['flag'] === global_.CONSTGET.WRONG_PASSWORD) {
+              this.$Message.error(global_.CONSTSHOW.WRONG_PASSWORD)
+            } else if (res['flag'] === global_.CONSTGET.FAIL_MODIFY) {
+              this.$Message.error(global_.CONSTSHOW.FAIL_MODIFY)
+            } else {
+              this.$Message.success('修改成功')
+            }
+          })
+        }
+        this.reset()
       }
     },
     created: function () {
