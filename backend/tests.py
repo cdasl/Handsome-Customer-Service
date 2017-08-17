@@ -210,11 +210,9 @@ class OnlineCustomersTestCase(TestCase):
         request.session = {}
         request.session['eid'] = 'test_eid1'
         result = jrToJson(enterprise.enterprise_online_customers(request))['message']
-        self.assertEqual(len(result), 2)
-        self.assertEqual(result[0]['cid'], 'test_cid2')
-        self.assertEqual(result[0]['name'], 'test_name2')
-        self.assertEqual(result[1]['cid'], 'test_cid3')
-        self.assertEqual(result[1]['name'], 'test_name3')
+        self.assertEqual(len(result), 1)
+        self.assertEqual(result[0]['cid'], 'test_cid1')
+        self.assertEqual(result[0]['name'], 'test_name1')
         del request.session['eid']
         result = jrToJson(enterprise.enterprise_online_customers(request))['flag']
         self.assertEqual(result, const_table.const.EID_NOT_EXIST)

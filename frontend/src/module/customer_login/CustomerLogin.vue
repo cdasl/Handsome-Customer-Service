@@ -55,7 +55,7 @@
           'email': this.findback.email
         })
         this.findback.email = ''
-        if (res['message'] === 'enterprise_reset') {
+        if (res['flag'] === global_.CONSTGET.SUCCESS) {
           this.$Message.warning('已发送一封邮件给您，请注意查看')
         } else {
           this.$Message.warning('发生错误')

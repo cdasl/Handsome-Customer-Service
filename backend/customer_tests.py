@@ -1,7 +1,7 @@
 from django.test import TestCase
 from django.test.client import RequestFactory
 from .apis import enterprise, helper, messages, customer
-from . import models
+from . import models, const, const_table
 import json, hashlib, time, random, string, datetime
 import django.utils.timezone as timezone
 
@@ -375,3 +375,71 @@ class CustomerGetIDTestCase(TestCase):
         #失败
         del request.session['cid']
         self.assertEqual(jrToJson(customer.customer_get_info(request))['flag'], -12)
+
+class CustomerOtherOnlineTestCase(TestCase):
+    '''测试获取其他在线客服'''
+    def setUp(self):
+        models.Customer.objects.create(
+            CID = 'test_cid1', EID = 'test_eid1', state = 3, last_login = datetime.datetime.now()
+        )
+        models.Customer.objects.create(
+            CID = 'test_cid2', EID = 'test_eid1', state = 2, last_login = datetime.datetime.now()
+        )
+        models.Customer.objects.create(
+            CID = 'test_cid3', EID = 'test_eid1', state = 3, last_login = datetime.datetime.now()
+        )
+        models.Customer.objects.create(
+            CID = 'test_cid4', EID = 'test_eid2', state = 2, last_login = datetime.datetime.now()
+        )
+
+    def test_customer_other_online(self):
+        rf = RequestFactory()
+        request = rf.post('api/customer/get_other_online/')
+        request.session =  {}
+        info = {}
+        #成功
+        request.session['cid'] = 'test_cid1'
+        request._body = json.dumps(info).encode('utf8')
+        result = jrToJson(customer.customer_other_online(request))['message']
+        self.assertEqual(len(result), 1)
+        #失败
+        del request.session['cid']
+        self.assertEqual(jrToJson(customer.customer_other_online(request))['flag'], -12)
+
+class CustomerModifyPwdTestCase(TestCase):
+    '''测试客服改密码'''
+    def setUp(self):
+        CustomerLoginTestCase.setUp(self)
+
+    def test_modify_password(self):
+        rf = RequestFactory()
+        request = rf.post('api/customer/modify_password/')
+        request.session =  {}
+        info = {
+            'old': 'password1',
+            'new': 'sometimes_stupid'
+        }
+        #成功
+        request.session['cid'] = 'test_cid'
+        request._body = json.dumps(info).encode('utf8')
+        result = jrToJson(customer.customer_modify_password(request))['flag']
+        self.assertEqual(result, const_table.const.SUCCESS)
+        new_pwd = info['new']
+        new_salt = models.Customer.objects.get(CID = 'test_cid').salt
+        md5 = hashlib.md5()
+        md5.update((new_pwd + new_salt).encode('utf8'))
+        self.assertEqual(md5.hexdigest(), models.Customer.objects.get(CID = 'test_cid').password)
+
+    def test_modify_fail(self):
+        rf = RequestFactory()
+        request = rf.post('api/customer/modify_password/')
+        request.session =  {}
+        info = {
+            'old': 'always_handsome',
+            'new': 'sometimes_stupid'
+        }
+        #旧密码不对
+        request.session['cid'] = 'test_cid'
+        request._body = json.dumps(info).encode('utf8')
+        result = jrToJson(customer.customer_modify_password(request))['flag']
+        self.assertEqual(result, const_table.const.WRONG_PASSWORD)

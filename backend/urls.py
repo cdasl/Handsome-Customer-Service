@@ -60,6 +60,7 @@ urlpatterns = [
     url(r'^api/enter/customer_info/$', enterprise.inquire_customer_info),
     url(r'^api/enter/delete_question/$', enterprise.enterprise_delete_question),
     url(r'^api/enter/modify_question/$', enterprise.enterprise_modify_question),
+    url(r'^api/url_validate/$', enterprise.UrlValidateJudge),
     #customer_apis
     url(r'^user/$', socket.user, name = 'socket'),
     url(r'^socketio*', socket.user, name = 'socketio'),
@@ -79,7 +80,8 @@ urlpatterns = [
     url(r'^api/customer/get_alldata/$', customer.customer_get_alldata),
     url(r'^api/customer/get_info/$', customer.customer_get_info),
     url(r'^api/customer/get_id/$', customer.customer_get_id),
-    url(r'^api/url_validate/$', enterprise.UrlValidateJudge),
+    url(r'^api/customer/get_other_online/$', customer.customer_other_online),
+    url(r'^api/customer/modify_password/$', customer.customer_modify_password),
     #404
     url(r'',  TemplateView.as_view(template_name = '404.html')),
 ]
