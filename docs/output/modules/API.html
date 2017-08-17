@@ -142,7 +142,7 @@
 <ul class="simple">
 <li><strong>CID</strong> - 客服的id</li>
 </ul>
-<p><strong>返回值</strong>:包含成功/失败消息和当前客服平均消息数的JsonResponse</p>
+<p><strong>返回值</strong>:当前客服平均消息数</p>
 </dd></dl>
 
 <dl class="function">
@@ -152,7 +152,7 @@
 <ul class="simple">
 <li><strong>CID</strong> - 客服的id</li>
 </ul>
-<p><strong>返回值</strong>:包含成功/失败消息和当前客服会话的平均时间的JsonResponse</p>
+<p><strong>返回值</strong>:当前客服会话的平均时间</p>
 </dd></dl>
 
 <dl class="function">
@@ -202,7 +202,7 @@
 <ul class="simple">
 <li><strong>CID</strong> - 客服的id</li>
 </ul>
-<p><strong>返回值</strong>:包含成功/失败消息和当前客服最近24小时会话数的JsonResponse</p>
+<p><strong>返回值</strong>:当前客服最近24小时会话数</p>
 </dd></dl>
 
 <dl class="function">
@@ -250,7 +250,12 @@
 <dl class="function">
 <dt id="backend.apis.customer.customer_login_helper">
 <code class="descclassname">backend.apis.customer.</code><code class="descname">customer_login_helper</code><span class="sig-paren">(</span><em>info</em><span class="sig-paren">)</span><a class="headerlink" href="#backend.apis.customer.customer_login_helper" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>客服登录预处理</p>
+<ul class="simple">
+<li><strong>info</strong> - 包含登录信息的字典</li>
+</ul>
+<p><strong>返回值</strong>: 成功/失败消息的列表</p>
+</dd></dl>
 
 <dl class="function">
 <dt id="backend.apis.customer.customer_logout">
@@ -273,13 +278,33 @@
 </dd></dl>
 
 <dl class="function">
+<dt id="backend.apis.customer.customer_modify_password">
+<code class="descclassname">backend.apis.customer.</code><code class="descname">customer_modify_password</code><span class="sig-paren">(</span><em>request</em><span class="sig-paren">)</span><a class="headerlink" href="#backend.apis.customer.customer_modify_password" title="Permalink to this definition">¶</a></dt>
+<dd><p>客服修改密码</p>
+<ul class="simple">
+<li><strong>request</strong> - 前端发送的请求，包含旧密码和新密码</li>
+</ul>
+<p><strong>返回值</strong>:包含成功/失败消息的JsonResponse</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="backend.apis.customer.customer_other_online">
+<code class="descclassname">backend.apis.customer.</code><code class="descname">customer_other_online</code><span class="sig-paren">(</span><em>request</em><span class="sig-paren">)</span><a class="headerlink" href="#backend.apis.customer.customer_other_online" title="Permalink to this definition">¶</a></dt>
+<dd><p>获取除当前客服外其他在线客服</p>
+<ul class="simple">
+<li><strong>request</strong> - 前端发来的请求，session中有cid</li>
+</ul>
+<p><strong>返回值</strong>:包含成功/失败消息和当前其他在线客服列表的JsonResponse</p>
+</dd></dl>
+
+<dl class="function">
 <dt id="backend.apis.customer.customer_serviced_number">
 <code class="descclassname">backend.apis.customer.</code><code class="descname">customer_serviced_number</code><span class="sig-paren">(</span><em>CID</em><span class="sig-paren">)</span><a class="headerlink" href="#backend.apis.customer.customer_serviced_number" title="Permalink to this definition">¶</a></dt>
 <dd><p>获取客服服务过的人数</p>
 <ul class="simple">
 <li><strong>CID</strong> - 客服的id</li>
 </ul>
-<p><strong>返回值</strong>:包含成功/失败消息和当前客服服务过的人数的JsonResponse</p>
+<p><strong>返回值</strong>:当前客服服务过的人数</p>
 </dd></dl>
 
 <dl class="function">
@@ -289,7 +314,7 @@
 <ul class="simple">
 <li><strong>CID</strong> - 客服的id</li>
 </ul>
-<p><strong>返回值</strong>:包含成功/失败消息和当前客服总会话数的JsonResponse</p>
+<p><strong>返回值</strong>:当前客服总会话数</p>
 </dd></dl>
 
 <dl class="function">
@@ -299,7 +324,7 @@
 <ul class="simple">
 <li><strong>CID</strong> - 客服的id</li>
 </ul>
-<p><strong>返回值</strong>:包含成功/失败消息和当前客服发送的总消息数的JsonResponse</p>
+<p><strong>返回值</strong>:当前客服发送的总消息数</p>
 </dd></dl>
 
 <dl class="function">
@@ -309,7 +334,7 @@
 <ul class="simple">
 <li><strong>CID</strong> - 客服的id</li>
 </ul>
-<p><strong>返回值</strong>:包含成功/失败消息和当前客服总服务时间的JsonResponse</p>
+<p><strong>返回值</strong>:当前客服总服务时间</p>
 </dd></dl>
 
 <dl class="function">
