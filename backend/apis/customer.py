@@ -223,10 +223,10 @@ def customer_avgtime_dialogs(CID):
     * **CID** - 客服的id\n
     **返回值**:当前客服会话的平均时间
     """
-    totaltime = jrToJson(customer_total_servicedtime(CID))['message']
-    total = jrToJson(customer_total_dialogs(CID))['message']
+    totaltime = customer_total_servicedtime(CID)
+    total = customer_total_dialogs(CID)
     if total == 0:
-        return JsonResponse({'flag': const_table.const.SUCCESS, 'message': 0})
+        return 0
     avgtime = round(totaltime / total, 2)
     return avgtime
 
