@@ -29,7 +29,7 @@ urlpatterns = [
     url(r'^reset_pwd/$', TemplateView.as_view(template_name = 'reset_password.html')),
     url(r'^enter_manage/$', TemplateView.as_view(template_name = 'enterprise_manage.html')),
     url(r'^customer_manage/$', TemplateView.as_view(template_name = 'customer_manage.html')),
-    url(r'^user/$', TemplateView.as_view(template_name = 'User.html')),
+    url(r'^user/([a-zA-Z0-9]+)/([a-zA-Z0-9]+)$', TemplateView.as_view(template_name = 'User.html')),
     url(r'^storeimage/$', views.store_image),
     url(r'^customer_login/$', TemplateView.as_view(template_name = 'customer_login.html')),
 

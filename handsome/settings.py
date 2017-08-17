@@ -124,6 +124,7 @@ CORS_ORIGIN_ALLOW_ALL = True
 CORS_ORIGIN_WHITELIST = ()
 CORS_ALLOW_METHODS = ('GET', 'POST')
 CORS_ALLOW_HEADERS = ('*')
+X_FRAME_OPTIONS = 'ALLOWALL'
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 

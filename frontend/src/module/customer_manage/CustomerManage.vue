@@ -142,7 +142,7 @@
         this.show = true
       },
       changeStatus (curvalue) {
-        if (curvalue === 2) {
+        if (curvalue === '2') {
           if (this.lists.length !== 0) {
             /* global alert: true */
             alert('还有客户在线，不可以休息')
@@ -301,7 +301,7 @@
         if (this.socket === null) {
           /* global location io: true */
           this.socket = io.connect('http://' + document.domain + ':' + location.port + '/test')
-          this.socket.emit('a customer connected', {cid: this.cid, eid: this.eid, name: this.name})
+          this.socket.emit('a customer connected', {cid: this.cid, eid: this.eid})
           this.oldData()
           this.newUser()
           this.myResponse()
