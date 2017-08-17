@@ -95,7 +95,7 @@
         this.reset()
         if (res['flag'] === global_.CONSTGET.SUCCESS) {
           this.$Message.success('登陆成功!')
-          window.location.href = '/customer_manage'
+          window.location.href = '/customer_manage/'
         } else if (res['flag'] === global_.CONSTGET.ACCOUNT_NOT_ACTIVETED) {
           this.$Message.warning('账号未激活!')
         } else if (res['flag'] === global_.CONSTGET.ACCOUNT_LOGGED_OFF) {
