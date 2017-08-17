@@ -22,3 +22,7 @@ def api(request):
 @ensure_csrf_cookie
 def enterprise(request):
     return render(request, 'enterprise.html')
+
+@csrf_exempt
+def user(request):
+    return render(request, 'User.html')

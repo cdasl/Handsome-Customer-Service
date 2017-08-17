@@ -38,7 +38,3 @@ def customer_active(request):
 @ensure_csrf_cookie
 def enterprise_manage(request):
     return render(request, 'enterprise_manage.html')
-
-@ensure_csrf_cookie
-def user(request):
-    return render(request,'User.html')

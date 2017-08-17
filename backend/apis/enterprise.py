@@ -622,10 +622,14 @@ def enterprise_set_chatbox_type(request):
         return JsonResponse({'flag': const_table.const.EID_NOT_EXIST})
     try:
         models.Enterprise.objects.filter(EID = EID, state = 1).update(chatbox_type = info['chatbox_type'])
-        code = 'abcdefzddhetdhsdzfsdgjhgsdxghfgggtfgchgsdzdfsdghfgdfj'
+        code = '?eid=' + EID + '"'
+        if info['chatbox_type'] == 2:
+            code = '<script src="http://localhost:8000/static/js/template/newBlank.js' + code + ' id="handsomejs"></script>'
+        elif info['chatbox_type'] == 1:
+            code = '<script src="http://localhost:8000/static/js/template/oldBlank.js' + code + ' id="handsomejs"></script>'
         return JsonResponse({'flag': const_table.const.SUCCESS, 'message': code})
     except Exception:
-        return JsonResponse({'flag': const_table.const.ERROR})
+        return JsonResponse({'flag': const_table.const.ERROR})  
 
 @ensure_csrf_cookie
 def enterprise_setuser_message(request):

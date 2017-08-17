@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  <div id="app" :class="userTalk">
     <div class="sidebar">
       <card></card>
       <list></list>
@@ -23,6 +23,7 @@
     components: {Card, List, TextInput, Message},
     data () {
       return {
+        userTalk: '',
         socket: null,
         content: [],
         cid: '',
@@ -121,12 +122,20 @@
       }
     },
     mounted: function () {
+      let href = window.location.href
+      this.uid = href.split('/')[href.split('/').length - 1]
+      this.eid = href.split('/')[href.split('/').length - 2]
+      console.log(this.eid)
+      console.log(this.uid)
+      if (this.uid[3] === '1') {
+        this.userTalk = 'user-talk'
+      } else {
+        this.userTalk = ''
+      }
       if (this.socket === null) {
         let namespace = '/test'
         /* global location io: true */
         this.socket = io.connect('http://' + document.domain + ':' + location.port + namespace)
-        /* global md5: true */
-        this.uid = md5(this.dateformat(new Date()))
         this.socket.emit('a user connected', {uid: this.uid})
         this.oldData()
         this.connectedToCustomer()
@@ -151,6 +160,13 @@
   height: 600px;
   overflow: hidden;
   border-radius: 3px;
+}
+.user-talk {
+  margin: -20px auto!important;
+  width: 100vw!important;
+  height: 100vh!important;
+  overflow: hidden!important;
+  border-radius: 3px!important;
 }
 #app .sidebar, #app .main {
   height: 100%;
