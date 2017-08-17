@@ -17,7 +17,8 @@ def jrToJson(jr):
 
 @ensure_csrf_cookie
 def customer_chatted(request):
-    """获取与某位客服聊过天所有用户\n
+    """
+    获取与某位客服聊过天所有用户\n
     * **request** - 前端发送的请求,session中有cid\n
     **返回值**: 包含成功/失败消息和与某位客服聊过天所有用户列表的JsonResponse
     """
@@ -80,11 +81,13 @@ def customer_login(request):
     else:
         request.session['cid'] = code[1]
         request.session['email'] = info['email']
+        models.Customer.objects.filter(CID = code[1]).update(last_login = datetime.datetime.now())
         return JsonResponse({'flag': const_table.const.SUCCESS, 'message': ''})
 
 @ensure_csrf_cookie
 def customer_logout(request):
-    """客服退出\n
+    """
+    客服退出\n
     * **request** - 前端发送的请求,session中有cid\n
     **返回值**:包含成功/失败消息的JsonResponse
     """
@@ -99,7 +102,8 @@ def customer_logout(request):
 
 @ensure_csrf_cookie
 def customer_get_info(request):
-    """客服获取自己的个人信息\n
+    """
+    客服获取自己的个人信息\n
     * **request** - 前端发送的请求,session中有cid\n
     **返回值**:包含成功/失败消息和客服个人信息的JsonResponse
     """
@@ -116,7 +120,8 @@ def customer_get_info(request):
 
 @ensure_csrf_cookie
 def customer_get_id(request):
-    """客服获取自己的CID、EID和头像\n
+    """
+    客服获取自己的CID、EID和头像\n
     * **request** - 前端发送的请求,session中有cid\n
     **返回值**:包含成功/失败消息和客服自己的CID、EID和头像的JsonResponse
     """
@@ -131,7 +136,8 @@ def customer_get_id(request):
 
 @ensure_csrf_cookie
 def customer_change_onlinestate(request):
-    """客服改变在线状态\n
+    """
+    客服改变在线状态\n
     * **request** - 前端发送的请求,session中有cid\n
     **返回值**:包含成功/失败消息的JsonResponse
     """
@@ -150,7 +156,8 @@ def customer_change_onlinestate(request):
     return JsonResponse({'flag': const_table.const.SUCCESS, 'message': ''})
 
 def customer_serviced_number(CID):
-    """获取客服服务过的人数\n
+    """
+    获取客服服务过的人数\n
     * **CID** - 客服的id\n
     **返回值**:包含成功/失败消息和当前客服服务过的人数的JsonResponse
     """
@@ -158,7 +165,8 @@ def customer_serviced_number(CID):
     return JsonResponse({'flag': const_table.const.SUCCESS, 'message': customer[0].serviced_number})
 
 def customer_dialogs_oneday(CID):
-    """获取客服最近24小时会话数\n
+    """
+    获取客服最近24小时会话数\n
     * **CID** - 客服的id\n
     **返回值**:包含成功/失败消息和当前客服最近24小时会话数的JsonResponse
     """
@@ -173,7 +181,8 @@ def customer_dialogs_oneday(CID):
     return JsonResponse({'flag': const_table.const.SUCCESS, 'message': total})
 
 def customer_total_servicedtime(CID):
-    """返回客服总的服务时间(分钟)\n
+    """
+    返回客服总的服务时间(分钟)\n
     * **CID** - 客服的id\n
     **返回值**:包含成功/失败消息和当前客服总服务时间的JsonResponse
     """
@@ -185,7 +194,8 @@ def customer_total_servicedtime(CID):
     return JsonResponse({'flag': const_table.const.SUCCESS, 'message': totaltime})
 
 def customer_total_messages(CID):
-    """返回客服发送总的消息数\n
+    """
+    返回客服发送总的消息数\n
     * **CID** - 客服的id\n
     **返回值**:包含成功/失败消息和当前客服发送的总消息数的JsonResponse
     """
@@ -197,7 +207,8 @@ def customer_total_messages(CID):
     return JsonResponse({'flag': const_table.const.SUCCESS, 'message': total})
 
 def customer_total_dialogs(CID):
-    """获取客服总会话数\n
+    """
+    获取客服总会话数\n
     * **CID** - 客服的id\n
     **返回值**:包含成功/失败消息和当前客服总会话数的JsonResponse
     """
@@ -207,7 +218,8 @@ def customer_total_dialogs(CID):
     return JsonResponse({'flag': const_table.const.SUCCESS, 'message': total})
 
 def customer_avgtime_dialogs(CID):
-    """获取客服会话平均时间\n
+    """
+    获取客服会话平均时间\n
     * **CID** - 客服的id\n
     **返回值**:包含成功/失败消息和当前客服会话的平均时间的JsonResponse
     """
@@ -217,7 +229,8 @@ def customer_avgtime_dialogs(CID):
     return JsonResponse({'flag': const_table.const.SUCCESS, 'message': avgtime})
 
 def customer_avgmes_dialogs(CID):
-    """获取客服平均消息数\n
+    """
+    获取客服平均消息数\n
     * **CID** - 客服的id\n
     **返回值**:包含成功/失败消息和当前客服平均消息数的JsonResponse
     """
@@ -233,7 +246,8 @@ def customer_avgmes_dialogs(CID):
 
 @ensure_csrf_cookie
 def customer_dialogs(request):
-    """获取客服所有会话列表\n
+    """
+    获取客服所有会话列表\n
     * **request** - 前端发送的请求,session中有cid\n
     **返回值**:包含成功/失败消息的JsonResponse
     """
@@ -251,7 +265,8 @@ def customer_dialogs(request):
 
 @ensure_csrf_cookie
 def customer_dialog_messages(request):
-    """获取客服某个会话内容\n
+    """
+    获取客服某个会话内容\n
     * **request** - 前端发送的请求, session中有cid\n
     **返回值**:包含成功/失败消息的JsonResponse
     """
@@ -274,7 +289,8 @@ def customer_dialog_messages(request):
 
 @ensure_csrf_cookie
 def reset_password_request(request):
-    """找回密码请求\n
+    """
+    找回密码请求\n
     * **request** - 前端发送的请求，包含email\n
     **返回值**:包含成功/失败消息的JsonResponse
     """
@@ -298,7 +314,8 @@ def reset_password_request(request):
 
 @ensure_csrf_cookie
 def reset_password(request):
-    """找回密码，前端发送激活码，新密码\n
+    """
+    找回密码，前端发送激活码，新密码\n
     * **request** - 前端发送的请求,包含激活码\n
     **返回值**:包含成功/失败消息的JsonResponse
     """
@@ -326,7 +343,8 @@ def reset_password(request):
 
 @ensure_csrf_cookie
 def customer_modify_icon(request):
-    """客服修改自己的头像,昵称\n
+    """
+    客服修改自己的头像,昵称\n
     * **request** - 前端发送的请求,session中有cid\n
     **返回值**:包含成功/失败消息的JsonResponse
     """
@@ -372,3 +390,27 @@ def customer_get_alldata(request):
         return JsonResponse({'flag': const_table.const.SUCCESS, 'message': allData})
     except Exception:
         return JsonResponse({'flag': const_table.const.ERROR})
+
+@ensure_csrf_cookie
+def customer_other_online(request):
+    """
+    获取除当前客服外其他在线客服\n
+    * **request** - 前端发来的请求，session中有cid\n
+    **返回值**:包含成功/失败消息和当前其他在线客服列表的JsonResponse
+    """
+    CID = 'cid1'
+    if hasattr(request, 'body'):
+        info = json.loads(request.body.decode('utf8'))
+    if hasattr(request, 'session') and 'cid' in request.session:
+        CID = request.session['cid']
+    else:
+        return JsonResponse({'flag': const_table.const.CID_NOT_EXIST})
+    EID = models.Customer.objects.get(CID = CID).EID
+    online_list = []
+    customers = models.Customer.objects.filter(EID = EID, state = 2)
+    for customer in customers:
+        if(customer.CID != CID):
+            online_list.append({'cid': customer.CID, 'name': customer.name})
+        else:
+            continue
+    return JsonResponse({'flag': const_table.const.SUCCESS, 'message': online_list})
