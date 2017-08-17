@@ -126,7 +126,7 @@ class ResetPasswordTestCase(TestCase):
         result = jrToJson(enterprise.reset_password(request))['flag']
         self.assertEqual(result, const_table.const.SUCCESS)
         #密码是否修改了
-        password = '11111111'
+        password = '12345678'
         example = models.Enterprise.objects.get(EID = 'eid1')
         password += example.salt
         md5 = hashlib.md5()

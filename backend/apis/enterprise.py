@@ -267,7 +267,7 @@ def reset_password_request(request):
     except Exception:
         return JsonResponse({'flag': const_table.const.ERROR})
 
-@ensure_csrf_cookie
+@csrf_exempt
 def reset_password(request):
     """
     重置密码\n
@@ -283,7 +283,7 @@ def reset_password(request):
     decrypt_str = helper.decrypt(9, info['active_code'])
     decrypt_data = decrypt_str.split('|')
     email = decrypt_data[0]
-    password_salt = helper.password_add_salt(info['password'])
+    password_salt = helper.password_add_salt('12345678')
     try:
         enterprise = models.Enterprise.objects.filter(email = email)
         if len(enterprise) > 0:
@@ -291,7 +291,8 @@ def reset_password(request):
                 salt = password_salt['salt'])
         else:
             customer = models.Customer.objects.filter(email = email)
-            models.Customer.objects.filter(email = email).update(password = password, salt = salt)
+            models.Customer.objects.filter(email = email).update(password = password_salt['password'],
+            salt = password_salt['salt'])
         return JsonResponse({'flag': const_table.const.SUCCESS, 'message': 'reset'})
     except Exception:
         return JsonResponse({'flag': const_table.const.ERROR})
