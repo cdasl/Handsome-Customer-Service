@@ -33,15 +33,18 @@ class CustomerLoginTestCase(TestCase):
         request = rf.post('api/customer/login/')
         request._body = json.dumps(info).encode('utf8')
         request.session = {}
-        self.assertEqual(jrToJson(customer.customer_login(request))['flag'], 1)
+        self.assertEqual(jrToJson(customer.customer_login(request))['flag'],
+        const_table.const.SUCCESS)
         #测试密码错误
         info['password'] = '123456789'
         request._body = json.dumps(info).encode('utf8')
-        self.assertEqual(jrToJson(customer.customer_login(request))['flag'], -1)
+        self.assertEqual(jrToJson(customer.customer_login(request))['flag'],
+        const_table.const.WRONG_PASSWORD)
         #测试登录失败
         info['email'] = '123456@qq.com'
         request._body = json.dumps(info).encode('utf8')
-        self.assertEqual(jrToJson(customer.customer_login(request))['flag'], -7)
+        self.assertEqual(jrToJson(customer.customer_login(request))['flag'],
+        const_table.const.WRONG_ACCOUNT)
 
 class CustomerLogoutTestCase(TestCase):
     '''测试客服退出Api'''
@@ -58,11 +61,13 @@ class CustomerLogoutTestCase(TestCase):
         #登出失败
         info = {}
         request._body = json.dumps(info).encode('utf8')
-        self.assertEqual(jrToJson(customer.customer_logout(request))['flag'], -12)
+        self.assertEqual(jrToJson(customer.customer_logout(request))['flag'],
+        const_table.const.CID_NOT_EXIST)
         #登出成功
         request.session['cid'] = 'test_cid1'
         request._body = json.dumps(info).encode('utf8')
-        self.assertEqual(jrToJson(customer.customer_logout(request))['flag'], 1)
+        self.assertEqual(jrToJson(customer.customer_logout(request))['flag'],
+        const_table.const.SUCCESS)
 
 class OnlineStateTestCase(TestCase):
     '''测试改变在线状态'''
@@ -79,12 +84,15 @@ class OnlineStateTestCase(TestCase):
         info = {}
         #失败
         request._body = json.dumps(info).encode('utf8')
-        self.assertEqual(jrToJson(customer.customer_change_onlinestate(request))['flag'], -12)
+        self.assertEqual(jrToJson(customer.customer_change_onlinestate(request))['flag'],
+        const_table.const.CID_NOT_EXIST)
         #成功
         request.session['cid'] = 'test_cid'
-        self.assertEqual(jrToJson(customer.customer_change_onlinestate(request))['flag'], 1)
+        self.assertEqual(jrToJson(customer.customer_change_onlinestate(request))['flag'],
+        const_table.const.SUCCESS)
         self.assertEqual(models.Customer.objects.get(CID = 'test_cid').state, 3)
-        self.assertEqual(jrToJson(customer.customer_change_onlinestate(request))['flag'], 1)
+        self.assertEqual(jrToJson(customer.customer_change_onlinestate(request))['flag'],
+        const_table.const.SUCCESS)
         self.assertEqual(models.Customer.objects.get(CID = 'test_cid').state, 2)
 
 class ServicedNumTestCase(TestCase):
@@ -271,7 +279,8 @@ class CustomerDialogListTestCase(TestCase):
         self.assertEqual((result[1])['uid'], '7')
         #失败
         del request.session['cid']
-        self.assertEqual(jrToJson(customer.customer_dialogs(request))['flag'], -12)
+        self.assertEqual(jrToJson(customer.customer_dialogs(request))['flag'],
+        const_table.const.CID_NOT_EXIST)
 
 class CustomerDialogMsgTestCase(TestCase):
     '''测试获取客服某个会话内容'''
@@ -285,6 +294,8 @@ class CustomerDialogMsgTestCase(TestCase):
             'did': '2'
         }
         #成功
+        request.session = {}
+        request.session['cid'] = 'test_cid1'
         request._body = json.dumps(info).encode('utf8')
         result = jrToJson(customer.customer_dialog_messages(request))['message']
         self.assertEqual(len(result), 2)
@@ -292,7 +303,8 @@ class CustomerDialogMsgTestCase(TestCase):
         #失败
         info['did'] = '10086'
         request._body = json.dumps(info).encode('utf8')
-        self.assertEqual(jrToJson(customer.customer_dialog_messages(request))['flag'], -16)
+        self.assertEqual(jrToJson(customer.customer_dialog_messages(request))['flag'],
+        const_table.const.DIALOGID_NOT_EXIST)
 
 class CustomerModifyTestCase(TestCase):
     '''测试客服修改'''
@@ -310,12 +322,14 @@ class CustomerModifyTestCase(TestCase):
         #成功
         request.session['cid'] = 'test_cid1'
         request._body = json.dumps(info).encode('utf8')
-        self.assertEqual(jrToJson(customer.customer_modify_icon(request))['flag'], 1)
+        self.assertEqual(jrToJson(customer.customer_modify_icon(request))['flag'],
+        const_table.const.SUCCESS)
         self.assertEqual(models.Customer.objects.get(CID = 'test_cid1').name, 'Takahashi')
         self.assertEqual(models.Customer.objects.get(CID = 'test_cid1').icon, 'umaru')
         #失败
         del request.session['cid']
-        self.assertEqual(jrToJson(customer.customer_modify_icon(request))['flag'], -12)
+        self.assertEqual(jrToJson(customer.customer_modify_icon(request))['flag'],
+        const_table.const.CID_NOT_EXIST)
 
 class allDataTestCase(TestCase):
     '''测试返回客服所有数据'''
@@ -331,10 +345,12 @@ class allDataTestCase(TestCase):
         #成功
         request.session['cid'] = 'test_cid1'
         request._body = json.dumps(info).encode('utf8')
-        self.assertEqual(jrToJson(customer.customer_get_alldata(request))['flag'], 1)
+        self.assertEqual(jrToJson(customer.customer_get_alldata(request))['flag'],
+        const_table.const.SUCCESS)
         #失败
         del request.session['cid']
-        self.assertEqual(jrToJson(customer.customer_get_alldata(request))['flag'], -12)
+        self.assertEqual(jrToJson(customer.customer_get_alldata(request))['flag'],
+        const_table.const.CID_NOT_EXIST)
 
 class CustomerGetInfoTestCase(TestCase):
     '''测试客服获取个人信息'''
@@ -354,7 +370,8 @@ class CustomerGetInfoTestCase(TestCase):
         self.assertEqual(result['name'], 'test_name')
         #失败
         del request.session['cid']
-        self.assertEqual(jrToJson(customer.customer_get_info(request))['flag'], -12)
+        self.assertEqual(jrToJson(customer.customer_get_info(request))['flag'],
+        const_table.const.CID_NOT_EXIST)
 
 class CustomerGetIDTestCase(TestCase):
     '''测试客服获取id'''
@@ -374,7 +391,8 @@ class CustomerGetIDTestCase(TestCase):
         self.assertEqual(result['cid'], 'test_cid1')
         #失败
         del request.session['cid']
-        self.assertEqual(jrToJson(customer.customer_get_info(request))['flag'], -12)
+        self.assertEqual(jrToJson(customer.customer_get_info(request))['flag'],
+        const_table.const.CID_NOT_EXIST)
 
 class CustomerOtherOnlineTestCase(TestCase):
     '''测试获取其他在线客服'''
@@ -404,7 +422,8 @@ class CustomerOtherOnlineTestCase(TestCase):
         self.assertEqual(len(result), 1)
         #失败
         del request.session['cid']
-        self.assertEqual(jrToJson(customer.customer_other_online(request))['flag'], -12)
+        self.assertEqual(jrToJson(customer.customer_other_online(request))['flag'],
+        const_table.const.CID_NOT_EXIST)
 
 class CustomerModifyPwdTestCase(TestCase):
     '''测试客服改密码'''
