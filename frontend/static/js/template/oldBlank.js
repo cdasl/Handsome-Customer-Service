@@ -12,6 +12,7 @@ function oldBlank () {
   frame.src = href
   frame.style = 'position:fixed;display:block;width:50vw;height:60vh;left:25vw;top:15vh;'
   frame.scrolling = 'no'
+  frame.id = 'handsome-talk'
   document.body.appendChild(frame)
 }
 function remove () {
