@@ -407,7 +407,7 @@ def customer_other_online(request):
         return JsonResponse({'flag': const_table.const.CID_NOT_EXIST})
     EID = models.Customer.objects.get(CID = CID).EID
     online_list = []
-    customers = models.Customer.objects.filter(EID = EID, state = 2)
+    customers = models.Customer.objects.filter(EID = EID, state = 3)
     for customer in customers:
         if(customer.CID != CID):
             online_list.append({'cid': customer.CID, 'name': customer.name})
