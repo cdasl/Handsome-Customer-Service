@@ -284,10 +284,10 @@ def customer_dialog_messages(request):
     if 'cid' in request.session:
         CID = request.session['cid']
     DID = info['did']
+    messages_list = []
     dialog = models.Message.objects.filter(DID = DID)
     if len(dialog) == 0:
-        return JsonResponse({'flag': const_table.const.DIALOGID_NOT_EXIST})
-    messages_list = []    
+        return JsonResponse({'flag': const_table.const.SUCCESS, 'message': messages_list})    
     messages = models.Message.objects.filter(DID = DID).order_by('date')
     for message in messages:
         if message.SID == CID or message.SID == 'robot':
