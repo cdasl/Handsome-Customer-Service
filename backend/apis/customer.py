@@ -55,7 +55,8 @@ def customer_login_helper(info):
         password += customer.salt
         md5.update(password.encode('utf8'))
         if md5.hexdigest() == customer.password:
-            if customer.state == 1  or customer.state == 2:
+            #customer.state>1时，全部置为1
+            if customer.state >= 1:
                 #成功
                 models.Customer.objects.filter(email = email).update(state = 2)
                 return (1, customer.CID)
