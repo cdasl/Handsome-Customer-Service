@@ -403,7 +403,7 @@ def enterprise_online_customers(request):
     else:
         return JsonResponse({'flag': const_table.const.EID_NOT_EXIST})
     online_list = []
-    customers = models.Customer.objects.filter(EID = EID, state = 2)
+    customers = models.Customer.objects.filter(EID = EID, state = 3)
     for customer in customers:
         online_list.append({'cid': customer.CID, 'name': customer.name})
     return JsonResponse({'flag': const_table.const.SUCCESS, 'message': online_list})
