@@ -42,6 +42,11 @@ def customer_chatted(request):
     return JsonResponse({'flag': const_table.const.SUCCESS, 'message': list(set(user_list))})
 
 def customer_login_helper(info):
+    """
+    客服登录预处理\n
+    * **info** - 包含登录信息的字典\n
+    **返回值**: 成功/失败消息的列表
+    """
     try:
         email = info['email']
         password = info['password']

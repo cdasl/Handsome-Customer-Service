@@ -104,8 +104,8 @@ class ServicedNumTestCase(TestCase):
 
     def test_serviced_number(self):
         CID = 'test_cid'
-        result = jrToJson(customer.customer_serviced_number(CID))
-        self.assertEqual(result['message'], 100)
+        result = customer.customer_serviced_number(CID)
+        self.assertEqual(result, 100)
 
 class CustomerOnedayTestCase(TestCase):
     '''测试客服24h的会话数'''
@@ -125,8 +125,8 @@ class CustomerOnedayTestCase(TestCase):
     
     def test_customer_oneday(self):
         CID = 'test_cid1'
-        result = jrToJson(customer.customer_dialogs_oneday(CID))
-        self.assertEqual(result['message'], 2)
+        result = customer.customer_dialogs_oneday(CID)
+        self.assertEqual(result, 2)
 
 class CustomerTotalMsgTestCase(TestCase):
     '''测试客服总消息数'''
@@ -160,8 +160,8 @@ class CustomerTotalMsgTestCase(TestCase):
 
     def test_customer_total_msg(self):
         CID = 'test_cid1'
-        result = jrToJson(customer.customer_total_messages(CID))
-        self.assertEqual(result['message'], 6)
+        result = customer.customer_total_messages(CID)
+        self.assertEqual(result, 6)
 
 class CustomerTotalServicedTimeTestCase(TestCase):
     '''测试客服服务的总分钟'''
@@ -181,8 +181,8 @@ class CustomerTotalServicedTimeTestCase(TestCase):
 
     def test_customer_total_minute(self):
         CID = 'test_cid1'
-        result = jrToJson(customer.customer_total_servicedtime(CID))
-        self.assertAlmostEqual(result['message'], 112, delta = 1)
+        result = customer.customer_total_servicedtime(CID)
+        self.assertAlmostEqual(result, 112, delta = 1)
 
 class CustomerTotalDialogTestCase(TestCase):
     '''测试客服总会话数'''
@@ -202,8 +202,8 @@ class CustomerTotalDialogTestCase(TestCase):
 
     def test_total_dialog(self):
         CID = 'test_cid1'
-        result = jrToJson(customer.customer_total_dialogs(CID))
-        self.assertEqual(result['message'], 3)
+        result = customer.customer_total_dialogs(CID)
+        self.assertEqual(result, 3)
 
 class CustomerAvgTimeTestCase(TestCase):
     '''测试客服会话平均时间'''
@@ -223,8 +223,8 @@ class CustomerAvgTimeTestCase(TestCase):
 
     def test_customer_avg_time(self):
         CID = 'test_cid1'
-        result = jrToJson(customer.customer_avgtime_dialogs(CID))
-        self.assertAlmostEqual(result['message'], 37, delta = 0.8)
+        result = customer.customer_avgtime_dialogs(CID)
+        self.assertAlmostEqual(result, 37, delta = 0.8)
 
 class CustomerAvgMegTestCase(TestCase):
     '''测试客服平均消息数'''
@@ -258,8 +258,8 @@ class CustomerAvgMegTestCase(TestCase):
 
     def test_avg_msg(self):
         CID = 'test_cid1'
-        result = jrToJson(customer.customer_avgmes_dialogs(CID))
-        self.assertAlmostEqual(result['message'], 2, delta = 0.8)
+        result = customer.customer_avgmes_dialogs(CID)
+        self.assertAlmostEqual(result, 2, delta = 0.8)
 
 class CustomerDialogListTestCase(TestCase):
     '''测试获取客服所有会话列表'''
