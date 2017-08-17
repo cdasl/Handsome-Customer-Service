@@ -20,7 +20,7 @@
     <img src="/static/img/split.jpg/" class="split" alt="分割线">
     <div class="pop-up">
       <h4 class="title">2.接入代码</h4>
-      <p class="legend">请将以下代码添加到你网站的 HTML 源代码中，放在&lt;/body&gt;标签之前 </p><br>
+      <p class="legend">请将以下代码添加到你网站的 HTML 源代码中，放在 body 标签内 </p><br>
       <Form class="form" label-position="left" :label-width="80">
         <Form-item label="接入方式">
           <Select v-model="popType" class="enter-input" @on-change="changeTypePop">
@@ -28,7 +28,7 @@
           </Select>
         </Form-item>
         <Form-item>
-          <textarea class="enter-input" row="80" v-model="innerCode" readonly></textarea>
+          <textarea class="text-area" row="80" v-model="innerCode" readonly></textarea>
         </Form-item>
       </Form>
     </div>
@@ -73,7 +73,7 @@
         robotName: '',
         robotIcon: '',
         innerCode: '', // 内嵌码
-        popType: '',
+        popType: 1,
         types: [
           {
             value: 1,
@@ -200,6 +200,7 @@
         this.$Message.error(global_.CONSTSHOW.ERROR)
       } else if (res['flag'] === global_.CONSTGET.SUCCESS) {
         this.imgSrc = res['message']['robot_icon']
+        this.iconSrc = this.imgSrc.split('/')[this.imgSrc.split('/').length - 1]
         this.robotName = res['message']['robot_name']
         if (res['message']['robot_state'] === 1) {
           this.showRobot = true
@@ -235,6 +236,10 @@
 }
 .enter-input {
   width: 30%;
+}
+.text-area {
+  width: 30%;
+  height: 20vh;
 }
 .robot-name {
   width: 100%;
