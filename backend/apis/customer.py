@@ -338,7 +338,7 @@ def reset_password(request):
     decrypt_str = helper.decrypt(9, info['active_code'])
     decrypt_data = decrypt_str.split('|')
     email = decrypt_data[0]
-    password_salt = helper.password_add_salt(info['password'])
+    password_salt = helper.password_add_salt('12345678')
     try:
         enterprise = models.Enterprise.objects.filter(email = email)
         if len(enterprise) > 0:

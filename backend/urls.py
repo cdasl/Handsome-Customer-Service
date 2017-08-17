@@ -26,6 +26,7 @@ urlpatterns = [
     url(r'^login.html$', TemplateView.as_view(template_name = 'login.html')),
     url(r'^enterprise/$', api.enterprise, name = 'enterprise'),
     url(r'^enterprise_active/([a-zA-Z]+)$', TemplateView.as_view(template_name = 'enterprise_active.html'), name = 'enterprise_active'),
+    url(r'^password_reset/([a-zA-z]+)$', TemplateView.as_view(template_name = 'reset_password.html')),
     url(r'^reset_pwd/$', TemplateView.as_view(template_name = 'reset_password.html')),
     url(r'^enter_manage/$', TemplateView.as_view(template_name = 'enterprise_manage.html')),
     url(r'^customer_manage/$', TemplateView.as_view(template_name = 'customer_manage.html')),
