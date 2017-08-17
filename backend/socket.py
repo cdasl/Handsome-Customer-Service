@@ -103,8 +103,6 @@ def connect_customer(sid, message):
     global customer_list, conversation, talker_list, enterprise_list
     num = 100
     target = None
-    print('******************************************')
-    print(enterprise_list)
     if message['eid'] not in enterprise_list:
         sio.emit('no customer online', {'data': 'no customer on line'}, room = sid, namespace = '/test')
         return
@@ -136,8 +134,6 @@ def customer_connect(sid, message):
             enterprise_list[message['eid']] = []
         enterprise_list[message['eid']].append(message['cid'])
         customer_list[message['cid']] = []
-    print('##############################################################')
-    print(enterprise_list)
     talker_list[message['cid']] = sid
     sio.emit('customer connected', {'data': 'connected'}, room = sid, namespace = '/test')
 

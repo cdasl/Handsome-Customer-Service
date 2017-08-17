@@ -125,8 +125,6 @@
       let href = window.location.href
       this.uid = href.split('/')[href.split('/').length - 1]
       this.eid = href.split('/')[href.split('/').length - 2]
-      console.log(this.eid)
-      console.log(this.uid)
       if (this.uid[3] === '1') {
         this.userTalk = 'user-talk'
       } else {

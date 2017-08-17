@@ -301,7 +301,7 @@
         if (this.socket === null) {
           /* global location io: true */
           this.socket = io.connect('http://' + document.domain + ':' + location.port + '/test')
-          this.socket.emit('a customer connected', {cid: this.cid, eid: this.eid, name: encodeURI(this.name)})
+          this.socket.emit('a customer connected', {cid: this.cid, eid: this.eid})
           this.oldData()
           this.newUser()
           this.myResponse()
