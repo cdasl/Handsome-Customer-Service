@@ -96,7 +96,7 @@ def customer_logout(request):
         CID = request.session['cid']
     else:
         return JsonResponse({'flag': const_table.const.CID_NOT_EXIST})
-    models.Customer.objects.filter(CID = CID).update(state = 1)
+    models.Customer.objects.filter(CID = CID).update(state = 1, service_number = 0)
     del request.session['cid']
     return JsonResponse({'flag': const_table.const.SUCCESS, 'message': ''})
 
