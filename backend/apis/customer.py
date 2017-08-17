@@ -414,3 +414,33 @@ def customer_other_online(request):
         else:
             continue
     return JsonResponse({'flag': const_table.const.SUCCESS, 'message': online_list})
+
+@ensure_csrf_cookie
+def customer_modify_password(request):
+    """
+    客服修改密码\n
+    * **request** - 前端发送的请求，包含旧密码和新密码\n
+    **返回值**:包含成功/失败消息的JsonResponse
+    """
+    if hasattr(request, 'body'):
+        info = json.loads(request.body.decode('utf8'))
+    if hasattr(request, 'session') and 'cid' in request.session:
+        CID = request.session['cid']
+    else:
+        return JsonResponse({'flag': const_table.const.EID_NOT_EXIST})
+    obj = models.Customer.objects.get(CID = CID)
+    salt = obj.salt
+    md5 = hashlib.md5()
+    md5.update((info['old'] + salt).encode('utf8'))
+    password = md5.hexdigest()
+    if password != obj.password:
+        return JsonResponse({'flag': const_table.const.WRONG_PASSWORD})
+    salt = ''.join(random.sample(string.ascii_letters + string.digits, 8))
+    md5 = hashlib.md5()
+    md5.update((info['new'] + salt).encode('utf8'))
+    password = md5.hexdigest()
+    try:
+        models.Customer.objects.filter(CID = CID).update(salt = salt, password = password)
+        return JsonResponse({'flag': const_table.const.SUCCESS, 'message': ''})
+    except Exception:
+        return JsonResponse({'flag': const_table.const.FAIL_MODIFY})
