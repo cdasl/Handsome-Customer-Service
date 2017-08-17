@@ -159,16 +159,16 @@ def customer_serviced_number(CID):
     """
     获取客服服务过的人数\n
     * **CID** - 客服的id\n
-    **返回值**:包含成功/失败消息和当前客服服务过的人数的JsonResponse
+    **返回值**:当前客服服务过的人数
     """
     customer = models.Customer.objects.filter(CID = CID)
-    return JsonResponse({'flag': const_table.const.SUCCESS, 'message': customer[0].serviced_number})
+    return customer[0].serviced_number
 
 def customer_dialogs_oneday(CID):
     """
     获取客服最近24小时会话数\n
     * **CID** - 客服的id\n
-    **返回值**:包含成功/失败消息和当前客服最近24小时会话数的JsonResponse
+    **返回值**:当前客服最近24小时会话数
     """
     total = 0
     nowtime = datetime.datetime.now()
@@ -178,61 +178,63 @@ def customer_dialogs_oneday(CID):
         time2 = time.mktime(dialog.start_time.timetuple())
         if time1 - time2 < 60 * 60 * 24:
             total += 1
-    return JsonResponse({'flag': const_table.const.SUCCESS, 'message': total})
+    return total
 
 def customer_total_servicedtime(CID):
     """
     返回客服总的服务时间(分钟)\n
     * **CID** - 客服的id\n
-    **返回值**:包含成功/失败消息和当前客服总服务时间的JsonResponse
+    **返回值**:当前客服总服务时间
     """
     totaltime = 0
     dialogs = models.Dialog.objects.filter(CID = CID)
     for dialog in dialogs:
         totaltime += (dialog.end_time - dialog.start_time).seconds
     totaltime = round(totaltime / 60, 2)
-    return JsonResponse({'flag': const_table.const.SUCCESS, 'message': totaltime})
+    return totaltime
 
 def customer_total_messages(CID):
     """
     返回客服发送总的消息数\n
     * **CID** - 客服的id\n
-    **返回值**:包含成功/失败消息和当前客服发送的总消息数的JsonResponse
+    **返回值**:当前客服发送的总消息数
     """
     total = 0
     dialogs = models.Dialog.objects.filter(CID = CID)
     for dialog in dialogs:
         for message in models.Message.objects.filter(DID = dialog.DID):
             total += 1
-    return JsonResponse({'flag': const_table.const.SUCCESS, 'message': total})
+    return total
 
 def customer_total_dialogs(CID):
     """
     获取客服总会话数\n
     * **CID** - 客服的id\n
-    **返回值**:包含成功/失败消息和当前客服总会话数的JsonResponse
+    **返回值**:当前客服总会话数
     """
     total = 0
     dialogs = models.Dialog.objects.filter(CID = CID)
     total = len(dialogs)
-    return JsonResponse({'flag': const_table.const.SUCCESS, 'message': total})
+    return total
 
 def customer_avgtime_dialogs(CID):
     """
     获取客服会话平均时间\n
     * **CID** - 客服的id\n
-    **返回值**:包含成功/失败消息和当前客服会话的平均时间的JsonResponse
+    **返回值**:当前客服会话的平均时间
     """
     totaltime = jrToJson(customer_total_servicedtime(CID))['message']
     total = jrToJson(customer_total_dialogs(CID))['message']
+    if total == 0:
+        return JsonResponse({'flag': const_table.const.SUCCESS, 'message': 0})
     avgtime = round(totaltime / total, 2)
-    return JsonResponse({'flag': const_table.const.SUCCESS, 'message': avgtime})
+    return avgtime
 
 def customer_avgmes_dialogs(CID):
     """
     获取客服平均消息数\n
     * **CID** - 客服的id\n
-    **返回值**:包含成功/失败消息和当前客服平均消息数的JsonResponse
+    **返回值**:当前客服平均消息数
     """
     totalmessage = 0
     totaldialog = 0
@@ -241,8 +243,11 @@ def customer_avgmes_dialogs(CID):
     for dialog in dialogs:
         messages = models.Message.objects.filter(DID = dialog.DID)
         totalmessage += len(messages)
-    avgmes = round(totalmessage / totaldialog, 2)
-    return JsonResponse({'flag': const_table.const.SUCCESS, 'message': avgmes})
+    if totaldialog == 0:
+        return 0
+    else:
+        avgmes = round(totalmessage / totaldialog, 2)
+        return avgmes
 
 @ensure_csrf_cookie
 def customer_dialogs(request):
@@ -378,13 +383,13 @@ def customer_get_alldata(request):
     else:
         return JsonResponse({'flag': const_table.const.CID_NOT_EXIST})
     try:
-        totaltime = jrToJson(customer_total_servicedtime(CID))['message']
-        totalmessage = jrToJson(customer_total_messages(CID))['message']
-        totaldialog = jrToJson(customer_total_dialogs(CID))['message']
-        totalserviced = jrToJson(customer_serviced_number(CID))['message']
-        todaydialog = jrToJson(customer_dialogs_oneday(CID))['message']
-        avgdialogtime = jrToJson(customer_avgtime_dialogs(CID))['message']
-        avgmessages = jrToJson(customer_avgmes_dialogs(CID))['message']
+        totaltime = customer_total_servicedtime(CID)
+        totalmessage = customer_total_messages(CID)
+        totaldialog = customer_total_dialogs(CID)
+        totalserviced = customer_serviced_number(CID)
+        todaydialog = customer_dialogs_oneday(CID)
+        avgdialogtime = customer_avgtime_dialogs(CID)
+        avgmessages = customer_avgmes_dialogs(CID)
         allData = {'totalTime': totaltime, 'totalMessage': totalmessage, 'totalDialog': totaldialog, 
         'totalServiced': totalserviced, 'todayDialog': todaydialog, 'avgDialogTime': avgdialogtime, 'avgMessages': avgmessages}
         return JsonResponse({'flag': const_table.const.SUCCESS, 'message': allData})
