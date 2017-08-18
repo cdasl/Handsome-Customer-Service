@@ -3,10 +3,28 @@
 let src = document.getElementById('handsomejs').src
 let temp = src.split('?')[src.split('?').length - 1]
 let eid = temp.split('=')[temp.split('=').length - 1]
+let uid = 'uid1' + Math.random().toString(36).substr(2)
 
-function oldBlank () {
+function handsomeSendInfo () {
+  // 将用户信息传给客服
+  user_info.uid = uid
+  fetch('http://localhost:8000/api/enter/send_user_info/', {
+    method: 'post',
+    credentials: 'same-origin',
+    body: JSON.stringify(user_info)
+  })
+  .then((res) => res.json())
+  .then((res) => {
+    if ('message' in res) {
+      console.log('用户信息发送成功')
+    } else {
+      console.log('用户信息发送失败')
+    }
+  })
+}
+
+function handsomeOldBlank () {
   // 页面添加iframe
-  let uid = 'uid1' + Math.random().toString(36).substr(2)
   let href = 'http://localhost:8000/user/' + eid + '/' + uid
   let frame = document.createElement('iframe')
   frame.src = href
@@ -14,8 +32,9 @@ function oldBlank () {
   frame.scrolling = 'no'
   frame.id = 'handsome-talk'
   document.body.appendChild(frame)
+  handsomeSendInfo()
 }
-function remove () {
+function handsomeRemove () {
   // 页面删除iframe
   let tmp = document.getElementById('handsome-talk')
   if (tmp) {
@@ -37,11 +56,11 @@ btn.onmouseover = () => {
 let show = false
 btn.onclick = function () {
   if (show) {
-    remove()
+    handsomeRemove()
     p.innerText = '咨询客服'
     btn.style.backgroundColor = '#2d8cf0'
   } else {
-    oldBlank()
+    handsomeOldBlank()
     p.innerText = '关闭窗口'
     btn.style.backgroundColor = 'lightblue'
   }
