@@ -279,8 +279,8 @@
       if (res['flag'] === global_.CONSTGET.SUCCESS) {
         for (let i = 0; i < res['message'].length; ++i) {
           this.dialogData.push({
-            'start_time': res['message'][i]['start_time'],
-            'end_time': res['message'][i]['end_time'],
+            'start_time': res['message'][i]['start_time'].substring(0, 10) + ' ' + res['message'][i]['start_time'].substring(11, 16),
+            'end_time': res['message'][i]['end_time'].substring(0, 10) + ' ' + res['message'][i]['end_time'].substring(11, 16),
             'cid': res['message'][i]['cid'],
             'did': res['message'][i]['did'],
             'uid': res['message'][i]['uid'],
@@ -288,6 +288,8 @@
             'feedback': res['message'][i]['feedback']
           })
         }
+        console.log(typeof res['message'][0]['start_time'])
+        console.log(res['message'][0]['start_time'])
         this.init(true)
       } else if (res['flag'] === global_.CONSTGET.ERROR) {
         this.$Message.error('历史会话获取失败')
