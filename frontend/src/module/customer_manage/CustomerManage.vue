@@ -77,7 +77,7 @@
         cid: '',
         eid: '',
         name: '',
-        icon: '/static/img/customer_icon/uh_1.gif',
+        icon: '',
         show: false,
         selected: '',
         customerList: [
@@ -320,6 +320,12 @@
           this.status = '3'
         })
       },
+      customerAlive () {
+        this.socket.on('customer alive', (msg) => {
+          console.log('alive')
+          this.socket.emit('customer alive', {cid: this.cid})
+        })
+      },
       userDisconnected () {
         this.socket.on('user disconnected', (msg) => {
           this.socket.emit('disconnect a user', {uid: msg['uid'], eid: this.eid, cid: this.cid})
@@ -336,6 +342,7 @@
           this.myResponse()
           this.userDisconnected()
           this.getTransferCustomer()
+          this.customerAlive()
           this.socket.on('continue work', (msg) => {
             this.status = '3'
           })

@@ -1,12 +1,22 @@
 <template>
 <div class="card">
   <header>
-    <img class="avatar" width="40" height="40" src="/static/img/background.jpg">
-    <p class="name">名字</p>
+    <img class="avatar" width="40" height="40" :src="icon">
+    <p class="name">{{ name }}</p>
   </header>
 </div>
 </template>
 <script>
+  export default {
+    props: {
+      icon: {
+        type: String
+      },
+      name: {
+        type: String
+      }
+    }
+  }
 </script>
 <style scoped lang="less" scoped>
 .card {

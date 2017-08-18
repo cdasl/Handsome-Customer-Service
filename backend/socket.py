@@ -11,9 +11,11 @@ sio = socketio.Server(async_mode = async_mode)
 thread = None
 talker_list = {}
 customer_list = {}
+customer_alive = {}
 enterprise_list = {}
 conversation = {}
 starttime = {}
+thread = None
 """
 talker_list以cid或uid为key存储sid customer_list以cid为key存储uid列表 conversation以uid为key存储聊天内容
 """
@@ -31,9 +33,64 @@ def time2str():
     date = datetime.datetime.now()
     return date.strftime('%Y-%m-%d %H:%M:%S')
 
-@csrf_exempt
-def user(request):
-    return render(request, 'user.html')
+def str2time(st):
+    t = time.strptime(st, '%Y-%m-%d %H:%M:%S')
+    return time.mktime(t)
+
+def start_thread():
+    global thread, sio, customer_alive
+    if thread is None:
+        thread = sio.start_background_task(background_thread)
+        for cid in customer_alive:
+            customer_alive[cid]['time'] = time2str()
+
+def background_thread():
+    global customer_alive, customer_list, starttime, enterprise_list, conversation, talker_list
+    while True:
+        sio.sleep(60)
+        t = time.time()
+        de_list = []
+        for cid in customer_alive:
+            if (t - str2time(customer_alive[cid]['time'])) > 62:
+                for uid in customer_list[cid]:
+                    endtime = time2str()
+                    msglist = []
+                    md5 = hashlib.md5()
+                    md5.update((cid + uid + str(int(time.time()))).encode('utf8'))
+                    did = md5.hexdigest()
+                    for i in conversation[uid]:
+                        mid = get_mid(i)
+                        msg = Message(MID = mid, SID = i['send'], RID = i['receive'], DID = did, content = i['data'], date = i['time'])
+                        msglist.append(msg)
+                    Message.objects.bulk_create(msglist)
+                    Dialog.objects.create(DID = did, EID = customer_alive[cid]['eid'], start_time = starttime[uid], end_time = endtime, UID = uid, CID = cid)
+                    del conversation[uid]
+                    del starttime[uid]
+                    sio.emit('customer offline', {'data': 'true'}, room = talker_list[uid], namespace = '/test')
+                    del talker_list[uid]
+                sio.disconnect(talker_list[cid], namespace = '/test')
+                obj = Customer.objects.get(CID = cid)
+                obj.service_number = 0
+                obj.serviced_number += len(customer_list[cid])
+                obj.state = 1
+                obj.save()
+                del customer_list[cid]
+                for i in range(len(enterprise_list[customer_alive[cid]['eid']])):
+                    if enterprise_list[customer_alive[cid]['eid']][i] == cid:
+                        del enterprise_list[customer_alive[cid]['eid']][i]
+                        break
+                de_list.append(cid)
+        for i in range(len(de_list)):
+            for cid in customer_alive:
+                if de_list[i] == cid:
+                    del customer_alive[cid]
+                    break
+        sio.emit('customer alive', {'data': 'true'}, room = 'customer', namespace = '/test')
+
+@sio.on('customer alive', namespace = '/test')
+def alive_customer(sid, message):
+    global customer_alive
+    customer_alive[message['cid']]['time'] = time2str()
 
 @sio.on('user message', namespace = '/test')
 def user_message(sid, message):
@@ -122,7 +179,7 @@ def connect_customer(sid, message):
 
 @sio.on('a customer connected', namespace = '/test')
 def customer_connect(sid, message):
-    global talker_list, customer_list, conversation, enterprise_list
+    global talker_list, customer_list, conversation, enterprise_list, customer_alive
     if message['cid'] in talker_list:
         sio.disconnect(talker_list[message['cid']], namespace = '/test')
         content = []
@@ -134,7 +191,12 @@ def customer_connect(sid, message):
             enterprise_list[message['eid']] = []
         enterprise_list[message['eid']].append(message['cid'])
         customer_list[message['cid']] = []
+    sio.enter_room(sid, 'customer', namespace = '/test')
+    start_thread()
     talker_list[message['cid']] = sid
+    customer_alive[message['cid']] = {}
+    customer_alive[message['cid']]['eid'] = message['eid']
+    customer_alive[message['cid']]['time'] = time2str()
     obj = Customer.objects.get(CID = message['cid'])
     obj.state = 3
     obj.save()
@@ -148,7 +210,7 @@ def continue_work(sid, message):
 def transfer_customer(sid, message):
     global customer_list, conversation
     for i in range(len(customer_list[message['fromcid']])):
-        if customer_list[message['fromcid']] == message['uid']:
+        if customer_list[message['fromcid']][i] == message['uid']:
             del customer_list[message['fromcid']][i]
             break
     obj = Customer.objects.get(CID = message['fromcid'])

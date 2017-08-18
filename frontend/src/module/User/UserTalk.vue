@@ -67,7 +67,7 @@
           this.disconnect = setTimeout(() => {
             alert('您已经断开连接')
             this.socket.emit('user disconnect', {cid: this.cid, uid: this.uid})
-          }, 120000)
+          }, 420000)
         }
       },
       dateformat: function (date) {
@@ -96,6 +96,11 @@
           }
         })
       },
+      customerOffline () {
+        this.socket.on('customer offline', (msg) => {
+          alert('为您服务的客服已掉线')
+        })
+      },
       connectedToCustomer () {
         this.socket.on('connected to customer', (msg) => {
           this.cid = msg['cid']
@@ -107,7 +112,7 @@
           this.disconnect = setTimeout(() => {
             alert('您已经断开连接')
             this.socket.emit('user disconnect', {cid: this.cid, uid: this.uid})
-          }, 120000)
+          }, 420000)
         })
       },
       myResponse () {
@@ -145,6 +150,7 @@
         this.connectedToCustomer()
         this.myResponse()
         this.beTransfered()
+        this.customerOffline()
         this.socket.on('no customer online', (msg) => {
           alert('都下班还来干嘛！！')
         })
