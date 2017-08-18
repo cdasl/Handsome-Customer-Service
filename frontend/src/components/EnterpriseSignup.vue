@@ -67,13 +67,21 @@
         this.formItem.password2 = ''
         this.formItem.name = ''
       },
+      trimItem () {
+        // 清除两边空格
+        this.formItem.email = this.formItem.email.trim()
+        this.formItem.name = this.formItem.name.trim()
+        this.formItem.password = this.formItem.password.trim()
+        this.formItem.password2 = this.formItem.password2.trim()
+      },
       async submit () {
         // 检查数据格式，并提交注册信息
+        this.trimItem()
         if (this.formItem.email === '' || this.formItem.password === '' || this.formItem.password2 === '' || this.formItem.name === '') {
-          this.$Message.warning('邮箱不能为空')
+          this.$Message.warning('不能有选项为空')
           return
         }
-        if (this.checkEmail(this.formItem.email) === false) {
+        if (this.checkEmail(this.formItem.email.trim()) === false) {
           this.$Message.warning('邮箱格式错误')
           return
         }

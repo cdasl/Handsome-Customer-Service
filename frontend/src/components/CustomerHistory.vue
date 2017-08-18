@@ -152,7 +152,14 @@
           window.location.replace('/customer_login/')
           return
         }
-        this.dialogData = res['message']
+        for (let i = 0; i < res['message'].length; ++i) {
+          this.dialogData.push({
+            'start_time': res['message'][i]['start_time'].substring(0, 10) + ' ' + res['message'][i]['start_time'].substring(11, 16),
+            'end_time': res['message'][i]['end_time'].substring(0, 10) + ' ' + res['message'][i]['end_time'].substring(11, 16),
+            'uid': res['message'][i]['uid'],
+            'did': res['message'][i]['did']
+          })
+        }
         this.dialogDataShow = this.dialogData.slice(0, Math.min(this.pageSize, this.dialogData.length))
       })
     }
