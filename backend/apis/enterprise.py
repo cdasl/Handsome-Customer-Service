@@ -876,7 +876,6 @@ def enterprise_delete_question(request):
 
 @ensure_csrf_cookie
 def enterprise_modify_question(request):
-    """企业修改问题"""
     """
     企业修改问题\n
     * **request** - 前端发送的请求，包含session，需要修改的问题ID，修改的内容\n
@@ -912,7 +911,7 @@ def enterprise_send_user_info(request):
         UID = information['uid']
         info = information['info']
     else:
-        return JsonResponse({'flag'})
+        return JsonResponse({'flag':const_table.const.ERROR})
     try:
         models.User.objects.create(UID = UID, info = info)
         return JsonResponse({'flag': const_table.const.SUCCESS, 'message': ''})

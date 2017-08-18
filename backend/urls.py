@@ -68,6 +68,7 @@ urlpatterns = [
     url(r'^api/enter/modify_question/$', enterprise.enterprise_modify_question),
     url(r'^api/url_validate/$', enterprise.UrlValidateJudge),
     url(r'^customer_active/([a-zA-z]+)$', TemplateView.as_view(template_name = 'customer_active.html')),
+    url(r'^api/enter/send_user_info/$', enterprise.enterprise_send_user_info),
 
     #customer_apis
     url(r'^user/$', socket.user, name = 'socket'),
