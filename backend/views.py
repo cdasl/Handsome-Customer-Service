@@ -1,21 +1,21 @@
 from django.shortcuts import render
 from django.shortcuts import redirect
-from django.http import HttpResponse,JsonResponse
-from django.views.decorators.csrf import csrf_exempt,ensure_csrf_cookie
+from django.http import HttpResponse, JsonResponse
+from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 import json, hashlib, time
 from django.conf import settings
 
 def getData(request):
-	List = ['自强学堂', '渲染Json到模板']
-	return render(request, 'getData.html', {'List': List})
+    List = ['自强学堂', '渲染Json到模板']
+    return render(request, 'getData.html', {'List': List})
 
 @csrf_exempt
 def test(request):
-	data = {"name": "Jing"}
+    data = {"name": "Jing"}
     #ensure_ascii=False用于处理中文
-	return JsonResponse(data)
+    return JsonResponse(data)
 
 @ensure_csrf_cookie
 def store_image(request):

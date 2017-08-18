@@ -352,9 +352,7 @@ def reset_password(request):
         enterprise = models.Enterprise.objects.filter(email = email)
         if len(enterprise) > 0:
             models.Enterprise.objects.filter(email = email).update(
-                password = password_salt['password'],
-                salt = password_salt['salt']
-            )
+                password = password_salt['password'], salt = password_salt['salt'])
         else:
             customer = models.Customer.objects.filter(email = email)
             models.Customer.objects.filter(email = email).update(password = password, salt = salt)
