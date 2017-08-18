@@ -1,20 +1,17 @@
 #coding:utf-8
+'''辅助函数'''
+import time
+import random
+import string
+import hashlib
 from django.core.mail import EmailMultiAlternatives
-import time, random, string, hashlib
-from . import messages
 from .. import models
-from django.http import JsonResponse
 
-def isLogin(request):
-    if request.session.get('email', None):
-        return False
-    return True
-
-def encrypt(key, string):   
+def encrypt(key, message):
     """
         字符串加密
     """
-    bytearr = bytearray(str(string).encode('utf-8'))
+    bytearr = bytearray(str(message).encode('utf-8'))
     #求出 b 的字节数
     length = len(bytearr)
     c = bytearray(length * 2)
@@ -31,11 +28,11 @@ def encrypt(key, string):
         j = j + 2
     return c.decode('utf-8').lower()
 
-def decrypt(key, string):
+def decrypt(key, message):
     """
         字符串解密
     """
-    c = bytearray(str(string).upper().encode('utf-8'))
+    c = bytearray(str(message).upper().encode('utf-8'))
     length = len(c)
     if length % 2 != 0:
         return ""
@@ -53,7 +50,7 @@ def decrypt(key, string):
             b1 = b2 ^ key
             bytearr[i] = b1
         return bytearr.decode('utf-8')
-    except:
+    except Exception:
         return ""
 
 def get_active_code(email):
@@ -61,16 +58,16 @@ def get_active_code(email):
         获取激活码
     """
     key = 9
-    encry_str='%s|%s' % (email, time.strftime('%Y-%m-%d', time.localtime(time.time())))
+    encry_str = '%s|%s' % (email, time.strftime('%Y-%m-%d', time.localtime(time.time())))
     active_code = encrypt(key, encry_str)
     return active_code
 
-def send_active_email(email, mySubject, myMessage):
+def send_active_email(email, userSubject, userMessage):
     """
         发送邮件
     """
-    subject = mySubject
-    message = myMessage
+    subject = userSubject
+    message = userMessage
     send_to = [email]
     #发送异常报错
     fail_silently = False
@@ -79,6 +76,7 @@ def send_active_email(email, mySubject, myMessage):
     msg.send(fail_silently)
 
 def active_code_check(active_code):
+    '''检车激活码'''
     decrypt_str = decrypt(9, active_code)
     decrypt_data = decrypt_str.split('|')
     email = decrypt_data[0]
@@ -94,11 +92,13 @@ def active_code_check(active_code):
         return -9
 
 def password_add_salt(password):
+    '''生成盐'''
     salt = ''.join(random.sample(string.ascii_letters + string.digits, 8))
     password += salt
     md5 = hashlib.md5()
     md5.update(password.encode('utf8'))
     password_encrypyed = md5.hexdigest()
-    return {'password': password_encrypyed,
-            'salt': salt
-            }
+    return {
+        'password': password_encrypyed,
+        'salt': salt
+    }

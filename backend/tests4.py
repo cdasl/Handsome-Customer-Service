@@ -22,7 +22,7 @@ class EnterpriseRobotStateTestCase(TestCase):
         request.session = {}
         request._body = json.dumps(info).encode('utf8')
         #成功
-        request.session['eid'] = 'eid1' 
+        request.session['eid'] = 'eid1'
         result = jrToJson(enterprise.enterprise_set_robot_state(request))['flag']
         self.assertEqual(result, const_table.const.SUCCESS)
         self.assertEqual(models.Enterprise.objects.get(EID = 'eid1').robot_state, 1)
@@ -43,7 +43,7 @@ class GetRobotInfoTestCase(TestCase):
         request.session = {}
         request._body = json.dumps(info).encode('utf8')
         #成功
-        request.session['eid'] = 'eid1' 
+        request.session['eid'] = 'eid1'
         result = jrToJson(enterprise.enterprise_get_robot_info(request))
         self.assertEqual(result['flag'], const_table.const.SUCCESS)
         self.assertEqual((result['message'])['robot_name'], 'rn1')
@@ -66,7 +66,7 @@ class SetRobotQuestionTestCase(TestCase):
         request.session = {}
         request._body = json.dumps(info).encode('utf8')
         #成功
-        request.session['eid'] = 'eid1' 
+        request.session['eid'] = 'eid1'
         result = jrToJson(enterprise.enterprise_set_robot_question(request))
         self.assertEqual(result['flag'], const_table.const.SUCCESS)
         test = models.Question.objects.get(category = 'Life')
@@ -79,13 +79,13 @@ class SetRobotQuestionTestCase(TestCase):
 class EnterpriseGetAllQuestionTestCase(TestCase):
     '''测试返回企业所有问题'''
     def setUp(self):
-        models.Question.objects.create(QID = 1, EID = 'test_eid1', question = 'f', 
+        models.Question.objects.create(QID = 1, EID = 'test_eid1', question = 'f',
             answer = 'u', category = 'n')
-        models.Question.objects.create(QID = 2, EID = 'test_eid1', question = 'k', 
+        models.Question.objects.create(QID = 2, EID = 'test_eid1', question = 'k',
             answer = 'k', category = 'k')
-        models.Question.objects.create(QID = 3, EID = 'test_eid1', question = 'l', 
+        models.Question.objects.create(QID = 3, EID = 'test_eid1', question = 'l',
             answer = 'a', category = 'o')
-        models.Question.objects.create(QID = 4, EID = 'test_eid2', question = 't', 
+        models.Question.objects.create(QID = 4, EID = 'test_eid2', question = 't',
             answer = 't', category = 't')
     def test_get_all_question(self):
         rf = RequestFactory()
@@ -155,9 +155,9 @@ class EnterpriseModifyQuestionTestCase(TestCase):
         rf = RequestFactory()
         request = rf.post('api/enter/modify_question/')
         info = {
-            'qid': '2', 
-            'question': '777', 
-            'answer': 'TTT', 
+            'qid': '2',
+            'question': '777',
+            'answer': 'TTT',
             'category': 'fun'
         }
         request.session = {}
@@ -171,3 +171,18 @@ class EnterpriseModifyQuestionTestCase(TestCase):
         del request.session['eid']
         result = jrToJson(enterprise.enterprise_modify_question(request))['flag']
         self.assertEqual(result, const_table.const.EID_NOT_EXIST)
+
+class EnterpriseSendUserInfoTestCase(TestCase):
+    '''测试发送用户信息'''
+    def test_modify_question(self):
+        rf = RequestFactory()
+        request = rf.post('api/enter/set_user_info/')
+        info = {
+            'uid': '2',
+            'info': 'TTT'
+        }
+        request._body = json.dumps(info).encode('utf8')
+        #成功
+        response = enterprise.enterprise_send_user_info(request)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual((models.User.objects.get(UID = '2')).info, 'TTT')
