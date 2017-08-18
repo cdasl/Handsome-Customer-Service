@@ -12,8 +12,11 @@
       <Form-item label="头像">
         <img :src="formItem.image" class="image">
         <Upload action="" :before-upload="handleUpload" >
-          <Button type="ghost" icon="ios-cloud-upload-outline" >更换头像</Button>
+          <Button type="ghost" icon="ios-cloud-upload-outline" >上传头像</Button>
         </Upload>
+        <Select v-model="headIcon" @on-change="changeIcon" class="input">
+          <Option v-for="item in iconList" :value="item">{{ item }}</Option>
+        </Select>
       </Form-item>
       <Form-item>
         <img :src="upload" class="image" v-show="show">
@@ -56,7 +59,9 @@
           confirm: ''
         },
         upload: '',
-        show: false
+        show: false,
+        iconList: ['选择头像', '1.gif', '2.gif', '3.gif', '4.gif', '5.gif', '6.gif', '7.gif', '8.gif', '9.gif'],
+        headIcon: '选择头像'
       }
     },
     methods: {
@@ -116,6 +121,11 @@
             this.$Message.success('保存成功')
           }
         })
+      },
+      changeIcon () {
+        if (this.headIcon !== '选择头像') {
+          this.formItem.image = '/static/img/customer_icon/uh_' + this.headIcon
+        }
       },
       reset () {
         this.passwordItem.oldpassword = ''
