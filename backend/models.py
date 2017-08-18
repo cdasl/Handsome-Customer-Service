@@ -30,7 +30,7 @@ class Enterprise(models.Model):
 
 class Customer(models.Model):
     '''
-    用户表\n
+    客服表\n
     * CID(String)：客服ID\n
     * EID(String)：客服所在企业ID\n
     * name(String)：客服昵称\n
@@ -57,7 +57,7 @@ class Customer(models.Model):
 
 class User(models.Model):
     '''
-    客户表\n
+    用户表\n
     * UID(String)：客户ID\n
     * info(String)：用户信息\n
     '''
