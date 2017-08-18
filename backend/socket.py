@@ -48,11 +48,10 @@ def background_thread():
     global customer_alive, customer_list, starttime, enterprise_list, conversation, talker_list
     while True:
         sio.sleep(60)
-        print('#######################################################################')
         t = time.time()
         de_list = []
         for cid in customer_alive:
-            if (t - str2time(customer_alive[cid]['time'])) > 70:
+            if (t - str2time(customer_alive[cid]['time'])) > 62:
                 for uid in customer_list[cid]:
                     endtime = time2str()
                     msglist = []
