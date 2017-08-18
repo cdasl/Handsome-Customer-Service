@@ -9,7 +9,10 @@ __pycache__/
 # C extensions
 *.so
 
+frontend/static/upload/
+
 db.sqlite*
+
 
 # Distribution / packaging
 .Python

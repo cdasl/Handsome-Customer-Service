@@ -170,16 +170,16 @@
         } else if (res['flag'] === global_.CONSTGET.SUCCESS) {
           this.content = []
           for (let i = 0; i < res['message'].length; ++i) {
-            if (res['message'][i]['sid'] === this.dialogDataShow[index]['cid']) {
+            if (res['message'][i]['sid'].substring(0, 3) !== 'uid') {
               this.content.push({
-                'word': res['message'][i]['content'],
+                'word': decodeURI(res['message'][i]['content']),
                 'time': res['message'][i]['date'],
                 'self': true,
                 'src': this.customerData[0]['icon']
               })
             } else {
               this.content.push({
-                'word': res['message'][i]['content'],
+                'word': decodeURI(res['message'][i]['content']),
                 'time': res['message'][i]['date'],
                 'self': false,
                 'src': '/static/img/logo.jpg'
