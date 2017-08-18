@@ -859,6 +859,28 @@ def UrlValidateJudge(request):
         return JsonResponse({'flag': const_table.const.ERROR})
 
 @ensure_csrf_cookie
+def enterprise_info(request):
+    """
+    获取企业信息\n
+    * **request** - 前端发送的请求\n
+    ***返回值**: 包含成功/失败信息的JsonResponse\n
+    """
+    EID = 'eid'
+    if hasattr(request, 'body'):
+        info = json.loads(request.body.decode('utf8'))
+    if hasattr(request, 'session') and 'eid' in request.session:
+        EID = request.session['eid']
+    else:
+        return JsonResponse({'flag': const_table.const.EID_NOT_EXIST})
+    try:
+        enterprise = models.Enterprise.objects.get(EID = EID)
+        return JsonResponse({'flag': const_table.const.SUCCESS, 'message': {
+            'name': enterprise.name
+        }})
+    except Exception:
+        return JsonResponse({'flag': const_table.const.ERROR})
+
+@ensure_csrf_cookie
 def enterprise_delete_question(request):
     """
     企业删除问题\n
