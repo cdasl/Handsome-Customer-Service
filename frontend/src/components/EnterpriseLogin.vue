@@ -95,7 +95,7 @@
         this.findback.email = this.findback.email.trim()
       },
       async submit () {
-        // 提交登陆信息
+        // 提交登录信息
         this.trimItem()
         if (this.formItem.email === '' || this.formItem.password === '') {
           this.$Message.warning('不能有内容为空')
@@ -115,7 +115,7 @@
         } else if (res['flag'] === global_.CONSTGET.WRONG_ACCOUNT) {
           this.$Message.error(global_.CONSTSHOW.WRONG_ACCOUNT)
         } else if (res['flag'] === global_.CONSTGET.SUCCESS) {
-          this.$Message.success('登陆成功')
+          this.$Message.success('登录成功')
           window.location.href = '/enter_manage/'
         }
       }

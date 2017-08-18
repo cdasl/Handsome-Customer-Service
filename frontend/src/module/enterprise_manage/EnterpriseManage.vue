@@ -34,8 +34,14 @@
           <ul class="nav">
             <li><a @click="goHome">汉森首页</a></li>
             <li><a @click="goHelp">帮助中心</a></li>
+            <li><a @click="showSub">{{ enterName }}</a><Icon type="arrow-down-b" color="#2d8cf0"></Icon></li>
+          </ul>
+          <Icon type="arrow-up-b" class="arrow-up" size="20" v-if="subShow"></Icon>
+          <ul class="sub-list" v-if="subShow">
+            <li>{{ enterName }}</li>
+            <li><a @click="goCustomer">客服登录</a></li>
             <li><a @click="logout">退出登录</a></li>
-          </ui>
+          </ul>
         </div>
         <div :class="contentClass">
           <div class="layout-content-main"><div :is="type"></div></div>
@@ -59,7 +65,9 @@
         leftClass: 'my-fixed',
         type: 'enterprise-overview',
         spanLeft: 5,
-        spanRight: 19
+        spanRight: 19,
+        enterName: '',
+        subShow: false
       }
     },
     computed: {
@@ -68,6 +76,19 @@
       }
     },
     methods: {
+      fetchBase (url, body) {
+        return fetch(url, {
+          method: 'post',
+          credentials: 'same-origin',
+          headers: {
+            'X-CSRFToken': this.getCookie('csrftoken'),
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(body)
+        })
+        .then((res) => res.json())
+      },
       goHome () {
         // 前往首页
         window.location.href = '/'
@@ -75,6 +96,24 @@
       goHelp () {
         // 前往帮助中心
         window.location.href = '/'
+      },
+      goCustomer () {
+        // 前往客服登录页面
+        fetch('/api/enter/logout/', {
+          method: 'post',
+          credentials: 'same-origin',
+          headers: {
+            'X-CSRFToken': this.getCookie('csrftoken'),
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({})
+        })
+        window.location.href = '/customer_login/'
+      },
+      showSub () {
+        // 显示下拉菜单
+        this.subShow = !this.subShow
       },
       logout () {
         // 退出登录
@@ -143,10 +182,21 @@
           window.location.href = '/enterprise/'
         }
       })
+    },
+    async mounted () {
+      // 获取企业信息
+      let res = await this.fetchBase('/api/enter/enter_info/', {})
+      if (res['flag'] === global_.CONSTGET.ERROR) {
+        this.$Message.error('企业名获取失败')
+      } else if (res['flag'] === global_.CONSTGET.EID_NOT_EXIST) {
+        window.location.href = '/enterprise/'
+      } else if (res['flag'] === global_.CONSTGET.SUCCESS) {
+        this.enterName = res['message']['name']
+      }
     }
   }
 </script>
-<style scoped>
+<style>
 .nav {
   text-align: right;
   height: 60px;
@@ -159,6 +209,34 @@
   font-size: 1.2em;
   display: inline-block;
   margin-left: 10px;
+}
+.nav li a {
+  margin-right: 3px;
+}
+.arrow-up {
+  position: fixed!important;
+  right: 4vw!important;
+  top: 6.1vh!important;
+}
+.sub-list {
+  width: 8vw;
+  position: fixed;  
+  right: 0.1vw;
+  top: 8vh;
+  background-color: white;
+  box-shadow: 0 0 10px rgba(0,0,0,0.3);
+}
+.sub-list li {
+  width: 8vw;
+  height: 4vh;
+  line-height: 4vh;
+  text-align: center;
+  font-size: 1.2em;
+}
+.sub-list li:hover {
+  background-color: #FAFAFA;
+  color: #2d8cf0;
+  cursor: pointer;
 }
 .row {
   display: flex;
