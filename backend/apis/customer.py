@@ -119,9 +119,12 @@ def customer_get_info(request):
     else:
         return JsonResponse({'flag': const_table.const.CID_NOT_EXIST})
     customer = models.Customer.objects.get(CID = CID)
-    info = {'cid': customer.CID, 'eid': customer.EID, 'email': customer.email, 'state': customer.state, 
-    'name': customer.name, 'serviced_number': customer.serviced_number, 'service_number': customer.service_number, 
-    'last_login': customer.last_login, 'icon': customer.icon}
+    info = {
+        'cid': customer.CID, 'eid': customer.EID, 'email': customer.email, 'state': customer.state,
+        'name': customer.name, 'serviced_number': customer.serviced_number,
+        'service_number': customer.service_number,
+        'last_login': customer.last_login, 'icon': customer.icon
+    }
     return JsonResponse({'flag': const_table.const.SUCCESS, 'message': info})
 
 @ensure_csrf_cookie
@@ -270,8 +273,10 @@ def customer_dialogs(request):
     dialogs_list = []
     dialogs = models.Dialog.objects.filter(CID = CID)
     for dialog in dialogs:
-        dialogs_list.append({'cid': dialog.CID, 'uid': dialog.UID, 'start_time': dialog.start_time, 
-            'end_time': dialog.end_time, 'did': dialog.DID})
+        dialogs_list.append({
+            'cid': dialog.CID, 'uid': dialog.UID, 'start_time': dialog.start_time,
+            'end_time': dialog.end_time, 'did': dialog.DID
+        })
     return JsonResponse({'flag': const_table.const.SUCCESS, 'message': dialogs_list})
 
 @ensure_csrf_cookie
@@ -288,14 +293,17 @@ def customer_dialog_messages(request):
     messages_list = []
     dialog = models.Message.objects.filter(DID = DID)
     if len(dialog) == 0:
-        return JsonResponse({'flag': const_table.const.SUCCESS, 'message': messages_list})    
+        return JsonResponse({'flag': const_table.const.SUCCESS, 'message': messages_list})
     messages = models.Message.objects.filter(DID = DID).order_by('date')
     for message in messages:
         if message.SID == CID or message.SID == 'robot':
             is_customer = True
         else:
             is_customer = False
-        messages_list.append({'mid': message.MID, 'isCustomer': is_customer, 'content': message.content, 'date': message.date})
+        messages_list.append({
+            'mid': message.MID, 'isCustomer': is_customer,
+            'content': message.content, 'date': message.date
+        })
     return JsonResponse({'flag': const_table.const.SUCCESS, 'message': messages_list})
 
 @ensure_csrf_cookie
@@ -343,8 +351,10 @@ def reset_password(request):
     try:
         enterprise = models.Enterprise.objects.filter(email = email)
         if len(enterprise) > 0:
-            models.Enterprise.objects.filter(email = email).update(password = password_salt['password'], 
-                salt = password_salt['salt'])
+            models.Enterprise.objects.filter(email = email).update(
+                password = password_salt['password'],
+                salt = password_salt['salt']
+            )
         else:
             customer = models.Customer.objects.filter(email = email)
             models.Customer.objects.filter(email = email).update(password = password, salt = salt)

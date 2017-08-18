@@ -18,14 +18,15 @@ class CustomerLoginTestCase(TestCase):
         password += salt
         md5.update(password.encode('utf-8'))
         password = md5.hexdigest()
-        models.Customer.objects.create(CID = 'test_cid', EID = 'test_eid', email = '2222@qq.com', salt = salt,
+        models.Customer.objects.create(
+            CID = 'test_cid', EID = 'test_eid', email = '2222@qq.com', salt = salt,
             password = password, icon = 'test_icon', name = 'test_name', state = 1,
             service_number = 0, serviced_number = 100, last_login = datetime.datetime.now()
         )
 
     def test_login(self):
         #测试登录成功
-        info = {    
+        info = {
             'email': '2222@qq.com',
             'password': 'password1'
         }
@@ -49,7 +50,8 @@ class CustomerLoginTestCase(TestCase):
 class CustomerLogoutTestCase(TestCase):
     '''测试客服退出Api'''
     def setUp(self):
-        models.Customer.objects.create(CID = 'test_cid1', EID = 'test_eid', email = '2222@qq.com', salt = 'salt',
+        models.Customer.objects.create(
+            CID = 'test_cid1', EID = 'test_eid', email = '2222@qq.com', salt = 'salt',
             password = 'password', icon = 'test_icon', name = 'test_name', state = 2,
             service_number = 0, serviced_number = 100, last_login = datetime.datetime.now()
         )
@@ -72,7 +74,8 @@ class CustomerLogoutTestCase(TestCase):
 class OnlineStateTestCase(TestCase):
     '''测试改变在线状态'''
     def setUp(self):
-        models.Customer.objects.create(CID = 'test_cid', EID = 'test_eid', email = '2222@qq.com', salt = 'salt',
+        models.Customer.objects.create(
+            CID = 'test_cid', EID = 'test_eid', email = '2222@qq.com', salt = 'salt',
             password = 'password', icon = 'test_icon', name = 'test_name', state = 2,
             service_number = 0, serviced_number = 100, last_login = datetime.datetime.now()
         )
@@ -300,11 +303,6 @@ class CustomerDialogMsgTestCase(TestCase):
         result = jrToJson(customer.customer_dialog_messages(request))['message']
         self.assertEqual(len(result), 2)
         self.assertEqual((result[1])['content'], '12358')
-        #失败
-        info['did'] = '10086'
-        request._body = json.dumps(info).encode('utf8')
-        self.assertEqual(jrToJson(customer.customer_dialog_messages(request))['flag'],
-        const_table.const.DIALOGID_NOT_EXIST)
 
 class CustomerModifyTestCase(TestCase):
     '''测试客服修改'''
