@@ -71,8 +71,6 @@ urlpatterns = [
     url(r'^api/enter/send_user_info/$', enterprise.enterprise_send_user_info),
 
     #customer_apis
-    url(r'^user/$', socket.user, name = 'socket'),
-    url(r'^socketio*', socket.user, name = 'socketio'),
     url(r'^api/customer/login/$', customer.customer_login, name = 'customer_login'),
     url(r'^api/customer/logout/$', customer.customer_logout, name = 'customer_logout'),   
     url(r'^api/customer/change_ol/$', customer.customer_change_onlinestate),
