@@ -2,7 +2,7 @@
   <div class="customertalk">
     <div id="app">
       <div class="sidebar">
-        <card></card>
+        <card :name="name" :icon="icon"></card>
         <list :lists="lists" @swit="swit"></list>
       </div>
       <div class="main">
@@ -33,6 +33,12 @@
       },
       lists: {
         type: Array
+      },
+      icon: {
+        type: String
+      },
+      name: {
+        type: String
       }
     },
     methods: {
