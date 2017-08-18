@@ -899,7 +899,7 @@ def enterprise_modify_question(request):
     except Exception:
         return JsonResponse({'flag': const_table.const.ERROR})
 
-@ensure_csrf_cookie
+@csrf_exempt
 def enterprise_send_user_info(request):
     """
     企业向系统发送用户的id和信息,系统将其存入数据库\n
