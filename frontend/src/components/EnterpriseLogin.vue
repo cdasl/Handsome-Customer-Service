@@ -56,6 +56,7 @@
       },
       async ok () {
         // 提交找回密码
+        this.trimItem()
         let res = await this.fetchBase('/api/reset_password/', {
           'email': this.findback.email
         })
@@ -86,11 +87,16 @@
       reset () {
         this.formItem.email = ''
         this.formItem.password = ''
-        this.formItem.password2 = ''
-        this.formItem.name = ''
+        this.findback.email = ''
+      },
+      trimItem () {
+        this.formItem.email = this.formItem.email.trim()
+        this.formItem.password = this.formItem.password.trim()
+        this.findback.email = this.findback.email.trim()
       },
       async submit () {
         // 提交登陆信息
+        this.trimItem()
         if (this.formItem.email === '' || this.formItem.password === '') {
           this.$Message.warning('不能有内容为空')
           return
