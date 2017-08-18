@@ -16,10 +16,6 @@
             <Icon type="document-text" :size="iconSize"></Icon>
             <span class="layout-text">信息统计</span>
           </Menu-item>
-          <Menu-item name="4">
-            <Icon type="cube" :size="iconSize"></Icon>
-            <span class="layout-text">知识库</span>
-          </Menu-item>
           <Menu-item name="customer-setting">
             <Icon type="settings" :size="iconSize"></Icon>
             <span class="layout-text">设置</span>
@@ -80,16 +76,14 @@
         icon: '',
         show: false,
         selected: '',
-        customerList: [
-          {
-            name: '小明',
-            cid: 'ccc'
-          },
-          {
-            name: '小光',
-            cid: 'ddd'
-          }
-        ]
+        customerList: [{
+          name: '小明',
+          cid: 'ccc'
+        }, {
+          name: '小光',
+          cid: 'ddd'
+        }],
+        roboticon: ''
       }
     },
     computed: {
@@ -267,7 +261,7 @@
         data['time'] = msg['time']
         data['self'] = msg['send'] !== this.uid
         if (data['self']) {
-          data['src'] = msg['send'] === 'robot' ? '/static/img/robot_icon/1.jpg' : this.icon
+          data['src'] = msg['send'] === 'robot' ? this.roboticon : this.icon
         } else {
           data['src'] = '/static/img/customer_icon/uh_1.gif'
         }
@@ -365,6 +359,7 @@
       this.name = res['message']['name']
       this.icon = res['message']['icon']
       this.status = (res['message']['state']).toString()
+      this.roboticon = res['message']['roboticon']
     }
   }
 </script>

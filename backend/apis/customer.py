@@ -119,11 +119,14 @@ def customer_get_info(request):
     else:
         return JsonResponse({'flag': const_table.const.CID_NOT_EXIST})
     customer = models.Customer.objects.get(CID = CID)
+    robot_icon = models.Enterprise.objects.get(EID = customer.EID).robot_icon
     info = {
         'cid': customer.CID, 'eid': customer.EID, 'email': customer.email, 'state': customer.state,
         'name': customer.name, 'serviced_number': customer.serviced_number,
         'service_number': customer.service_number,
-        'last_login': customer.last_login, 'icon': customer.icon
+        'last_login': customer.last_login,
+        'icon': customer.icon,
+        'roboticon': robot_icon
     }
     return JsonResponse({'flag': const_table.const.SUCCESS, 'message': info})
 
