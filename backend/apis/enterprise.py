@@ -33,20 +33,16 @@ def signup_init(info):
     md5 = hashlib.md5()
     md5.update(info['password'].encode('utf8'))
     password = md5.hexdigest()
-    name_list = [
-        '库', '里', '汤', '普', '森', '杜', '兰', '特',
-        '格', '林', '科', '尔', '尼', '克', '杨', '麦', '基'
-    ]
-    return {
-        'ri': 'http://www.jb51.net/images/logo.gif',
-        'rn': (random.choice(name_list) + random.choice(name_list)),
-        'rs': 1,
-        'eid': md5.hexdigest(),
-        'salt': salt,
-        'email': info['email'],
-        'name': info['name'],
-        'password': password
-    }
+    name_list = ['库', '里', '汤', '普', '森', '杜', '兰', '特', '格', '林', '科', '尔', '尼', '克', '杨', '麦', '基']
+    return {'ri': 'http://www.jb51.net/images/logo.gif',
+            'rn': (random.choice(name_list) + random.choice(name_list)),
+            'rs': 1,
+            'eid': md5.hexdigest(),
+            'salt': salt,
+            'email': info['email'],
+            'name': info['name'],
+            'password': password
+            }
 
 @ensure_csrf_cookie
 def enterprise_changepassword(request):
@@ -97,11 +93,10 @@ def enterprise_signup(request):
         myMessage = messages.enterprise_active_message(
             'http:/127.0.0.1:8000%s' % ('/enterprise_active/' + active_code))
         helper.send_active_email(email, mySubject, myMessage)
-        models.Enterprise.objects.create(
-            EID = info_dict['eid'], email = email, password = info_dict['password'],
-            name = info_dict['name'], robot_icon = info_dict['ri'],
-            robot_name = info_dict['rn'], robot_state = info_dict['rs'],
-            salt = info_dict['salt'])
+        models.Enterprise.objects.create(EID = info_dict['eid'], email = email, password = info_dict['password'],
+                                         name = info_dict['name'], robot_icon = info_dict['ri'],
+                                         robot_name = info_dict['rn'], robot_state = info_dict['rs'], 
+                                         salt = info_dict['salt'])
         return JsonResponse({'flag': const_table.const.SUCCESS, 'message': ''})
     except Exception:
         return JsonResponse({'flag': const_table.const.FAIL_SIGN_UP})
@@ -239,16 +234,12 @@ def set_customer_message(email, EID):
     md52.update(password.encode('utf8'))
     password = md52.hexdigest()
     icon = 'demo.png'
-    name_list = [
-        '库', '里', '汤', '普', '森', '杜', '兰', '特',
-        '格', '林', '科', '尔', '尼', '克', '杨', '麦', '基']
+    name_list = ['库', '里', '汤', '普', '森', '杜', '兰', '特', '格', '林', '科', '尔', '尼', '克', '杨', '麦', '基']
     name = random.choice(name_list) + random.choice(name_list)
     last_login = datetime.datetime.now()
-    models.Customer.objects.create(CID = CID, EID = EID, email = email, password = password,
+    models.Customer.objects.create(CID = CID, EID = EID, email = email, password = password, 
         icon = icon, name = name, last_login = last_login, salt = salt)
-    customer_info = {
-        'cid': CID, 'name': name, 'email': email, 'state': 0,
-        'service_number': 0, 'serviced_number': 0}
+    customer_info = {'cid': CID, 'name': name, 'email': email, 'state': 0, 'service_number': 0, 'serviced_number': 0}
     return JsonResponse({'flag': const_table.const.SUCCESS, 'message': customer_info})
 
 @ensure_csrf_cookie
@@ -296,8 +287,8 @@ def reset_password(request):
     try:
         enterprise = models.Enterprise.objects.filter(email = email)
         if len(enterprise) > 0:
-            models.Enterprise.objects.filter(email = email).update(
-                password = password_salt['password'], salt = password_salt['salt'])
+            models.Enterprise.objects.filter(email = email).update(password = password_salt['password'], 
+                salt = password_salt['salt'])
         else:
             customer = models.Customer.objects.filter(email = email)
             models.Customer.objects.filter(email = email).update(password = password_salt['password'],
@@ -905,6 +896,25 @@ def enterprise_modify_question(request):
         QID = info['qid']
         questions = models.Question.objects.filter(QID = QID)
         questions.update(question = question, answer = answer, category = category)
+        return JsonResponse({'flag': const_table.const.SUCCESS, 'message': ''})
+    except Exception:
+        return JsonResponse({'flag': const_table.const.ERROR})
+
+@ensure_csrf_cookie
+def enterprise_send_user_info(request):
+    """
+    企业向系统发送用户的id和信息,系统将其存入数据库\n
+    * **request** - 前端发送的请求，包含用户的id 和信息\n
+    **返回值**:包含成功/失败消息的JsonResponse
+    """
+    information = json.loads(request.body.decode('utf8'))
+    if 'uid' in information and 'info' in information:
+        UID = information['uid']
+        info = information['info']
+    else:
+        return JsonResponse({'flag'})
+    try:
+        models.User.objects.create(UID = UID, info = info)
         return JsonResponse({'flag': const_table.const.SUCCESS, 'message': ''})
     except Exception:
         return JsonResponse({'flag': const_table.const.ERROR})
