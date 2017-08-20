@@ -11,7 +11,7 @@
       </div>
     </div>
     <div class="userinfo">
-      <user-info></user-info>
+      <user-info :uid="uid"></user-info>
       <div class="buttongroup">
         <Button type="primary" class="button" @click="transfer">转接</Button>
         <Button type="primary" class="button" @click="close">结束会话</Button>
@@ -38,6 +38,9 @@
         type: String
       },
       name: {
+        type: String
+      },
+      uid: {
         type: String
       }
     },

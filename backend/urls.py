@@ -91,6 +91,7 @@ urlpatterns = [
     url(r'^api/customer/get_id/$', customer.customer_get_id),
     url(r'^api/customer/get_other_online/$', customer.customer_other_online),
     url(r'^api/customer/modify_password/$', customer.customer_modify_password),
+    url(r'^api/customer/user_info/$', customer.customer_user_info),
     #404
     url(r'',  TemplateView.as_view(template_name = '404.html')),
 ]
