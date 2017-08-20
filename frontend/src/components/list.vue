@@ -3,8 +3,8 @@
     <ul>
         <li v-for="(item,index) in lists" @click="swit(item, index)" :class="{ active: index === activeindex }">
           <Badge :count="item.num">
-            <img class="avatar" width="30" height="30" src="/static/img/customer_icon/uh_1.gif">
-            <p class="name">联系人</p>
+            <img class="avatar" width="30" height="30" :src="headIcons[index % 8]">
+            <p class="name">{{ item.uid.substring(3, 6) }}</p>
           </Badge>
         </li>
     </ul>
@@ -19,7 +19,10 @@
     },
     data () {
       return {
-        activeindex: 0
+        activeindex: 0,
+        headIcons: ['/static/js/emojiSources/huaji/1.jpg', '/static/js/emojiSources/huaji/8.jpg', '/static/js/emojiSources/huaji/9.jpg',
+          '/static/js/emojiSources/huaji/11.jpg', '/static/js/emojiSources/huaji/12.jpg',
+          '/static/js/emojiSources/huaji/18.jpg', '/static/js/emojiSources/huaji/19.jpg', '/static/js/emojiSources/huaji/22.jpg']
       }
     },
     methods: {
