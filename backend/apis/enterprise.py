@@ -759,6 +759,22 @@ def enterprise_dialogs_total_oneday(EID):
     return JsonResponse({'flag': const_table.const.SUCCESS, 'message': total})
 
 @ensure_csrf_cookie
+def enterprise_name(request):
+    """
+    根据企业ID获取企业名称\n
+    * ""EID"" - 企业ID\n
+    **返回值**: 包含成功/失败信息\n
+    """
+    if hasattr(request, 'body'):
+        info = json.loads(request.body.decode('utf8'))
+    try:
+        EID = info['eid']
+        enterprise = models.Enterprise.objects.get(EID = EID)
+        return JsonResponse({'flag': const_table.const.SUCCESS, 'message': enterprise.name})
+    except Exception:
+        return JsonResponse({'flag': const_table.const.ERROR})
+
+@ensure_csrf_cookie
 def enterprise_get_alldata(request):
     """
     企业获取所有数据：总服务时间，总消息数，总会话数，总服务人数，

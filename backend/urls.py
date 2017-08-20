@@ -70,6 +70,7 @@ urlpatterns = [
     url(r'^customer_active/([a-zA-z]+)$', TemplateView.as_view(template_name = 'customer_active.html')),
     url(r'^api/enter/send_user_info/$', enterprise.enterprise_send_user_info),
     url(r'^api/enter/enter_info/$', enterprise.enterprise_info),
+    url(r'^api/enter/get_name/$', enterprise.enterprise_name),
 
     #customer_apis
     url(r'^api/customer/login/$', customer.customer_login, name = 'customer_login'),
