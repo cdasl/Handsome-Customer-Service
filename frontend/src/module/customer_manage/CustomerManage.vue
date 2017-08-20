@@ -34,7 +34,7 @@
           <Button type="text" class="logout" @click="logout">退出</Button>
         </div>
         <div class="layout-content">
-          <div class="layout-content-main" :is="type" @send="send" @swit="swit" @close="close" @transfer="transferCustomer" :content="currentcontent" :lists="lists" :name="name" :icon="icon"></div>
+          <div class="layout-content-main" :is="type" @send="send" @swit="swit" @close="close" @transfer="transferCustomer" :content="currentcontent" :lists="lists" :name="name" :icon="icon" :uid="uid"></div>
         </div>
       </i-col>
     </Row>

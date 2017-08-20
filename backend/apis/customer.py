@@ -131,6 +131,22 @@ def customer_get_info(request):
     return JsonResponse({'flag': const_table.const.SUCCESS, 'message': info})
 
 @ensure_csrf_cookie
+def customer_user_info(request):
+    """
+    客服通过UID获取用户信息
+    * **request** - 前端发送的请求\n
+    **返回值**:包含成功/失败消息和客服个人信息的JsonResponse
+    """
+    if hasattr(request, 'body'):
+        info = json.loads(request.body.decode('utf8'))
+    try:
+        UID = info['uid']
+        user = models.User.objects.get(UID = UID)
+        return JsonResponse({'flag': const_table.const.SUCCESS, 'message': user.info})
+    except Exception:
+        return JsonResponse({'flag': const_table.const.ERROR})
+
+@ensure_csrf_cookie
 def customer_get_id(request):
     """
     客服获取自己的CID、EID和头像\n
