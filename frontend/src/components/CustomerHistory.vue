@@ -120,7 +120,7 @@
         return ''
       },
       ok () {
-        this.$Message.success('ok')
+        // pass
       },
       cancel () {
         this.show = false
