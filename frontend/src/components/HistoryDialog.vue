@@ -182,7 +182,7 @@
                 'word': decodeURI(res['message'][i]['content']),
                 'time': res['message'][i]['date'],
                 'self': false,
-                'src': '/static/img/logo.jpg'
+                'src': '/static/js/emojiSources/huaji/1.jpg'
               })
             }
           }

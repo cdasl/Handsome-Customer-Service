@@ -26,6 +26,11 @@
   import global_ from './Const'
   export default {
     components: {Message},
+    props: {
+      icon: {
+        type: String
+      }
+    },
     data () {
       return {
         show: false,
@@ -94,7 +99,7 @@
             // 判断消息是谁发送的
             data['self'] = res['message'][i]['isCustomer']
             data['time'] = res['message'][i]['date']
-            data['src'] = '/static/js/emojiSources/huaji/1.jpg'
+            data['src'] = data['self'] ? this.icon : '/static/js/emojiSources/huaji/1.jpg'
             this.content.push(data)
           }
           this.show = true
