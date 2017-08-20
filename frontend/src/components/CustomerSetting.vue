@@ -125,6 +125,7 @@
       changeIcon () {
         if (this.headIcon !== '选择头像') {
           this.formItem.image = '/static/img/customer_icon/uh_' + this.headIcon
+          this.upload = this.formItem.image
         }
       },
       reset () {
