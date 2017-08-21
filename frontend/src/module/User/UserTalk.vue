@@ -73,7 +73,7 @@
         data['self'] = true
         data['src'] = '/static/js/emojiSources/huaji/10.jpg'
         this.content.push(data)
-        this.socket.emit('user message', {data: encodeURI(message), time: data['time'], cid: this.cid, uid: this.uid, src: encodeURI(data['src']), flag: this.talkToRobot})
+        this.socket.emit('user message', {data: encodeURI(message), time: data['time'], cid: this.cid, uid: this.uid, eid: this.eid, src: encodeURI(data['src']), flag: this.talkToRobot})
         if (!this.talkToRobot) {
           clearTimeout(this.timeout)
           clearTimeout(this.disconnect)

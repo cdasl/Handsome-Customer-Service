@@ -2,7 +2,7 @@ from django.shortcuts import render
 import socketio
 from django.views.decorators.csrf import ensure_csrf_cookie,csrf_exempt
 import hashlib, time, datetime
-from .models import Dialog, Message, Customer
+from .models import Dialog, Message, Customer, Enterprise
 from chatterbot import ChatBot
 import urllib.parse
 
@@ -15,6 +15,7 @@ customer_alive = {}
 enterprise_list = {}
 conversation = {}
 starttime = {}
+robot_icon = {}
 thread = None
 """
 talker_list以cid或uid为key存储sid customer_list以cid为key存储uid列表 conversation以uid为key存储聊天内容
@@ -95,14 +96,18 @@ def alive_customer(sid, message):
 
 @sio.on('user message', namespace = '/test')
 def user_message(sid, message):
-    global conversation, talker_list, chatbot
+    global conversation, talker_list, chatbot, robot_icon
     if not message['flag']:
         sio.emit('my response', {'data': message['data'], 'time': message['time'], 'src': message['src'], 'uid': message['uid']}, room = talker_list[message['cid']], namespace = '/test')
         conversation[message['uid']].append({'send': message['uid'], 'receive': message['cid'], 'time': message['time'], 'data': message['data']})
     else:
-        sio.emit('my response', {'data': chatbot.get_response(urllib.parse.unquote(message['data'])).text, 'time': time2str(), 'src': '/static/img/robot_icon/1.jpg'}, room = sid, namespace = '/test')
+        if message['eid'] not in robot_icon:
+            obj = Enterprise.objects.get(EID = message['eid'])
+            robot_icon[message['eid']] = obj.robot_icon
+        response = urllib.parse.quote(chatbot.get_response(urllib.parse.unquote(message['data'])).text)
+        sio.emit('my response', {'data': response, 'time': time2str(), 'src': robot_icon[message['eid']]}, room = sid, namespace = '/test')
         conversation[message['uid']].append({'send': message['uid'], 'receive': 'robot', 'time': message['time'], 'data': urllib.parse.unquote(message['data'])})
-        conversation[message['uid']].append({'send': 'robot', 'receive': message['uid'], 'time': time2str(), 'data': chatbot.get_response(urllib.parse.unquote(message['data'])).text})
+        conversation[message['uid']].append({'send': 'robot', 'receive': message['uid'], 'time': time2str(), 'data': response})
 
 @sio.on('customer message', namespace = '/test')
 def customer_message(sid, message):
@@ -180,7 +185,7 @@ def connect_customer(sid, message):
 
 @sio.on('a customer connected', namespace = '/test')
 def customer_connect(sid, message):
-    global talker_list, customer_list, conversation, enterprise_list, customer_alive
+    global talker_list, customer_list, conversation, enterprise_list, customer_alive, robot_icon
     if message['cid'] in talker_list:
         sio.disconnect(talker_list[message['cid']], namespace = '/test')
         content = []
@@ -196,6 +201,8 @@ def customer_connect(sid, message):
     else:
         if message['eid'] not in enterprise_list:
             enterprise_list[message['eid']] = []
+            obj = Enterprise.objects.get(EID = message['eid'])
+            robot_icon[message['eid']] = obj.robot_icon
         enterprise_list[message['eid']].append(message['cid'])
         customer_list[message['cid']] = []
     sio.enter_room(sid, 'customer', namespace = '/test')

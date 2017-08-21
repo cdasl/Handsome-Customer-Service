@@ -7,14 +7,17 @@
       </p>
       <div class="main" :class="{self: item.self}">
         <img class="avatar" width="30" height="30" :src="item.src">
-        <div class="text" v-html="explain(item.word)"></div>
+        <div v-if="checktype(item.word)"class="text" v-html="explain(item.word)"></div>
+        <ImageShow v-else :address="item.word"></ImageShow>
       </div>
     </li>
   </ul>
 </div>
 </template>
 <script>
+  import ImageShow from './ImageShow'
   export default {
+    components: {ImageShow},
     props: {
       content: {
         type: Array
@@ -37,6 +40,10 @@
     methods: {
       explain: function (content) {
         return this.we.explain(content)
+      },
+      checktype (word) {
+        let pattern = /\/static\/upload\/*/
+        return !pattern.test(word)
       }
     },
     created: function () {

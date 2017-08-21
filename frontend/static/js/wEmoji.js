@@ -311,10 +311,6 @@
 
     //解释表情代码
     explain: function (str) {
-      let pattern = /\/static\/upload\/*/;
-      if (pattern.test(str)) {
-        return '<img src="' + str +'" style="width:75px;height:75px;cursor:pointer;" crossOrigin="anonymous" onclick=window.open(\'http://localhost:8000' + str +'\') />';
-      }
       var reg = /\[wem:(\w+):wem\]/g,
         _self = this;
 
@@ -326,7 +322,7 @@
         path = _self.emojis[eid].path;
         url = name + "." + type;
 
-        return '<img src="' + path + url + '" style="width: 25px; height: 25px;"/>';
+        return '<img src="' + path + url + '" style="width: 25px; height: 25px; margin-top: 10px;"/>';
       });
     },
 
