@@ -186,7 +186,8 @@ def customer_connect(sid, message):
         content = []
         if message['cid'] in customer_list:
             for uid in customer_list[message['cid']]:
-                content.append(conversation[uid])
+                if uid in conversation:
+                    content.append(conversation[uid])
             sio.emit('old data', {'list': customer_list[message['cid']], 'content': content}, room = sid, namespace = '/test')
             if message['eid'] not in enterprise_list:
                 enterprise_list[message['eid']] = []
@@ -206,8 +207,6 @@ def customer_connect(sid, message):
     obj = Customer.objects.get(CID = message['cid'])
     obj.state = 3
     obj.save()
-    print('###############################################')
-    print('状态已重置')
     sio.emit('customer connected', {'data': 'connected'}, room = sid, namespace = '/test')
 
 @sio.on('continue work', namespace = '/test')

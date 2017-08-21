@@ -263,7 +263,7 @@
         if (data['self']) {
           data['src'] = msg['send'] === 'robot' ? this.roboticon : this.icon
         } else {
-          data['src'] = '/static/img/customer_icon/uh_1.gif'
+          data['src'] = '/static/js/emojiSources/huaji/10.jpg'
         }
         return data
       },
@@ -306,6 +306,7 @@
           for (let i = 0; i < msg['list'].length; ++i) {
             this.lists.push({'uid': msg['list'][i], 'num': 0})
             this.content[msg['list'][i]] = []
+            this.uid = msg['list'][i]
             for (let j = 0; j < msg['content'][i].length; ++j) {
               let data = this.getData(msg['content'][i][j])
               this.content[msg['list'][i]].push(data)
