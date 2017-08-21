@@ -80,16 +80,13 @@
         icon: '',
         show: false,
         selected: '',
-        customerList: [
-          {
-            name: '小明',
-            cid: 'ccc'
-          },
-          {
-            name: '小光',
-            cid: 'ddd'
-          }
-        ],
+        customerList: [{
+          name: '小明',
+          cid: 'ccc'
+        }, {
+          name: '小光',
+          cid: 'ddd'
+        }],
         roboticon: ''
       }
     },
