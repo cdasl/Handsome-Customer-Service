@@ -1,0 +1,243 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  
+  <!-- Licensed under the Apache 2.0 License -->
+  <link rel="stylesheet" type="text/css" href="../_static/fonts/open-sans/stylesheet.css" />
+  <!-- Licensed under the SIL Open Font License -->
+  <link rel="stylesheet" type="text/css" href="../_static/fonts/source-serif-pro/source-serif-pro.css" />
+  <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap.min.css" />
+  <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+    <title>Models &#8212; Handsome&#39;s Customer Service 1.0 documentation</title>
+    <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="API" href="api_modules.html" />
+    <link rel="prev" title="Welcome to Handsome’s Customer Service documentation!" href="../index.html" />
+  
+   
+
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="api_modules.html" title="API"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../index.html" title="Welcome to Handsome’s Customer Service documentation!"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Handsome&#39;s Customer Service 1.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="container-wrapper">
+
+      <div id="mobile-toggle">
+        <a href="#"><span class="glyphicon glyphicon-align-justify" aria-hidden="true"></span></a>
+      </div>
+  <div id="left-column">
+    <div class="sphinxsidebar"><a href="
+    ../index.html" class="text-logo">Handsome's Customer Service</a>
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <h2>Table Of Contents</h2>
+  </div>
+  <div class="sidebar-toc">
+    
+    
+      <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_modules.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="const_table.html">Constant Table</a></li>
+</ul>
+
+    
+  </div>
+</div>
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <div id="main-search">
+      <form class="form-inline" action="../search.html" method="GET" role="form">
+        <div class="input-group">
+          <input name="q" type="text" class="form-control" placeholder="Search...">
+        </div>
+        <input type="hidden" name="check_keywords" value="yes" />
+        <input type="hidden" name="area" value="default" />
+      </form>
+    </div>
+  </div>
+</div>
+      
+    </div>
+  </div>
+        <div id="right-column">
+          
+          <div role="navigation" aria-label="breadcrumbs navigation">
+            <ol class="breadcrumb">
+              <li><a href="../index.html">Docs</a></li>
+              
+              <li>Models</li>
+            </ol>
+          </div>
+          
+          <div class="document clearer body">
+            
+  <div class="section" id="module-backend.models">
+<span id="models"></span><h1>Models<a class="headerlink" href="#module-backend.models" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="backend.models.Customer">
+<em class="property">class </em><code class="descclassname">backend.models.</code><code class="descname">Customer</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#backend.models.Customer" title="Permalink to this definition">¶</a></dt>
+<dd><p>客服表</p>
+<ul class="simple">
+<li>CID(String)：客服ID</li>
+<li>EID(String)：客服所在企业ID</li>
+<li>name(String)：客服昵称</li>
+<li>state(int)：客服状态（-1：注销，0：未激活，1：激活，2：离线，3：在线）</li>
+<li>service_number(int)：客服正在服务的人数</li>
+<li>serviced_number(int)：客服服务过的人数</li>
+<li>last_login(date)：客服最后一次登录的时间</li>
+</ul>
+</dd></dl>
+
+<dl class="class">
+<dt id="backend.models.Dialog">
+<em class="property">class </em><code class="descclassname">backend.models.</code><code class="descname">Dialog</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#backend.models.Dialog" title="Permalink to this definition">¶</a></dt>
+<dd><p>对话表</p>
+<ul class="simple">
+<li>DID(String)：本次对话的ID</li>
+<li>EID(String)：本次对话所属企业的ID</li>
+<li>start_time(date)：对话开始时间</li>
+<li>end_time(date)：对话结束时间</li>
+<li>UID(String)：用户ID</li>
+<li>CID(String)：客服ID</li>
+<li>feedback(int)：对话评分</li>
+</ul>
+</dd></dl>
+
+<dl class="class">
+<dt id="backend.models.Enterprise">
+<em class="property">class </em><code class="descclassname">backend.models.</code><code class="descname">Enterprise</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#backend.models.Enterprise" title="Permalink to this definition">¶</a></dt>
+<dd><p>企业表</p>
+<ul class="simple">
+<li>EID(String)：企业ID</li>
+<li>name(String)：企业名字</li>
+<li>robot_icon(String)：企业机器人头像，储存路径</li>
+<li>robot_name(String)：企业机器人名字</li>
+<li>state(int)：企业状态（0：未激活，1：激活）</li>
+<li>chatbox_type(int)：企业选择的窗口类型（1：嵌入式，2：窗口式，3：移动端）</li>
+<li>robot_state(int)：企业机器人状态（0：未激活，1：激活）</li>
+</ul>
+</dd></dl>
+
+<dl class="class">
+<dt id="backend.models.Message">
+<em class="property">class </em><code class="descclassname">backend.models.</code><code class="descname">Message</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#backend.models.Message" title="Permalink to this definition">¶</a></dt>
+<dd><p>消息表</p>
+<ul class="simple">
+<li>MID(String)：本条消息的ID</li>
+<li>SID(String)：发送者ID</li>
+<li>RID(String)：接收者ID</li>
+<li>DID(String)：消息所属对话ID</li>
+<li>content(String)：消息内容</li>
+<li>date(date)：消息发送时间</li>
+</ul>
+</dd></dl>
+
+<dl class="class">
+<dt id="backend.models.Question">
+<em class="property">class </em><code class="descclassname">backend.models.</code><code class="descname">Question</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#backend.models.Question" title="Permalink to this definition">¶</a></dt>
+<dd><p>机器人问题表</p>
+<ul class="simple">
+<li>QID(String)：问题ID</li>
+<li>EID(String)：问题所属企业ID</li>
+<li>category(String)：问题所属目录</li>
+</ul>
+</dd></dl>
+
+<dl class="class">
+<dt id="backend.models.User">
+<em class="property">class </em><code class="descclassname">backend.models.</code><code class="descname">User</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#backend.models.User" title="Permalink to this definition">¶</a></dt>
+<dd><p>用户表</p>
+<ul class="simple">
+<li>UID(String)：客户ID</li>
+<li>info(String)：用户信息</li>
+</ul>
+</dd></dl>
+
+</div>
+
+
+          </div>
+            
+  <div class="footer-relations">
+    
+      <div class="pull-left">
+        <a class="btn btn-default" href="../index.html" title="previous chapter (use the left arrow)">Welcome to Handsome’s Customer Service documentation!</a>
+      </div>
+    
+      <div class="pull-right">
+        <a class="btn btn-default" href="api_modules.html" title="next chapter (use the right arrow)">API</a>
+      </div>
+    </div>
+    <div class="clearer"></div>
+  
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="api_modules.html" title="API"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../index.html" title="Welcome to Handsome’s Customer Service documentation!"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Handsome&#39;s Customer Service 1.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+<script type="text/javascript">
+  $("#mobile-toggle a").click(function () {
+    $("#left-column").toggle();
+  });
+</script>
+<script type="text/javascript" src="../_static/js/bootstrap.js"></script>
+  <div class="footer">
+    &copy; Copyright 2017, Handsome. Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  </body>
+</html>
