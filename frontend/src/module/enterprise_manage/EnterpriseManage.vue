@@ -31,17 +31,31 @@
           <i-button type="text" @click="toggleClick">
             <Icon type="navicon" size="32"></Icon>
           </i-button>
-          <ul class="nav">
-            <li><a @click="goHome">汉森首页</a></li>
-            <li><a @click="goHelp">帮助中心</a></li>
-            <li><a @click="showSub">{{ enterName }}</a><Icon type="arrow-down-b" color="#2d8cf0"></Icon></li>
-          </ul>
-          <Icon type="arrow-up-b" class="arrow-up" size="20" v-if="subShow"></Icon>
-          <ul class="sub-list" v-if="subShow">
-            <li>{{ enterName }}</li>
-            <li><a @click="goCustomer">客服登录</a></li>
-            <li><a @click="logout">退出登录</a></li>
-          </ul>
+          <Menu mode="horizontal" class="nav">
+            <Menu-item name="1" @click.native="goHome">
+              <Icon type="home"></Icon>
+              汉森客服首页
+            </Menu-item>
+            <Menu-item name="2" @click.native="goHelp">
+              <Icon type="ios-paper"></Icon>
+              帮助中心
+            </Menu-item>
+            <Submenu name="3">
+              <template slot="title">
+                <Icon type="more"></Icon>
+                {{ enterName }}
+              </template>
+              <Menu-item name="3-1">
+                {{ enterName }}
+              </Menu-item>
+              <Menu-item name="3-2" @click.native="goCustomer">
+                客服登录  
+              </Menu-item>
+              <Menu-item name="3-3" @click.native="logout">
+                退出登录
+              </Menu-item>
+            </Submenu>
+          </Menu>
         </div>
         <div :class="contentClass">
           <div class="layout-content-main"><div :is="type"></div></div>
@@ -198,20 +212,9 @@
 </script>
 <style>
 .nav {
-  text-align: right;
-  height: 60px;
-  line-height: 60px;
-  padding-right: 100px;
-  margin-top: -50px;
-  margin-right: 250px;
-}
-.nav li {
-  font-size: 1.2em;
-  display: inline-block;
-  margin-left: 10px;
-}
-.nav li a {
-  margin-right: 3px;
+  position: absolute;
+  right: 21vw;
+  top: 0;
 }
 .arrow-up {
   position: fixed!important;
@@ -315,25 +318,5 @@
 }
 .ivu-col {
   transition: width .2s ease-in-out;
-}
-.m-logo {
-  position: relative;
-  width: 320px;
-  height: 54px;
-  padding: 0;
-  font-size: 12px;
-  color: #fff;
-  line-height: 30px;
-  background-color: #5294e0;
-}
-.logo {
-  position: relative;
-  left: 16px;
-  display: inline-block;
-  width: 300px;
-  height: 50px;
-  background: url('/static/img/tubiao.gif') no-repeat;
-  background-position: left center;
-  background-size: contain;
 }
 </style>
