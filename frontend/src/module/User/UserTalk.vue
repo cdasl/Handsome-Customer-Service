@@ -22,14 +22,6 @@
   import global_ from '../../components/Const'
   export default {
     components: {Card, List, TextInput, Message},
-    props: {
-      icon: {
-        type: String
-      },
-      name: {
-        type: String
-      }
-    },
     data () {
       return {
         userTalk: '',
@@ -43,7 +35,9 @@
         did: '',
         talkToRobot: true,
         uid: 'connect',
-        eid: 'eeid'
+        eid: 'eeid',
+        name: '',
+        icon: ''
       }
     },
     methods: {
