@@ -84,6 +84,7 @@ def background_thread():
             for cid in customer_alive:
                 if de_list[i] == cid:
                     del customer_alive[cid]
+                    models.Customer.objects.filter(CID = cid).update(state = 1)
                     break
         sio.emit('customer alive', {'data': 'true'}, room = 'customer', namespace = '/test')
 
@@ -183,9 +184,14 @@ def customer_connect(sid, message):
     if message['cid'] in talker_list:
         sio.disconnect(talker_list[message['cid']], namespace = '/test')
         content = []
-        for uid in customer_list[message['cid']]:
-            content.append(conversation[uid])
-        sio.emit('old data', {'list': customer_list[message['cid']], 'content': content}, room = sid, namespace = '/test')
+        if message['cid'] in customer_list:
+            for uid in customer_list[message['cid']]:
+                content.append(conversation[uid])
+            sio.emit('old data', {'list': customer_list[message['cid']], 'content': content}, room = sid, namespace = '/test')
+            if message['eid'] not in enterprise_list:
+                enterprise_list[message['eid']] = []
+                enterprise_list[message['eid']].append(message['cid'])
+                customer_list[message['cid']] = []
     else:
         if message['eid'] not in enterprise_list:
             enterprise_list[message['eid']] = []
@@ -200,6 +206,8 @@ def customer_connect(sid, message):
     obj = Customer.objects.get(CID = message['cid'])
     obj.state = 3
     obj.save()
+    print('###############################################')
+    print('状态已重置')
     sio.emit('customer connected', {'data': 'connected'}, room = sid, namespace = '/test')
 
 @sio.on('continue work', namespace = '/test')
