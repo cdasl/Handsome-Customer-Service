@@ -7,11 +7,13 @@ import time, hashlib, datetime, random, string, math
 
 eid = '3fb9c866c15fa98d47ee47690a6d57c0'
 cids = []
-uids = ['test_uid3', 'test_uid4', 'test_uid5', 'test_uid6', 'test_uid7', 'test_uid8', 'test_uid9',
-        'test_uid10', 'test_uid11', 'test_uid12', 'test_uid13', 'test_uid14', 'test_uid15']
-messages = ['你好', '毕竟too young', 'naive', 'excited', '谈笑风生', '比你们不知道高到哪里去了',
-        '长者的身份', '董先生连任好不好啊', '吼啊', '打工是不可能打工的', '这辈子都不可能打工的',
-        '超喜欢这里的', '说话又好听', '做生意嘛又不会', '人生经验']
+uids = ['uid11', 'uid12', 'uid13', 'uid14', 'uid15', 'uid16', 'uid17',
+        'uid21', 'uid22', 'uid23', 'uid24', 'uid25', 'uid26', 'uid27']
+messages = ['你好', 'excited', '谈笑风生', '最近在忙什么', '老板，你做淘宝最放心的是什么啊？哦！我最放心的是，从来没有收到过假钱！耶！', 
+'长者的身份', '吼啊', '用户的事，就是我最大的事！', '认真倾听、真情服务、站在客户的立场为客户服务！', 
+'超喜欢这里的', '说话又好听', '你如何对待别人，别人也就这样对待你.', '人生经验', '客户是工作以外的自己，怎么善待他们，就等于怎么善待自己！', 
+'声音打动人，服务打动心。', '首先要自我满意才能还给客户满意。', '当重大投诉来临，客服就是公司的防火墙！', 
+'客户就是中心，中心来自爱心！', '手握手的承诺，心贴心的服务。', '真正的销售始于售后。']
 questions = [
     {'question': '怎么看待励志书籍？', 'answer': '看再多，那都是别人的人生'},
     {'question': '＂知行合一＂到底如何理解？', 'answer': '  知道做不到，等于不知道。'},
@@ -34,7 +36,7 @@ questions = [
     {'question': '信念值多少钱？', 'answer': '信念是不值钱的，它有时甚至是一个善意的欺骗。然而，你一旦坚持下去，它就会迅速升值。'},
     {'question': '什么样的青春最辉煌？', 'answer': '燃烧的青春一片光芒，很绚丽很辉煌。'},
     {'question': '什么是合作？', 'answer': '合作是互相配合。'},
-    {'question': '什么是生物？', 'answer': '生物就是有生命的物体……'},
+    {'question': '什么是生物？', 'answer': '生物就是有生命的物体'},
     {'question': '请问遇到这个问题怎么解决？', 'answer': '我来帮您看一下！'},
     {'question': '今天天气怎么样？', 'answer': '推荐您查看汉森客服天气预报！'},
     {'question': '这个商品可以打折吗？', 'answer': '已经是最优惠的了，亲'},
@@ -92,7 +94,7 @@ def generate_messages(uid, cid):
     start_time = time1 - delta(random.choice([i for i in range(24 * 60)]))
     models.Dialog.objects.create(DID = did, EID = eid, start_time = start_time, end_time = start_time + delta(random.choice([i for i in range(10)])),
         UID = uid, CID = cid, feedback = random.choice([1, 2, 3, 4, 5]))
-    message_length = random.choice([i for i in range(15)])
+    message_length = random.choice([i for i in range(15)]) + 1
     for i in range(message_length):
         mid = generate_str()
         content = random.choice(messages)
@@ -116,9 +118,9 @@ def generate_customer():
         email = generate_email()
         name = generate_name()
         icon = '/static/img/customer_icon/uh_' + str(random.choice([i + 1 for i in range(9)])) + '.gif'
-        state = random.choice([i - 1 for i in range(4)])
+        state = random.choice([i - 1 for i in range(2)])
         serviced_number = random.choice([i for i in range(100)])
-        service_number = random.choice([i for i in range(10)])
+        service_number = 0
         raw_password = 'password'
         salt = 'salt'
         md5 = hashlib.md5()
