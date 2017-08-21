@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>内嵌</title>
+</head>
+<body>
+
+  <!-- 用户信息构造处，也可由企业获取到用户信息，然后将信息通过handsomeSendInfo传给客服系统，注意info需要是json格式 -->
+  <script>
+    let first = ['牛', '李', '马', '丁', '熊', '秦', '武']
+    let second = ['大壮', '珍香', '寿生', '铁柱', '二妞', '狗蛋', '三宝']
+    let user_info = {'info': JSON.stringify({'name': first[Math.floor(Math.random()*first.length)]+second[Math.floor(Math.random()*second.length)], 'age': Math.round(Math.random() * 50), 'gender': ['女','男'][Math.floor(Math.random()*2)]})}
+    console.log(user_info)
+  </script>
+
+  <!-- 嵌入代码粘贴处 -->
+  <script src="http://localhost:8000/static/js/template/oldBlank.js?eid=0b8b02df95b01bc61ffdc64b0c879d00" id="handsomejs"></script>
+</body>
+</html>
