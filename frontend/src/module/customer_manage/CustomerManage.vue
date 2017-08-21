@@ -89,7 +89,8 @@
             name: '小光',
             cid: 'ddd'
           }
-        ]
+        ],
+        roboticon: ''
       }
     },
     computed: {
@@ -267,7 +268,7 @@
         data['time'] = msg['time']
         data['self'] = msg['send'] !== this.uid
         if (data['self']) {
-          data['src'] = msg['send'] === 'robot' ? '/static/img/robot_icon/1.jpg' : this.icon
+          data['src'] = msg['send'] === 'robot' ? this.roboticon : this.icon
         } else {
           data['src'] = '/static/img/customer_icon/uh_1.gif'
         }
@@ -312,6 +313,7 @@
           for (let i = 0; i < msg['list'].length; ++i) {
             this.lists.push({'uid': msg['list'][i], 'num': 0})
             this.content[msg['list'][i]] = []
+            this.uid = msg['list'][i]
             for (let j = 0; j < msg['content'][i].length; ++j) {
               let data = this.getData(msg['content'][i][j])
               this.content[msg['list'][i]].push(data)
@@ -365,6 +367,7 @@
       this.name = res['message']['name']
       this.icon = res['message']['icon']
       this.status = (res['message']['state']).toString()
+      this.roboticon = res['message']['roboticon']
     }
   }
 </script>
