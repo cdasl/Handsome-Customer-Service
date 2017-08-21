@@ -16,9 +16,11 @@ div {
 a {
   text-decoration: none;
 }
-#eu {
-  margin-right: 20px;
+#use_img {
+  text-align: center;
+  margin: 0 auto;
 }
-#cu {
-  margin-left: 20px;
+#pic {
+  margin-left: 10px;
+  margin-right: 10px;
 }
