@@ -1,7 +1,7 @@
 <template>
   <div class="image">
     <img :src="address" @click="show" class="small">
-    <Modal v-model="modal" class-name="vertical-center-modal">
+    <Modal v-model="modal">
       <div slot="header"></div>
       <img :src="address" class="big">
       <div slot="footer"></div>

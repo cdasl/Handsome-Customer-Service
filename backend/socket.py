@@ -117,7 +117,7 @@ def customer_message(sid, message):
 
 @sio.on('disconnect a user', namespace = '/test')
 def write_message(sid,message):
-    global starttime, conversation, talker_list
+    global starttime, conversation, talker_list, customer_list
     endtime = time2str()
     msglist = []
     md5 = hashlib.md5()
@@ -134,6 +134,12 @@ def write_message(sid,message):
     customer.service_number -= 1
     customer.save()
     sio.emit('user disconnected', {'did': did}, room = talker_list[message['uid']], namespace = '/test')
+    for i in range(len(customer_list[message['cid']])):
+        item = customer_list[message['cid']][i]
+        if item == message['uid']:
+            del customer_list[message['cid']][i]
+            break
+
     del conversation[message['uid']]
     del starttime[message['uid']]
     del talker_list[message['uid']]
