@@ -186,3 +186,69 @@ class EnterpriseSendUserInfoTestCase(TestCase):
         response = enterprise.enterprise_send_user_info(request)
         self.assertEqual(response.status_code, 200)
         self.assertEqual((models.User.objects.get(UID = '2')).info, 'TTT')
+
+class SetCustomerInfoTestCase(TestCase):
+    '''测试设置客服信息'''
+    def setUp(self):
+        tests.ResetCustomerStateTestCase.setUp(self)
+        models.Customer.objects.create(
+            CID = 'test_cid1', EID = 'test_eid', email = '2222@qq.com', salt = 'salt',
+            password = 'password', icon = 'test_icon', name = 'test_name', state = 0,
+            service_number = 0, serviced_number = 100, last_login = datetime.datetime.now()
+        )
+
+    def test_set_customer_info(self):
+        rf = RequestFactory()
+        request = rf.post('validate/customer/')
+        info = {
+            'active_code': 'nhmgkhnhgfmgegigagfgfhldjdidadecjdbdecjdid',
+            'password': 'TTTTtttt',
+            'name': 'mob',
+            'icon': 'umr'
+        }
+        request._body = json.dumps(info).encode('utf8')
+        #已激活
+        response = enterprise.customer_set_active_info(request)
+        self.assertEqual(response.status_code, 200)
+        result = jrToJson(response)['flag']
+        self.assertEqual(result, const_table.const.ACCOUNT_ACTIVITED)
+
+    def test_invalid(self):
+        rf = RequestFactory()
+        request = rf.post('validate/customer/')
+        info = {
+            'active_code': 'hhmgkhnhgfmezgigagfgfhldjdidadmctdbdecjdidd',
+            'password': 'TTTTtttt',
+            'name': 'mob',
+            'icon': 'umr'
+        }
+        request._body = json.dumps(info).encode('utf8')
+        result = jrToJson(enterprise.customer_set_active_info(request))['flag']
+        self.assertEqual(result, const_table.const.INVALID)
+
+    def test_expired(self):
+        rf = RequestFactory()
+        request = rf.post('validate/customer/')
+        info = {
+            'active_code': 'nhmgkhnhgfmgegigagfgfhldjdidjdecjdbdecjdid',
+            'password': 'TTTTtttt',
+            'name': 'mob',
+            'icon': 'umr'
+        }
+        request._body = json.dumps(info).encode('utf8')
+        result = jrToJson(enterprise.customer_set_active_info(request))['flag']
+        self.assertEqual(result, const_table.const.EXPIRED)
+    
+    def test_activated(self):
+        rf = RequestFactory()
+        request = rf.post('validate/customer/')
+        info = {
+            'active_code': 'ldldldldjeihihhckgggegfhldjdidadecjdbdecjdid',
+            'password': 'TTTTtttt',
+            'name': 'mob',
+            'icon': 'umr'
+        }
+        request._body = json.dumps(info).encode('utf8')
+        result = jrToJson(enterprise.customer_set_active_info(request))['flag']
+        self.assertEqual(result, const_table.const.SUCCESS)
+        self.assertEqual(models.Customer.objects.get(email = '2222@qq.com').name, 'mob')

@@ -264,12 +264,13 @@ def customer_set_active_info(request):
     decrypt_str = helper.decrypt(9, info['active_code'])
     decrypt_data = decrypt_str.split('|')
     email = decrypt_data[0]
-    if models.Customer.objects.get(email = email).state == 1:
+    if models.Customer.objects.get(email = email).state >= 1:
         return JsonResponse({'flag': const_table.const.ACCOUNT_ACTIVITED})
     password_salt = helper.password_add_salt(password)
     try:
         models.Customer.objects.filter(email = email).update(password = password_salt['password'], 
-            icon = icon, name = name, salt = password_salt['salt'])
+            icon = icon, name = name, salt = password_salt['salt'], state = 1)
+        return JsonResponse({'flag': const_table.const.SUCCESS})
     except Exception:
         return JsonResponse({'flag': const_table.const.ERROR})
 
