@@ -357,7 +357,7 @@ def reset_customer_state(request):
 def customer_avg_feedback(CID):
     """
     返回客服所有会话的平均评分\n
-    * **CIDt** - 客服的ID\n
+    * **CID** - 客服的ID\n
     **返回值**: 客服的平均评分\n
     """
     dialogs = models.Dialog.objects.filter(CID = CID)
