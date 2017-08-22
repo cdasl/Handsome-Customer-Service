@@ -43,11 +43,19 @@
       </div>
     </Modal>
     <Modal
+      v-model="showConfirm"
+      title="确认框"
+      @on-ok="remove"
+      @on-cancel="cancel"
+      width="30vw">
+        确定要删除吗?
+    </Modal>
+    <Modal
       v-model="show2"
       title="修改问题"
       @on-ok="submitModify"
       @on-cancel="cancel"
-      width="45vw">
+      width="20vw">
       <div class="add-question" v-if="show2">
         <h4>问题:</h4>
         <textarea class="text-area" v-model="myQuestoin"></textarea>
@@ -116,9 +124,12 @@
                     type: 'error',
                     size: 'small'
                   },
+                  style: {
+                    marginRight: '5px'
+                  },
                   on: {
                     click: () => {
-                      this.remove(params.index)
+                      this.beforeRemove(params.index)
                     }
                   }
                 }, '删除')
@@ -130,7 +141,9 @@
         questionData: [], // 当前类别所有问题
         questionDataShow: [], // 当前显示的所有问题
         current: 1, // 页码
-        pageSize: 10 // 每页的数据条数
+        pageSize: 10, // 每页的数据条数
+        showConfirm: false, // 显示删除确认框
+        currentIndex: '' // 当前index
       }
     },
     methods: {
@@ -251,8 +264,13 @@
         this.currentCategory = this.questionDataShow[index]['category']
         this.show2 = true
       },
-      async remove (index) {
+      beforeRemove (index) {
+        this.currentIndex = index
+        this.showConfirm = true
+      },
+      async remove () {
         // 提交删除问题
+        let index = this.currentIndex
         let qid = this.questionDataShow[index]['qid']
         let i = 0
         for (; i < this.questionDataAll.length; ++i) {
