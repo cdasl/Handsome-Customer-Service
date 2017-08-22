@@ -354,6 +354,7 @@ class CustomerGetInfoTestCase(TestCase):
     '''测试客服获取个人信息'''
     def setUp(self):
         CustomerLogoutTestCase.setUp(self)
+        models.Enterprise.objects.create(EID = 'test_eid')
 
     def test_get_info(self):
         rf = RequestFactory()
@@ -375,6 +376,7 @@ class CustomerGetIDTestCase(TestCase):
     '''测试客服获取id'''
     def setUp(self):
         CustomerLogoutTestCase.setUp(self)
+        models.Enterprise.objects.create(EID = 'test_eid')
 
     def test_get_id(self):
         rf = RequestFactory()
