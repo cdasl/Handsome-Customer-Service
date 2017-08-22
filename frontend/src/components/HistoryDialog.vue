@@ -13,7 +13,7 @@
     </div>
     <Row class="table">
         <Table border :columns="dialogForm" :data="dialogDataShow" ref="table"></Table>
-        <Page :total="dialogData.length" @on-change="changePage" :page-size="pageSize"></Page>
+        <Page :total="dialogData.length" @on-change="changePage" :page-size="pageSize" style="margin-top:1vh;"></Page>
     </Row>
     <br>
     <Button type="primary" size="large" @click="exportData()"><Icon type="ios-download-outline"></Icon> 导出原始数据</Button>
