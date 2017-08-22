@@ -34,7 +34,7 @@ class Customer(models.Model):
     * CID(String)：客服ID\n
     * EID(String)：客服所在企业ID\n
     * name(String)：客服昵称\n
-    * state(int)：客服状态（-1：注销，0：未激活，1：激活，2：离线，3：在线）\n
+    * state(int)：客服状态（-1：注销，0：未激活，1：激活，2：休息，3：工作）\n
     * service_number(int)：客服正在服务的人数\n
     * serviced_number(int)：客服服务过的人数\n
     * last_login(date)：客服最后一次登录的时间\n

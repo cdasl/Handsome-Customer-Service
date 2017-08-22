@@ -76,7 +76,7 @@ def send_active_email(email, userSubject, userMessage):
     msg.send(fail_silently)
 
 def active_code_check(active_code):
-    '''检车激活码'''
+    '''检测激活码'''
     decrypt_str = decrypt(9, active_code)
     decrypt_data = decrypt_str.split('|')
     email = decrypt_data[0]
