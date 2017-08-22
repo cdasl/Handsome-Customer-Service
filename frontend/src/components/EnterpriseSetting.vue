@@ -32,7 +32,7 @@
           </Select>
         </Form-item>
         <Form-item>
-          <textarea class="text-area" row="80" v-model="innerCode" readonly></textarea>
+          <Input type="textarea" class="text-area" :rows="6" v-model="innerCode" readonly></Input>
         </Form-item>
       </Form>
     </div>
@@ -246,8 +246,8 @@ h2 {
   width: 30%;
 }
 .text-area {
-  width: 30%;
-  height: 20vh;
+  width: 30%!important;
+  height: 20vh!important;
 }
 .robot-name {
   width: 100%;
@@ -282,9 +282,6 @@ h2 {
 .robot-switch {
   margin-top: 2vh;
   margin-left: 30px;
-}
-.text-area {
-  margin-top: 10px;
 }
 .wrap {
   display: block;

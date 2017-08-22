@@ -18,7 +18,7 @@
     </div>    
     <Row class="table">
         <Table border :columns="questionForm" :data="questionDataShow" ref="table"></Table>
-        <Page :total="questionData.length" @on-change="changePage" :page-size="pageSize"></Page>
+        <Page :total="questionData.length" @on-change="changePage" :page-size="pageSize" style="margin-top:1vh;"></Page>
     </Row>
     <br>
     <Button type="primary" size="large" @click="exportData(1)"><Icon type="ios-download-outline"></Icon> 导出原始数据</Button>
@@ -29,18 +29,22 @@
       @on-ok="submitQuestion"
       @on-cancel="cancel"
       width="45vw">
-      <div class="add-question" v-if="show">
-        <h4>问题:</h4>
-        <textarea class="text-area" placeholder="输入问题" v-model="myQuestoin"></textarea>
-        <h4>答案:</h4>
-        <textarea class="text-area" placeholder="预设答案" v-model="myAnswer"></textarea>
-        <h4>分类</h4>
-        <Select v-model="currentCategory" style="width:200px">
-          <Option v-for="item of categoryList" :value="item" :key="item">{{ item }}</Option>
-        </Select>
-        <h4>自定义分类</h4>
-        <Input class="my-input" v-model="selfCategory"></Input><br>
-      </div>
+      <Form label-position="top">
+        <Form-item label="问题">
+          <Input type="textarea" :rows="5" placeholder="请输入问题" v-model="myQuestoin"></Input>
+        </Form-item>
+        <Form-item label="答案">
+          <Input type="textarea" :rows="5" placeholder="预设答案" v-model="myAnswer"></Input>
+        </Form-item>
+        <Form-item label="分类">
+          <Select v-model="currentCategory" style="width:200px;">
+            <Option v-for="item of categoryList" :value="item" :key="item">{{ item }}</Option>
+          </Select>
+        </Form-item>
+        <Form-item label="自定义分类">
+          <Input v-model="selfCategory" style="width:200px;"></Input>
+        </Form-item>
+      </Form>
     </Modal>
     <Modal
       v-model="showConfirm"
