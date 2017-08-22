@@ -1,13 +1,62 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8">
-    <title>客服信息完善</title>
-    <link rel="shortcut icon" type="image/x-icon" href="/static/img/logo.gif" id="favicon" />
-  </head>
-  <body>
+<head>
+<meta charset="utf-8">
+<title>客服信息完善</title>
+<link rel="shortcut icon" type="image/x-icon" href="/static/img/logo.gif" id="favicon" />
+<style>
+  body {
+    position: relative;
+    background-size: 100vw 100vh;
+    background-image: url('/static/img/background.jpg');
+  }
+  .footer {
+    display: block;
+    width: 100vw;
+    height: 5vh;
+    position: fixed;
+    bottom: 0;
+    background-color: rgba(50, 50, 50, 0.7);
+    text-align: right;
+    font-size: 1.2em;
+  }
+  .footer span {
+    color: #2d8cf0;;
+    line-height: 5vh;
+    margin-right: 3vw;
+  }
+  .footer a {
+    line-height: 5vh;
+    margin-right: 3vw;
+  }
+</style>
+</head>
+<body>
+  <script>
+    function goHelp() {
+      window.location.href = '/static/html/doc.html'
+    }
+    function goHome () {
+      window.location.href = '/'
+    }
+    function goCustomer () {
+      window.location.href = '/customer_login/'
+    }
+    function goEnterprise () {
+      window.location.href = '/enterprise/'
+    }
+  </script>
+  <div class="wrapper">
     <div id="customeractive">
       <customer-activity></customer-activity>
     </div>
-  </body>
+    <div class="footer">
+      <span>©2017 Handsome</span>
+      <a onclick="goHelp()">帮助文档</a>
+      <a onclick="goHome()">返回首页</a>
+      <a onclick="goEnterprise()">企业登录</a>
+      <a onclick="goCustomer()">客服登录</a>
+    </div>  
+  </div>
+ </body>
 </html>

@@ -1,29 +1,16 @@
 <template>
-  <div id="app">
-    <h1>客服人员激活信息完善</h1>
-    <Form :model="formItem" class="form">
-      <Form-item label="密码" class="input">
-        <Input v-model="formItem.password" placeholder="输入密码，长度不小于8" type="password" ></Input>
-      </Form-item>
-      <Form-item label="再次输入密码" class="input">
-        <Input v-model="formItem.password2" placeholder="请再次输入密码" type="password"></Input>
-      </Form-item>
-      <Form-item label="名称" class="input">
-        <Input v-model="formItem.name" placeholder="请输入名称"></Input>
-      </Form-item>
-      <Form-item class="upload">
-        <Upload action="/" :before-upload="handleUpload" >
-          <Button type="ghost" icon="ios-cloud-upload-outline" >上传头像</Button>
-        </Upload>
-        <div v-if="file !== null" >待上传文件：{{ file.name }}</div>
-      </Form-item>
-      <Form-item>
-        <Button type="primary" @click="submit" class="submit">提交</Button>
-      </Form-item>
-    </Form>
+  <div class="app">
+    <div class="wrap">
+      <h3 class="title">设置初始信息</h3>
+      <Input v-model="formItem.password" placeholder="输入密码，长度不小于8" type="password" class="customer-input"></Input>
+      <Input v-model="formItem.password2" placeholder="请再次输入密码" type="password" class="customer-input"></Input>
+      <Input v-model="formItem.name" placeholder="请输入名称" class="customer-input"></Input>
+      <Button type="primary" @click="submit" class="btn">提交</Button>
+    </div>
   </div>
 </template>
 <script>
+  import global_ from '../../components/Const'
   export default {
     data () {
       return {
@@ -31,8 +18,7 @@
           password: '',
           password2: '',
           name: ''
-        },
-        file: null
+        }
       }
     },
     methods: {
@@ -51,67 +37,111 @@
         return ''
       },
       submit () {
-        if (this.formItem.name === '' || this.formItem.password === '' || this.formItem.password2 === '' || this.file === null) {
+        if (this.formItem.name === '' || this.formItem.password === '' || this.formItem.password2 === '') {
           /* global alert: true */
-          alert('请填写所有信息并上传头像')
+          this.$Message.warning('请填写所有信息并上传头像')
           return
         }
         if (this.formItem.password !== this.formItem.password2) {
-          alert('两次密码不相同')
+          this.$Message.warning('两次密码不相同')
+          return
+        }
+        if (this.formItem.password.length < 8) {
+          this.$Message.warning('密码长度不能小于8')
           return
         }
         /* global FormData: true */
-        let image = new FormData()
-        image.append('image', this.file)
-        image.append('user', 'com')
         fetch('/validate/customer/', {
           method: 'post',
           credentials: 'same-origin',
           headers: {
-            'X-CSRFToken': this.getCookie('csrftoken'),
-            'Accept': 'application/json'
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
           },
-          body: image
-        }).then((res) => res.json()).then((res) => {
-          console.log(res)
+          body: JSON.stringify({
+            'password': this.formItem.password,
+            'name': this.formItem.name,
+            'active_code': this.geturl(),
+            'icon': '/static/img/customer_icon/uh_1.gif'
+          })
+        })
+        .then((res) => res.json())
+        .then((res) => {
+          if (res === global_.CONSTGET.INVALID) {
+            this.$Message.error(global_.CONSTSHOW.INVALID)
+          } else if (res['flag'] === global_.CONSTGET.EXPIRED) {
+            this.$Message.error(gloab_.CONSTGET.EXPIRED)
+          } else if (res['flag'] === global_.CONSTGET.ACCOUNT_ACTIVITED) {
+            this.$Message.error(gloab_.CONSTGET.ACCOUNT_ACTIVITED)
+          } else if (res['flag'] === global_.CONSTGET.SUCCESS) {
+            this.$Message.error(gloab_.CONSTGET.SUCCESS)
+            window.location.href = '/customer_login/'
+          } else if (res['flag'] === global_.CONSTGET.ERROR) {
+            this.$Message.error(gloab_.CONSTGET.ERROR)
+          }
         })
       },
       geturl () {
         let url = window.location.href
         let code = url.split('/')
-        return code
-      },
-      handleUpload (file) {
-        this.file = file
-        return false
+        return code[code.length - 1]
       }
     }
   }
 </script>
 <style scoped>
-h1 {
-  text-align: center;
-  margin-bottom: 50px;
-  margin-top: 100px;
+.app {
+  width: 100%;
 }
-#app {
-  margin: auto;
-  width: 50%;
-}
-.input {
+.wrap {
   display: block;
-  width: 200px;
+  width: 30vw;
+  height: 35vh;
+  margin-left: auto;
+  margin-right: auto;
+  padding-top: 2vh;
+  margin-top: 20vh;
+  background-color: rgba(255, 255, 255, 1);
+}
+.title {
+  margin-left: 17%;
+  margin-bottom: 2vh;
+  margin-top: 2vh;
+  font-size: 1.5em;
+}
+.customer-input {
+  display: block;
+  width: 20vw;
+  height: 4vh;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 2vh;
+  border-color: blue;
+}
+.line {
+  display: block;
+  width: 20vw;
   margin-left: auto;
   margin-right: auto;
 }
 .upload {
-  display: block;
-  margin-left: 37%;
-  margin-right: auto;
+  display: inline-block;
+  width: 6vw;
+  margin: auto;
 }
-.submit {
+.show-src {
+  display: inline-block;
+  width: 14vw;
+  text-align: right;
+}
+.btn {
   display: block;
+  width: 20vw;
+  height: 5vh;
   margin-left: auto;
   margin-right: auto;
+  margin-bottom: 2vh;
+  border-color: blue;
+  font-size: 1.4em;
 }
 </style>

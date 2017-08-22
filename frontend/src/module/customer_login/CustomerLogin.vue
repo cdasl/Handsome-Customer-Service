@@ -114,7 +114,7 @@
     }
   }
 </script>
-<style lang="" scoped>
+<style scoped>
 .app {
   width: 100%;
 }

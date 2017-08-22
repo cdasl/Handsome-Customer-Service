@@ -20,7 +20,8 @@ const CONSTGET = {
   SID_NOT_EXIST: 'not exist this SID',
   RID_NOT_EXIST: 'not exist this RID',
   EID_NOT_EXIST: 'eid not in request.session',
-  CID_NOT_EXIST: 'cid not in request.session'
+  CID_NOT_EXIST: 'cid not in request.session',
+  ACCOUNT_ACTIVITED: 'account has been activated'
 }
 const CONSTSHOW = {
   WRONG_PASSWORD: '密码错误',
@@ -42,7 +43,8 @@ const CONSTSHOW = {
   SID_NOT_EXIST: 'SID不存在',
   RID_NOT_EXIST: 'RID不存在',
   EID_NOT_EXIST: '登录失败',
-  CID_NOT_EXIST: '登录失败'
+  CID_NOT_EXIST: '登录失败',
+  ACCOUNT_ACTIVITED: '账号已经激活过了'
 }
 
 export default {
