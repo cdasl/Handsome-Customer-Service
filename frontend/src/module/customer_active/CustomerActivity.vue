@@ -38,7 +38,6 @@
       },
       submit () {
         if (this.formItem.name === '' || this.formItem.password === '' || this.formItem.password2 === '') {
-          /* global alert: true */
           this.$Message.warning('请填写所有信息并上传头像')
           return
         }
@@ -50,7 +49,6 @@
           this.$Message.warning('密码长度不能小于8')
           return
         }
-        /* global FormData: true */
         fetch('/validate/customer/', {
           method: 'post',
           credentials: 'same-origin',
@@ -70,14 +68,14 @@
           if (res === global_.CONSTGET.INVALID) {
             this.$Message.error(global_.CONSTSHOW.INVALID)
           } else if (res['flag'] === global_.CONSTGET.EXPIRED) {
-            this.$Message.error(gloab_.CONSTGET.EXPIRED)
+            this.$Message.error(global_.CONSTGET.EXPIRED)
           } else if (res['flag'] === global_.CONSTGET.ACCOUNT_ACTIVITED) {
-            this.$Message.error(gloab_.CONSTGET.ACCOUNT_ACTIVITED)
+            this.$Message.error(global_.CONSTGET.ACCOUNT_ACTIVITED)
           } else if (res['flag'] === global_.CONSTGET.SUCCESS) {
-            this.$Message.error(gloab_.CONSTGET.SUCCESS)
+            this.$Message.error(global_.CONSTGET.SUCCESS)
             window.location.href = '/customer_login/'
           } else if (res['flag'] === global_.CONSTGET.ERROR) {
-            this.$Message.error(gloab_.CONSTGET.ERROR)
+            this.$Message.error(global_.CONSTGET.ERROR)
           }
         })
       },
