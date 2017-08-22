@@ -90,10 +90,23 @@
                   },
                   on: {
                     click: () => {
+                      this.activate(params.index)
+                    }
+                  }
+                }, '激活'), h('Button', {
+                  props: {
+                    type: 'error',
+                    size: 'small'
+                  },
+                  style: {
+                    marginRight: '5px'
+                  },
+                  on: {
+                    click: () => {
                       this.logoff(params.index)
                     }
                   }
-                }, '注销/激活')
+                }, '注销')
               ])
             }
           }
@@ -178,8 +191,35 @@
         this.init(false)
       },
       async logoff (index) {
-        // 注销或者重新激活客服
-        if (this.customerDataShow[index]['state'] === 0) {
+        // 注销客服
+        if (this.customerDataShow[index]['state'] === '未激活' || this.customerDataShow[index]['state'] === '已被注销') {
+          this.$Message.error('操作失败')
+          return
+        }
+        let res = await this.fetchBase('/api/enter/reset/', {
+          'cid': this.customerDataShow[index]['cid']
+        })
+        if (res['flag'] === global_.CONSTGET.CUSTOMER_NOT_EXIST) {
+          this.$Message.warning(global_.CONSTSHOW.CUSTOMER_NOT_EXIST)
+        } else if (res['flag'] === global_.CONSTGET.FAIL_LOG_OFF) {
+          this.$Message.error(global_.CONSTSHOW.FAIL_LOG_OFF)
+        } else if (res['flag'] === global_.CONSTGET.EID_NOT_EXIST) {
+          window.location.href = '/enterprise/'
+        } else if (res['flag'] === global_.CONSTGET.SUCCESS) {
+          let i = 0
+          for (; i < this.customerDataAll.length; ++i) {
+            if (this.customerDataAll[i].cid === this.customerDataShow[index].cid) {
+              break
+            }
+          }
+          this.customerDataAll[i]['state'] = this.customerDataAll[i]['state'] === this.stateMap['-1'] ? this.stateMap['1'] : this.stateMap['-1']
+          this.init(false)
+        }
+      },
+      async activate (index) {
+        // 激活客服
+        if (this.customerDataShow[index]['state'] === '未激活' || this.customerDataShow[index]['state'] === '不在线' ||
+          this.customerDataShow[index]['state'] === '休息中' || this.customerDataShow[index]['state'] === '工作中') {
           this.$Message.error('操作失败')
           return
         }
