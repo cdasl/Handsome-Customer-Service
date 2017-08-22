@@ -387,6 +387,10 @@
   background: #fff;
   border-radius: 4px;
 }
+.layout-content-main {
+  width: 100%;
+  padding: 10px;
+}
 .layout-copy{
   text-align: center;
   padding: 10px 0 20px;
@@ -398,7 +402,7 @@
 }
 .my-fixed {
   position: fixed;
-  width: 20.88%!important;
+  width: 20.87%!important;
   left: 0;
 }
 .my-fixed-shrink {

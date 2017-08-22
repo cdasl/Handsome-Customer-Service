@@ -118,6 +118,7 @@
 .title {
   margin-left: 9%;
   margin-bottom: 2vh;
+  margin-top: 2vh;
   font-size: 1.5em;
 }
 .container {

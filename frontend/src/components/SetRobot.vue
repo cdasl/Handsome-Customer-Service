@@ -8,10 +8,10 @@
         </Select>
       </div>
       <div class="head-right">
-        <Select v-model="sortKeyWord" style="width:150px;text-align:left;" @on-change="changeSort">
+        <Select v-model="sortKeyWord" style="width:12vw;text-align:left;" @on-change="changeSort">
           <Option v-for="item of sortList" :value="item" :key="item">{{ item }}</Option>
         </Select>
-        <Select v-model="sortOrder" style="width:150px;text-align:left;" @on-change="changeSort">
+        <Select v-model="sortOrder" style="width:12vw;text-align:left;margin-left:1vw;" @on-change="changeSort">
           <Option v-for="item of orderList" :value="item" :key="item">{{ item }}</Option>
         </Select>
       </div>
