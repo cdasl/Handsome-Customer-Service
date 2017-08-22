@@ -389,9 +389,19 @@
 <code class="descclassname">backend.apis.enterprise.</code><code class="descname">customer_avg_feedback</code><span class="sig-paren">(</span><em>CID</em><span class="sig-paren">)</span><a class="headerlink" href="#backend.apis.enterprise.customer_avg_feedback" title="Permalink to this definition">¶</a></dt>
 <dd><p>返回客服所有会话的平均评分</p>
 <ul class="simple">
-<li><strong>CIDt</strong> - 客服的ID</li>
+<li><strong>CID</strong> - 客服的ID</li>
 </ul>
 <p><strong>返回值</strong>: 客服的平均评分</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="backend.apis.enterprise.customer_set_active_info">
+<code class="descclassname">backend.apis.enterprise.</code><code class="descname">customer_set_active_info</code><span class="sig-paren">(</span><em>request</em><span class="sig-paren">)</span><a class="headerlink" href="#backend.apis.enterprise.customer_set_active_info" title="Permalink to this definition">¶</a></dt>
+<dd><p>客服打开激活链接，设置自己的密码，头像，昵称</p>
+<ul class="simple">
+<li><strong>request</strong> - 前端发来的请求，包含激活码，密码，头像，昵称</li>
+</ul>
+<p><strong>返回值</strong>:包含成功/失败的消息JsonResponse</p>
 </dd></dl>
 
 <dl class="function">
