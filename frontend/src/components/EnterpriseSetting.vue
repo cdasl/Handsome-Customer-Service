@@ -247,7 +247,6 @@ h2 {
 }
 .text-area {
   width: 30%!important;
-  height: 20vh!important;
 }
 .robot-name {
   width: 100%;
