@@ -246,6 +246,34 @@ def set_customer_message(email, EID):
     return JsonResponse({'flag': const_table.const.SUCCESS, 'message': customer_info})
 
 @ensure_csrf_cookie
+def customer_set_active_info(request):
+    """
+    客服打开激活链接，设置自己的密码，头像，昵称\n
+    * **request** - 前端发来的请求，包含激活码，密码，头像，昵称\n
+    **返回值**:包含成功/失败的消息JsonResponse
+    """
+    info = json.loads(request.body.decode('utf8'))
+    password = info['password']
+    icon = info['icon']
+    name = info['name']
+    tip = helper.active_code_check(info['active_code'])
+    if tip == -8:
+        return JsonResponse({'flag': const_table.const.INVALID})
+    if tip == -9:
+        return JsonResponse({'flag': const_table.const.EXPIRED})
+    decrypt_str = helper.decrypt(9, info['active_code'])
+    decrypt_data = decrypt_str.split('|')
+    email = decrypt_data[0]
+    if models.Customer.objects.get(email = email).state == 1:
+        return JsonResponse({'flag': const_table.const.ACCOUNT_ACTIVITED})
+    password_salt = helper.password_add_salt(password)
+    try:
+        models.Customer.objects.filter(email = email).update(password = password_salt['password'], 
+            icon = icon, name = name, salt = password_salt['salt'])
+    except Exception:
+        return JsonResponse({'flag': const_table.const.ERROR})
+
+@ensure_csrf_cookie
 def reset_password_request(request):
     """
     发送重置密码的请求\n
@@ -329,7 +357,7 @@ def reset_customer_state(request):
 def customer_avg_feedback(CID):
     """
     返回客服所有会话的平均评分\n
-    * **CIDt** - 客服的ID\n
+    * **CID** - 客服的ID\n
     **返回值**: 客服的平均评分\n
     """
     dialogs = models.Dialog.objects.filter(CID = CID)
