@@ -68,7 +68,7 @@
     <Select v-model="chartType" style="width:200px">
       <Option v-for="item in typeList" :value="item.value" :key="item.value">{{ item.label }}</Option>
     </Select>
-    <Button type="primary" size="large" @click="exportData()" style="margin-left:2vw;"><Icon type="ios-download-outline"></Icon>导出统计信息</Button>
+    <Button type="primary" size="large" @click="exportData()" style="margin-left:2vw;"><Icon type="ios-download-outline"></Icon> 导出统计信息</Button>
     <div>
       <schart :canvasId="canvasId"
         :type="chartType"
@@ -132,7 +132,7 @@
         .then((res) => res.json())
       },
       async getChart (num) {
-        // 从后端获取统计图所需要的数据（欠一个）
+        // 从后端获取统计图所需要的数据
         let urls = ['/api/enter/get_enterprise_msgnum/', '/api/enter/get_oneday/', '/api/enter/get_enter_serviced_num/']
         let titles = ['过去24小时消息数统计', '过去24小时会话数统计', '过去24小时服务人数统计']
         let res = await this.fetchBase(urls[num - 1], {})
@@ -239,6 +239,7 @@
   height: 20vh;
   margin-right: 2vw;
   margin-bottom: 2vh;
+  margin-top: 2vh;
   border: 1px solid #ddd;
   border-radius: 20px;
   box-shadow: 5px 5px 2px #888888;

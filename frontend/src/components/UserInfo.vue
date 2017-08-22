@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Card dis-hover>
+    <Card dis-hover style="border-radius:0!impotant;">
       <p solt="title" class="title">用户信息</p>
       <p class="item">姓名: {{ name }}</p>
       <p class="item">性别: {{ gender }}</p>
@@ -89,5 +89,8 @@
   }
   .item {
     margin: 10% 0;
+  }
+  .ivu-card {
+    border-radius: 0!important;
   }
 </style>

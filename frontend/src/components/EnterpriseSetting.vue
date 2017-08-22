@@ -1,7 +1,9 @@
 <template>
   <div class="app">
     <div class="psw">
-      <h4 class="title">1.修改密码</h4>
+      <div class="title">
+        <h2>修改密码</h2>
+      </div>
       <Form :model="password" class="form" label-position="left" :label-width="80">
         <Form-item label="原密码">
           <Input v-model="password.old" class="enter-input" type="password"></Input>
@@ -19,8 +21,10 @@
     </div>
     <img src="/static/img/split.jpg/" class="split" alt="分割线">
     <div class="pop-up">
-      <h4 class="title">2.接入代码</h4>
-      <p class="legend">请将以下代码添加到你网站的 HTML 源代码中，放在 body 标签内 </p><br>
+      <div class="title">
+        <h2>接入代码</h2>
+        <p class="legend">请将以下代码添加到你网站的 HTML 源代码中，放在 body 标签内 </p><br>
+      </div>
       <Form class="form" label-position="left" :label-width="80">
         <Form-item label="接入方式">
           <Select v-model="popType" class="enter-input" @on-change="changeTypePop">
@@ -35,7 +39,7 @@
     <img src="/static/img/split.jpg/" class="split" alt="分割线">
     <div class="robot">
       <div class="title">
-        <h4>3.机器人设置</h4>
+        <h2>机器人设置</h2>
         <i-switch v-model="showRobot" @on-change="switchRobot" class="robot-switch">
           <span slot="open">开</span>
           <span slot="close">关</span>
@@ -224,6 +228,10 @@
   width: 100%;
   overflow: hidden;
 }
+h2 {
+  font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial,sans-serif;
+  font-size: 16px;
+}
 .psw {
   display: block;
   width: 100%;
@@ -247,6 +255,7 @@
 .legend {
   font-size: 12px;
   line-height: 1;
+  margin-top: 2vh;
   color: #999;
   padding-bottom: 15px;
 }

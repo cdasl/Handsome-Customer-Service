@@ -3,13 +3,13 @@
     <div class="head">
       <Input v-model="customerEmail" class="email-input" placeholder="输入邮箱邀请客服" @on-enter="invite"></Input>
       <Button @click="invite">邀请客服</Button>
-      <Input v-model="searchWord" @on-enter="search" placeholder="输入ID,邮箱,姓名查找客服" class="search-input"></Input>
+      <Input v-model="searchWord" @on-enter="search" placeholder="输入ID,邮箱,姓名查找客服" class="search-input" style="margin-left:2vw;"></Input>
       <Button @click="search">查询</Button>
       <div class="head-right">
-        <Select v-model="sortKeyWord" @on-change="changeSort" style="width:150px;text-align:left;">
+        <Select v-model="sortKeyWord" @on-change="changeSort" style="width:12vw;text-align:left;">
           <Option v-for="item of sortList" :value="item" :key="item">{{ item }}</Option>
         </Select>
-        <Select v-model="sortOrder" @on-change="changeSort" style="width:150px;text-align:left;">
+        <Select v-model="sortOrder" @on-change="changeSort" style="width:12vw;text-align:left;margin-left:1vw;">
           <Option v-for="item of orderList" :value="item" :key="item">{{ item }}</Option>
         </Select>
       </div>
@@ -329,7 +329,7 @@
   display: inline-block;
   position: absolute;
   right: 28px;
-  width: 55%;
+  width: 50%;
   text-align: right;
 }
 .head-right span {

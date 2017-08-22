@@ -128,28 +128,29 @@
 }
 .item {
   display: inline-block;
-  width: 200px;
-  height: 200px;
-  margin-right: 10px;
-  margin-bottom: 20px;
+  width: 15vw;
+  height: 20vh;
+  margin-right: 2vw;
+  margin-bottom: 2vh;
+  margin-top: 2vh;
   border: 1px solid #ddd;
   border-radius: 20px;
   box-shadow: 5px 5px 2px #888888;
 }
 .title {
-  width: 200px;
-  height: 80px;
+  width: 100%;
+  height: 7vh;
 }
 .data {
-  width: 200px;
-  height: 120px;
+  width: 100%;
+  height: 13vh;
+  text-align: center;
 }
 .title p {
-  width: 150px;
-  font-size: 1.4em;
-  line-height: 80px;
-  margin-left: auto;
-  margin-right: auto;
+  width: 100%;
+  font-size: 1.2em;
+  line-height: 7vh;
+  text-align: center;
 }
 .item:hover {
   background-color: #ccc;
@@ -157,10 +158,10 @@
 }
 .data span {
   display: block;
-  width: 120px;
-  font-size: 1.8em;
+  width: 100%;
+  font-size: 1.4em;
   font-weight: bold;
-  line-height: 100px;
+  line-height: 13vh;
   margin-left: auto;
   margin-right: auto;
   color: rgb(52, 101, 255);

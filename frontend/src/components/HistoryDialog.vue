@@ -3,10 +3,10 @@
     <div class="head">
       <div class="head-left"></div>
       <div class="head-right">
-        <Select v-model="sortKeyWord" @on-change="changeSort" style="width:150px;text-align:left;">
+        <Select v-model="sortKeyWord" @on-change="changeSort" style="width:12vw;text-align:left;">
           <Option v-for="item of sortList" :value="item" :key="item">{{ item }}</Option>
         </Select>
-        <Select v-model="sortOrder" @on-change="changeSort" style="width:150px;text-align:left;">
+        <Select v-model="sortOrder" @on-change="changeSort" style="width:12vw;text-align:left;margin-left:1vw;">
           <Option v-for="item of orderList" :value="item" :key="item">{{ item }}</Option>
         </Select>
       </div>    
@@ -55,7 +55,7 @@
             'title': '服务过的人数',
             'key': 'serviced_number'
           }, {
-            'title': '最后一次登陆时间',
+            'title': '最后一次登录时间',
             'key': 'last_login'
           }
         ], // 客服表格格式

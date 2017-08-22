@@ -26,7 +26,7 @@
         formItem: {
           email: '',
           password: ''
-        }, // 登陆用输入账号密码
+        }, // 登录用输入账号密码
         findback: {
           modal: false,
           email: ''

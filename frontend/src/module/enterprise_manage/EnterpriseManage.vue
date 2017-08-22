@@ -294,7 +294,7 @@
 }
 .my-fixed {
   position: fixed;
-  width: 20.88%!important;
+  width: 20.87%!important;
   left: 0;
 }
 .my-fixed-shrink {

@@ -106,7 +106,7 @@ def user_message(sid, message):
             robot_icon[message['eid']] = obj.robot_icon
         response = urllib.parse.quote(chatbot.get_response(urllib.parse.unquote(message['data'])).text)
         sio.emit('my response', {'data': response, 'time': time2str(), 'src': robot_icon[message['eid']]}, room = sid, namespace = '/test')
-        conversation[message['uid']].append({'send': message['uid'], 'receive': 'robot', 'time': message['time'], 'data': urllib.parse.unquote(message['data'])})
+        conversation[message['uid']].append({'send': message['uid'], 'receive': 'robot', 'time': message['time'], 'data': message['data']})
         conversation[message['uid']].append({'send': 'robot', 'receive': message['uid'], 'time': time2str(), 'data': response})
 
 @sio.on('customer message', namespace = '/test')

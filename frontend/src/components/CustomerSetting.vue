@@ -1,7 +1,8 @@
 <template>
   <div>
-    <h2>个人信息</h2>
-    <hr class="hr">
+    <div class="title">
+      <h2>个人信息</h2>
+    </div>
     <Form :model="formItem" class="form" label-position="left" :label-width="80">
       <Form-item label="邮箱">
         <Input v-model="formItem.mail" class="input" disabled>
@@ -25,8 +26,10 @@
         <Button type="primary" @click="save">保存</Button>
       </Form-item>
     </Form>
-    <h2>密码设置</h2>
-    <hr class="hr">
+    <img src="/static/img/split.jpg/" class="split" alt="分割线">
+    <div class="title">
+      <h2>密码设置</h2>
+    </div>
     <Form :model="passwordItem" class="form" label-position="left" :label-width="80">
       <Form-item label="原密码">
         <Input v-model="passwordItem.oldpassword" class="input" placeholder="请输入原密码">
@@ -188,6 +191,11 @@
     font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial,sans-serif;
     font-size: 16px;
   }
+  .split {
+    display: block;
+    width: 100%;
+    height: 5vh;
+  }
   .form {
     margin-left: 30px;
   }
@@ -205,5 +213,11 @@
   }
   .input {
     width: 300px;
+  }
+  .title {
+    font-size: 14px;
+    line-height: 1;
+    color: #222;
+    padding: 20px 0 20px 0;
   }
 </style>

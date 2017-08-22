@@ -5,8 +5,8 @@
       <textarea placeholder="按 Ctrl + Enter 发送" v-model="content" @keyup="onKeyup"></textarea>
     </div>
     <div class="icon">
-      <Button type="ghost" icon="social-octocat" @click="toggle"></Button>
-      <Button type="ghost" icon="cube" @click="screenshot"></Button>
+      <Button type="ghost" icon="happy-outline" @click="toggle"></Button>
+      <Button type="ghost" icon="scissors" @click="screenshot"></Button>
       <Upload :before-upload="handleUpload" action="/" class="upload">
           <Button type="ghost" icon="image"></Button>
       </Upload>
