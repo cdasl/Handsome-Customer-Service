@@ -5,8 +5,8 @@
       <textarea placeholder="按 Ctrl + Enter 发送" v-model="content" @keyup="onKeyup"></textarea>
     </div>
     <div class="icon">
-      <Button type="ghost" icon="happy-outline" @click="toggle"></Button>
-      <Button type="ghost" icon="scissors" @click="screenshot"></Button>
+      <Button type="ghost" icon="happy-outline" @click="toggle" class="no-margin"></Button>
+      <Button type="ghost" icon="scissors" @click="screenshot" class="no-margin"></Button>
       <Upload :before-upload="handleUpload" action="/" class="upload">
           <Button type="ghost" icon="image"></Button>
       </Upload>
@@ -133,6 +133,7 @@
 .text {
   height: 160px;
   border-top: solid 1px #ddd;
+  padding-top: 3vh;
 }
 .text textarea {
   padding: 10px;
@@ -153,11 +154,19 @@
 }
 .icon {
   position: absolute;
-  top: -20%;
+  width: 100%;
+  top: -5%;
   left: 0;
+  border-right: 1px solid black;
+  border-top: 1px solid lightgray;
+  background-color: white;
   z-index: 10;
 }
+ .no-margin {
+   margin-left: -0.3vw;
+ }
 .upload {
   display: inline-block;
+  margin-left: -0.3vw;
 }
 </style>
