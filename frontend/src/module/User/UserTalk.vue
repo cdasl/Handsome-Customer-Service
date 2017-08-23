@@ -255,7 +255,7 @@
 }
 .btn {
   position: absolute;
-  bottom: 25.8%; /* 22.5 */
+  bottom: 23.8%; /* 22.5 */
   right: 1%;
   z-index: 100;
 }
