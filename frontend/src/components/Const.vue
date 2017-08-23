@@ -5,7 +5,7 @@ const CONSTGET = {
   FAIL_MODIFY: 'fail to midify',
   EMAIL_REGISTERED: 'this email has been registered',
   FAIL_SIGN_UP: 'fail to sign up',
-  ACCOUNT_NOT_ACTIVETED: 'account not activeted',
+  ACCOUNT_NOT_ACTIVETED: 'account not be activated',
   ACCOUNT_LOGGED_OFF: 'account has been logged off',
   WRONG_ACCOUNT: 'wrong account',
   INVALID: 'invalid',
