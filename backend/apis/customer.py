@@ -198,11 +198,12 @@ def customer_dialogs_oneday(CID):
     total = 0
     nowtime = datetime.datetime.now()
     dialogs = models.Dialog.objects.filter(CID = CID)
-    for dialog in dialogs:
-        time1 = time.mktime(nowtime.timetuple())
-        time2 = time.mktime(dialog.start_time.timetuple())
-        if time1 - time2 < 60 * 60 * 24:
-            total += 1
+    if len(dialogs) > 0:
+        for dialog in dialogs:
+            time1 = time.mktime(nowtime.timetuple())
+            time2 = time.mktime(dialog.start_time.timetuple())
+            if time1 - time2 < 60 * 60 * 24:
+                total += 1
     return total
 
 def customer_total_servicedtime(CID):
@@ -213,8 +214,9 @@ def customer_total_servicedtime(CID):
     """
     totaltime = 0
     dialogs = models.Dialog.objects.filter(CID = CID)
-    for dialog in dialogs:
-        totaltime += (dialog.end_time - dialog.start_time).seconds
+    if len(dialogs) > 0:
+        for dialog in dialogs:
+            totaltime += (dialog.end_time - dialog.start_time).seconds
     totaltime = round(totaltime / 60, 2)
     return totaltime
 
@@ -226,9 +228,11 @@ def customer_total_messages(CID):
     """
     total = 0
     dialogs = models.Dialog.objects.filter(CID = CID)
-    for dialog in dialogs:
-        for message in models.Message.objects.filter(DID = dialog.DID):
-            total += 1
+    if len(dialogs) > 0:
+        for dialog in dialogs:
+            if len(models.Message.objects.filter(DID = dialog.DID)) > 0:
+                for message in models.Message.objects.filter(DID = dialog.DID):
+                    total += 1
     return total
 
 def customer_total_dialogs(CID):
@@ -265,14 +269,13 @@ def customer_avgmes_dialogs(CID):
     totaldialog = 0
     dialogs = models.Dialog.objects.filter(CID = CID)
     totaldialog = len(dialogs)
+    if totaldialog == 0:
+        return 0
     for dialog in dialogs:
         messages = models.Message.objects.filter(DID = dialog.DID)
         totalmessage += len(messages)
-    if totaldialog == 0:
-        return 0
-    else:
-        avgmes = round(totalmessage / totaldialog, 2)
-        return avgmes
+    avgmes = round(totalmessage / totaldialog, 2)
+    return avgmes
 
 @ensure_csrf_cookie
 def customer_dialogs(request):

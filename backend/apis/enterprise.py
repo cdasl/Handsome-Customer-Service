@@ -245,7 +245,7 @@ def set_customer_message(email, EID):
         'state': 0, 'service_number': 0, 'serviced_number': 0}
     return JsonResponse({'flag': const_table.const.SUCCESS, 'message': customer_info})
 
-@ensure_csrf_cookie
+@csrf_exempt
 def customer_set_active_info(request):
     """
     客服打开激活链接，设置自己的密码，头像，昵称\n
@@ -437,8 +437,9 @@ def enterprise_online_customers(request):
         return JsonResponse({'flag': const_table.const.EID_NOT_EXIST})
     online_list = []
     customers = models.Customer.objects.filter(EID = EID, state = 3)
-    for customer in customers:
-        online_list.append({'cid': customer.CID, 'name': customer.name})
+    if len(customers) > 0:
+        for customer in customers:
+            online_list.append({'cid': customer.CID, 'name': customer.name})
     return JsonResponse({'flag': const_table.const.SUCCESS, 'message': online_list})
 
 def enterprise_total_servicetime(EID):
@@ -449,8 +450,9 @@ def enterprise_total_servicetime(EID):
     """
     total = 0
     times = models.Dialog.objects.filter(EID = EID)
-    for t in times:
-        total += (t.end_time - t.start_time).seconds
+    if len(times) > 0:
+        for t in times:
+            total += (t.end_time - t.start_time).seconds
     total = round(total / 60, 2)
     return JsonResponse({'flag': const_table.const.SUCCESS, 'message': total})
 
@@ -462,8 +464,9 @@ def enterprise_total_messages(EID):
     """
     total = 0
     dialogs = models.Dialog.objects.filter(EID = EID)
-    for dialog in dialogs:
-        total += len(models.Message.objects.filter(DID = dialog.DID))
+    if len(dialogs) > 0:
+        for dialog in dialogs:
+            total += len(models.Message.objects.filter(DID = dialog.DID))
     return JsonResponse({'flag': const_table.const.SUCCESS, 'message': total})
 
 def enterprise_total_dialogs(EID):
@@ -501,8 +504,9 @@ def enterprise_total_service_number(EID):
     """
     totalserviced = []
     dialogs = models.Dialog.objects.filter(EID = EID)
-    for dialog in dialogs:
-        totalserviced.append(dialog.UID)
+    if len(dialogs) > 0:
+        for dialog in dialogs:
+            totalserviced.append(dialog.UID)
     return JsonResponse({'flag': const_table.const.SUCCESS, 'message': len(list(set(totalserviced)))})
 
 @ensure_csrf_cookie
@@ -554,8 +558,10 @@ def enterprise_avgtime_dialogs(EID):
     * **EID** - 企业ID\n
     **返回值**: 包含成功/失败信息和平均会话分钟数的JsonResponse\n
     """
-    totaltime = 0
+    totaltime = avgtime = 0
     times = models.Dialog.objects.filter(EID = EID)
+    if len(times) == 0:
+        return JsonResponse({'flag': const_table.const.SUCCESS, 'message': avgtime})
     for t in times:
         totaltime += (t.end_time - t.start_time).seconds
     totaltime /= 60
@@ -631,12 +637,13 @@ def enterprise_avgmes_dialogs(EID):
     * **EID** - 企业ID\n
     **返回值**: 包含成功/失败信息和机器人信息的JsonResponse\n
     """
-    total_messages = 0
+    total_messages = avgmes = 0
     dialogs = models.Dialog.objects.filter(EID = EID)
-    for dialog in dialogs:
-        total_messages += len(models.Message.objects.filter(DID = dialog.DID))
-    total_dialogs = len(models.Dialog.objects.filter(EID = EID))
-    avgmes = round(total_messages / total_dialogs, 2)
+    if len(dialogs) > 0:
+        for dialog in dialogs:
+            total_messages += len(models.Message.objects.filter(DID = dialog.DID))
+        total_dialogs = len(models.Dialog.objects.filter(EID = EID))
+        avgmes = round(total_messages / total_dialogs, 2)
     return JsonResponse({'flag': const_table.const.SUCCESS, 'message': avgmes})
 
 @ensure_csrf_cookie
@@ -778,10 +785,11 @@ def enterprise_dialogs_total_oneday(EID):
     nowtime = datetime.datetime.now()
     dialogs = models.Dialog.objects.filter(EID = EID)
     time1 = time.mktime(nowtime.timetuple())
-    for dialog in dialogs:
-        time2 = time.mktime(dialog.start_time.timetuple())
-        if time1 - time2 < 60 * 60 * 24:
-            total += 1
+    if len(dialogs) > 0:
+        for dialog in dialogs:
+            time2 = time.mktime(dialog.start_time.timetuple())
+            if time1 - time2 < 60 * 60 * 24:
+                total += 1
     return JsonResponse({'flag': const_table.const.SUCCESS, 'message': total})
 
 @ensure_csrf_cookie
