@@ -14,7 +14,7 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>API &#8212; Handsome&#39;s Customer Service 1.0 documentation</title>
+    <title>How to Access &#8212; Handsome&#39;s Customer Service 1.0 documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
@@ -32,8 +32,7 @@
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="API package" href="API.html" />
-    <link rel="prev" title="Models" href="models.html" />
+    <link rel="prev" title="Constant Table" href="const_table.html" />
   
    
 
@@ -49,10 +48,7 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="API.html" title="API package"
-             accesskey="N">next</a> |</li>
-        <li class="right" >
-          <a href="models.html" title="Models"
+          <a href="const_table.html" title="Constant Table"
              accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../index.html">Handsome&#39;s Customer Service 1.0 documentation</a> &#187;</li> 
       </ul>
@@ -75,15 +71,29 @@
       <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="models.html">Models</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">API</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="API.html">API package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_modules.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="const_table.html">Constant Table</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">How to Access</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#a-example">A example</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="const_table.html">Constant Table</a></li>
-<li class="toctree-l1"><a class="reference internal" href="config.html">How to Access</a></li>
 </ul>
 
     
+  </div>
+</div>
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <h2>Contents</h2>
+    <div class="sidebar-localtoc">
+      <ul>
+<li><a class="reference internal" href="#">How to Access</a><ul>
+<li><a class="reference internal" href="#a-example">A example</a></li>
+</ul>
+</li>
+</ul>
+
+    </div>
   </div>
 </div>
 <div class="sidebar-block">
@@ -108,22 +118,48 @@
             <ol class="breadcrumb">
               <li><a href="../index.html">Docs</a></li>
               
-              <li>API</li>
+              <li>How to Access</li>
             </ol>
           </div>
           
           <div class="document clearer body">
             
-  <div class="section" id="api">
-<h1>API<a class="headerlink" href="#api" title="Permalink to this headline">¶</a></h1>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="API.html">API package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="API.html#module-backend.apis.customer">Customer APIs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="API.html#module-backend.apis.enterprise">Enterprise APIs</a></li>
-</ul>
-</li>
-</ul>
+  <div class="section" id="how-to-access">
+<h1>How to Access<a class="headerlink" href="#how-to-access" title="Permalink to this headline">¶</a></h1>
+<ol class="arabic simple">
+<li>登录企业后，在企业管理界面，点击 <strong>设置</strong>，会看到如下界面</li>
+</ol>
+<a class="reference internal image-reference" href="../_images/capture.jpg"><img alt="../_images/capture.jpg" src="../_images/capture.jpg" style="width: 65%;" /></a>
+<ol class="arabic simple" start="2">
+<li>在选择接入方式为 <strong>内嵌</strong> 的情况下，将代码复制在企业网页代码的 <code class="docutils literal"><span class="pre">&lt;script&gt;</span></code> 标签下</li>
+</ol>
+<ol class="arabic simple" start="3">
+<li>效果如下</li>
+</ol>
+<a class="reference internal image-reference" href="../_images/effect.jpg"><img alt="../_images/effect.jpg" src="../_images/effect.jpg" style="width: 65%;" /></a>
+<div class="section" id="a-example">
+<h2>A example<a class="headerlink" href="#a-example" title="Permalink to this headline">¶</a></h2>
+<p>以下为一个嵌入了客服系统的企业网页示例</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+  &lt;meta charset=&quot;UTF-8&quot;&gt;
+  &lt;title&gt;内嵌&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;!-- 用户信息构造处，也可由企业获取到用户信息，然后将信息通过handsomeSendInfo传给客服系统，注意info需要是json格式 --&gt;
+  &lt;script&gt;
+    let first = [&#39;牛&#39;, &#39;李&#39;, &#39;马&#39;, &#39;丁&#39;, &#39;熊&#39;, &#39;秦&#39;, &#39;武&#39;]
+    let second = [&#39;大壮&#39;, &#39;珍香&#39;, &#39;寿生&#39;, &#39;铁柱&#39;, &#39;二妞&#39;, &#39;狗蛋&#39;, &#39;三宝&#39;]
+    let user_info = {&#39;info&#39;: JSON.stringify({&#39;name&#39;: first[Math.floor(Math.random()*first.length)]+second[Math.floor(Math.random()*second.length)], &#39;age&#39;: Math.round(Math.random() * 50), &#39;gender&#39;: [&#39;女&#39;,&#39;男&#39;][Math.floor(Math.random()*2)]})}
+    console.log(user_info)
+  &lt;/script&gt;
+  &lt;!-- 嵌入代码粘贴处 --&gt;
+  &lt;script src=&quot;http://localhost:8000/static/js/template/oldBlank.js?eid=82a7ebc5f63e8c126767f4d0bf8c0ea8&quot; id=&quot;handsomejs&quot;&gt;&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre></div>
+</div>
 </div>
 </div>
 
@@ -133,12 +169,9 @@
   <div class="footer-relations">
     
       <div class="pull-left">
-        <a class="btn btn-default" href="models.html" title="previous chapter (use the left arrow)">Models</a>
+        <a class="btn btn-default" href="const_table.html" title="previous chapter (use the left arrow)">Constant Table</a>
       </div>
     
-      <div class="pull-right">
-        <a class="btn btn-default" href="API.html" title="next chapter (use the right arrow)">API package</a>
-      </div>
     </div>
     <div class="clearer"></div>
   
@@ -155,10 +188,7 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="API.html" title="API package"
-             >next</a> |</li>
-        <li class="right" >
-          <a href="models.html" title="Models"
+          <a href="const_table.html" title="Constant Table"
              >previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../index.html">Handsome&#39;s Customer Service 1.0 documentation</a> &#187;</li> 
       </ul>
