@@ -90,7 +90,7 @@ def enterprise_signup(request):
         active_code = helper.get_active_code(email)
         mySubject = messages.enterprise_active_subject()
         myMessage = messages.enterprise_active_message(
-            'http:/127.0.0.1:8000%s' % ('/enterprise_active/' + active_code))
+            'http:/localhost:8000%s' % ('/enterprise_active/' + active_code))
         helper.send_active_email(email, mySubject, myMessage)
         models.Enterprise.objects.create(
             EID = info_dict['eid'], email = email, password = info_dict['password'],
@@ -210,7 +210,7 @@ def enterprise_invite(request):
         active_code = helper.get_active_code(email)
         mySubject = messages.customer_active_subject()
         myMessage = messages.customer_active_message(
-            'http:/127.0.0.1:8000%s' % ('/customer_active/' + active_code))
+            'http:/localhost:8000%s' % ('/customer_active/' + active_code))
         helper.send_active_email(email, mySubject, myMessage)
         return JsonResponse({'flag': const_table.const.SUCCESS, 'message': customer_info})
     except Exception:
@@ -288,7 +288,7 @@ def reset_password_request(request):
     if len(valid_enterprise) == 0 and len(vaild_customer) == 0:
         return JsonResponse({'flag': const_table.const.INVALID})
     active_code = helper.get_active_code(email)
-    url = 'http://127.0.0.1:8000/password_reset/%s' % (active_code)
+    url = 'http://localhost:8000/password_reset/%s' % (active_code)
     mySubject = u"重置密码"
     myMessage = messages.reset_password_message(url)
     try:

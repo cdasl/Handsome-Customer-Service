@@ -180,7 +180,7 @@
               service_number: res['message']['service_number'],
               serviced_number: res['message']['serviced_number'],
               cid: res['message']['cid'],
-              cid_show: res['message'][i]['cid'].substring(0, 5)
+              cid_show: res['message']['cid'].substring(0, 5)
             })
             this.init(true)
             this.$Message.success('邀请成功')
