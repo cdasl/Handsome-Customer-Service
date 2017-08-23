@@ -339,7 +339,7 @@ def reset_password_request(request):
     if len(valid_enterprise) == 0 and len(vaild_customer) == 0:
         return JsonResponse({'flag': const_table.const.INVALID})
     active_code = helper.get_active_code(email)
-    url = 'http://127.0.0.1:8000/password_reset/%s' % (active_code)
+    url = 'http://localhost:8000/password_reset/%s' % (active_code)
     mySubject = u"重置密码"
     myMessage = messages.reset_password_message(url)
     try:

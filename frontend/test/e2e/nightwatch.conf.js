@@ -10,7 +10,7 @@ module.exports = {
   "selenium": {
     "start_process": true,
     "server_path": "node_modules/selenium-server/lib/runner/selenium-server-standalone-2.53.1.jar",
-    "host": "127.0.0.1",
+    "host": "localhost",
     "port": 4444,
     "cli_args": {
       "webdriver.chrome.driver": require('chromedriver').path

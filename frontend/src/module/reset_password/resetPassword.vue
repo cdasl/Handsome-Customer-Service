@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <div v-show="success">
-      <p>密码已重置为12345678，请立即<a href="http://127.0.0.1:8000">登录</a>修改</p>
+      <p>密码已重置为12345678，请立即<a href="http://localhost:8000">登录</a>修改</p>
     </div>
     <div v-show="fail">
       <p>失败</p>
