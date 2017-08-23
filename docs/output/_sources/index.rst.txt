@@ -13,6 +13,7 @@ Welcome to Handsome's Customer Service documentation!
    modules/models
    modules/api_modules
    modules/const_table
+   modules/config
 
 
 
