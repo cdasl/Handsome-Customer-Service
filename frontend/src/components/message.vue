@@ -63,6 +63,7 @@
     z-index: 0;
     padding: 10px 15px;
     overflow-y: scroll;
+    padding-bottom: 3vh;
   }
   .message li {
     margin-bottom: 15px;
