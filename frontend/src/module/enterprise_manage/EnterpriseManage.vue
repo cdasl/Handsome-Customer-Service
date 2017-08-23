@@ -75,7 +75,7 @@
     components: {ManageCustomer, EnterpriseSetting, EnterpriseOverview, HistoryDialog, SetRobot},
     data () {
       return {
-        contentClass: 'layout-content',
+        contentClass: 'layout-content1',
         leftClass: 'my-fixed',
         type: 'enterprise-overview',
         spanLeft: 5,
@@ -157,10 +157,16 @@
       },
       select (name) {
         // 选择显示不同的子组件
-        if (name === 'enterprise-setting') {
+        if (name === 'enterprise-overview') {
+          this.contentClass = 'layout-content1'
+        } else if (name === 'manage-customer') {
           this.contentClass = 'layout-content2'
-        } else {
-          this.contentClass = 'layout-content'
+        } else if (name === 'history-dialog') {
+          this.contentClass = 'layout-content3'
+        } else if (name === 'set-robot') {
+          this.contentClass = 'layout-content4'
+        } else if (name === 'enterprise-overview') {
+          this.contentClass = 'enterprise-setting'
         }
         this.type = name
       },
@@ -256,7 +262,7 @@
 .layout-breadcrumb {
   padding: 10px 15px 0;
 }
-.layout-content {
+.layout-content1 {
   min-height: 800px;
   margin: 15px;
   margin-top: 75px;
@@ -265,6 +271,30 @@
   border-radius: 4px;
 }
 .layout-content2 {
+  min-height: 720px;
+  margin: 15px;
+  margin-top: 75px;
+  overflow: hidden;
+  background: #fff;
+  border-radius: 4px;
+}
+.layout-content3 {
+  min-height: 680px;
+  margin: 15px;
+  margin-top: 75px;
+  overflow: hidden;
+  background: #fff;
+  border-radius: 4px;
+}
+.layout-content4 {
+  min-height: 680px;
+  margin: 15px;
+  margin-top: 75px;
+  overflow: hidden;
+  background: #fff;
+  border-radius: 4px;
+}
+.layout-content5 {
   min-height: 1080px;
   margin: 15px;
   margin-top: 75px;

@@ -33,7 +33,7 @@
           </i-select>
           <Button type="text" class="logout" @click="logout">退出</Button>
         </div>
-        <div class="layout-content">
+        <div :class="contentClass">
           <div class="layout-content-main" :is="type" @send="send" @swit="swit" @close="close" @transfer="transferCustomer" :content="currentcontent" :lists="lists" :name="name" :icon="icon" :uid="uid"></div>
         </div>
       </i-col>
@@ -83,7 +83,8 @@
           name: '小光',
           cid: 'ddd'
         }],
-        roboticon: ''
+        roboticon: '',
+        contentClass: 'layout-content1'
       }
     },
     computed: {
@@ -202,6 +203,15 @@
         this.socket.emit('customer message', {data: encodeURI(msg), time: data['time'], cid: this.cid, uid: this.uid, src: encodeURI(data['src'])})
       },
       select (name) {
+        if (name === 'customer-talk') {
+          this.contentClass = 'layout-content1'
+        } else if (name === 'customer-history') {
+          this.contentClass = 'layout-content2'
+        } else if (name === 'customer-overview') {
+          this.contentClass = 'layout-content3'
+        } else if (name === 'customer-setting') {
+          this.contentClass = 'layout-content4'
+        }
         this.type = name
       },
       ok () {
@@ -380,9 +390,34 @@
 .layout-breadcrumb {
   padding: 10px 15px 0;
 }
-.layout-content {
-  min-height: 100vh;
+.layout-content1 {
+  min-height: 680px;
   margin: 15px;
+  margin-top: 75px;
+  overflow: auto;
+  background: #fff;
+  border-radius: 4px;
+}
+.layout-content2 {
+  min-height: 680px;
+  margin: 15px;
+  margin-top: 75px;
+  overflow: auto;
+  background: #fff;
+  border-radius: 4px;
+}
+.layout-content3 {
+  min-height: 680px;
+  margin: 15px;
+  margin-top: 75px;
+  overflow: auto;
+  background: #fff;
+  border-radius: 4px;
+}
+.layout-content4 {
+  min-height: 680px;
+  margin: 15px;
+  margin-top: 75px;
   overflow: auto;
   background: #fff;
   border-radius: 4px;
@@ -411,9 +446,12 @@
   left: 0;
 }
 .layout-header {
+  position: fixed;
+  width: 100%;
   height: 60px;
   background: #fff;
   box-shadow: 0 1px 1px rgba(0,0,0,.1);
+  z-index: 100;
 }
 .layout-logo-left {
   width: 90%;
@@ -435,11 +473,15 @@
   position: absolute;
   right: 10%;
   width: 10%;
-  top: 1.2%;
+  top: 2vh;
+  right: 30vw;
+  z-index: 1000;
 }
 .logout {
   position: absolute;
   right: 0;
-  top: 1.3%;
+  top: 2vh;
+  right: 23vw;
+  z-index: 1000;
 }
 </style>
