@@ -43,7 +43,7 @@ class Customer(models.Model):
     EID = models.CharField(max_length = 50)
     email = models.CharField(max_length = 30)
     password = models.CharField(max_length = 50)
-    icon = models.CharField(max_length = 50)
+    icon = models.CharField(max_length = 120)
     name = models.CharField(max_length = 10)
     state = models.IntegerField(default = 0)
     service_number = models.IntegerField(default = 0)
