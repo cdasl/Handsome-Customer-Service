@@ -3,7 +3,7 @@
     <Row type="flex" class="row">
       <i-col :span="spanLeft" class="layout-menu-left">
         <Menu active-name="enterprise-overview" theme="dark" width="auto" @on-select="select" :class="leftClass">
-          <div class="layout-logo-left"></div>
+          <i class="logo"></i>
           <Menu-item name="enterprise-overview">
             <Icon type="ios-navigate" :size="iconSize"></Icon>
             <span class="layout-text">主页</span>
@@ -217,9 +217,21 @@
   }
 </script>
 <style>
+.ivu-col-span-5 {
+  width: 14.833333%!important;
+}
+.ivu-col-span-2 {
+  width: 5.333333%!important;
+}
+.ivu-col-span-22 {
+  width: 94.66666667%!important;
+}
+.ivu-col-span-19 {
+  width: 85.16666667%!important;
+}
 .nav {
-  position: absolute;
-  right: 21vw;
+  position: fixed;
+  right: 0;
   top: 0;
 }
 .arrow-up {
@@ -324,12 +336,12 @@
 }
 .my-fixed {
   position: fixed;
-  width: 20.87%!important;
+  width: 14.833333%!important;
   left: 0;
 }
 .my-fixed-shrink {
   position: fixed;
-  width: 8.33%!important;
+  width: 5.333333%!important;
   left: 0;
 }
 .layout-header {
@@ -348,5 +360,11 @@
 }
 .ivu-col {
   transition: width .2s ease-in-out;
+}
+.logo {
+  display: inline-block;
+  width: 225.5px;
+  height: 60px;
+  background: url('/static/img/logo.jpg') no-repeat;
 }
 </style>

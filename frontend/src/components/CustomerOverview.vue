@@ -128,7 +128,7 @@
 }
 .item {
   display: inline-block;
-  width: 15vw;
+  width: 14vw;
   height: 20vh;
   margin-right: 2vw;
   margin-bottom: 2vh;
