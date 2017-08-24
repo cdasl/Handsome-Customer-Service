@@ -6,7 +6,6 @@
     </Row>
     <br>
     <Button type="primary" size="large" @click="exportData(1)"><Icon type="ios-download-outline"></Icon> 导出原始数据</Button>
-    <Button type="primary" size="large" @click="exportData(2)"><Icon type="ios-download-outline"></Icon> 导出排序和过滤后的数据</Button>
     <Modal
         v-model="show"
         title="对话框"
@@ -130,16 +129,34 @@
         this.dialogDataShow = this.dialogData.slice((this.current - 1) * this.pageSize, Math.min((this.current - 1) * this.pageSize + this.pageSize, this.dialogData.length))
       },
       exportData (type) {
+        let csv = '\ufeff'
+        let keys = []
+        this.dialogForm.forEach(function (item) {
+          csv += '"' + item['title'] + '",'
+          keys.push(item['key'])
+        })
+        csv = csv.replace(/,$/, '\n')
+        let data = this.dialogDataShow
         if (type === 1) {
-          this.$refs.table.exportCsv({
-            filename: '原始数据'
-          })
-        } else if (type === 2) {
-          this.$refs.table.exportCsv({
-            filename: '排序和过滤后的数据',
-            original: false
-          })
+          data = this.dialogData
         }
+        data.forEach(function (item) {
+          keys.forEach(function (key) {
+            csv += '"' + item[key] + '",'
+          })
+          csv = csv.replace(/,$/, '\n')
+        })
+        csv = csv.replace(/"null"/g, '""')
+        var blob = new window.Blob([csv], {
+          type: 'text/csv,charset=UTF-8'
+        })
+        let csvUrl = window.URL.createObjectURL(blob)
+        let a = document.createElement('a')
+        a.download = '客服历史会话.csv'
+        a.href = csvUrl
+        document.body.appendChild(a)
+        a.click()
+        document.body.removeChild(a)
       }
     },
     mounted: function () {
