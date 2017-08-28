@@ -275,7 +275,7 @@
   padding: 10px 15px 0;
 }
 .layout-content1 {
-  min-height: 800px;
+  min-height: 100vh;
   margin: 15px;
   margin-top: 75px;
   overflow: hidden;
@@ -283,7 +283,7 @@
   border-radius: 4px;
 }
 .layout-content2 {
-  min-height: 720px;
+  min-height: 100vh;
   margin: 15px;
   margin-top: 75px;
   overflow: hidden;
@@ -291,7 +291,7 @@
   border-radius: 4px;
 }
 .layout-content3 {
-  min-height: 680px;
+  min-height: 100vh;
   margin: 15px;
   margin-top: 75px;
   overflow: hidden;
@@ -299,7 +299,7 @@
   border-radius: 4px;
 }
 .layout-content4 {
-  min-height: 680px;
+  min-height: 100vh;
   margin: 15px;
   margin-top: 75px;
   overflow: hidden;
@@ -307,7 +307,7 @@
   border-radius: 4px;
 }
 .layout-content5 {
-  min-height: 1080px;
+  min-height: 100vh;
   margin: 15px;
   margin-top: 75px;
   overflow: hidden;
