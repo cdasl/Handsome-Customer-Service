@@ -57,7 +57,7 @@
             </Submenu>
           </Menu>
         </div>
-        <div :class="contentClass">
+        <div :class="contentClass">	
           <div class="layout-content-main"><div :is="type"></div></div>
         </div>
       </i-col>

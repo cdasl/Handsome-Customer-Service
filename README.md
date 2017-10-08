@@ -6,6 +6,34 @@
 
 此客服系统支持文字、表情、图片的发送，可以对页面进行截图；每次服务结束后用户可以对客服进行评分；客服也能选择转接用户给另一名客服；企业端有对客服服务情况的数据报表，并提供24小时内服务信息的统计图；除此之外我们引入了Python的ChatterBot机器人来为客服分担一部分任务，企业可以通过录入知识库来训练机器人。
 
+### 效果图
+
+1. #### 首页
+
+   ![](https://raw.githubusercontent.com/dogloving/Handsome-Customer-Service/master/frontend/static/img/render1.png)
+
+2. #### 企业注册页面
+
+   ![](https://raw.githubusercontent.com/dogloving/Handsome-Customer-Service/master/frontend/static/img/render2.png)
+
+3. #### 企业查看统计信息
+
+   ![](https://raw.githubusercontent.com/dogloving/Handsome-Customer-Service/master/frontend/static/img/render3.png)
+
+4. #### 企业管理客服
+
+   ![](https://raw.githubusercontent.com/dogloving/Handsome-Customer-Service/master/frontend/static/img/render7.png)
+
+5. #### 企业管理机器人知识库
+
+   ![](https://raw.githubusercontent.com/dogloving/Handsome-Customer-Service/master/frontend/static/img/render4.png)
+
+6. #### 客服和用户聊天(支持一个客服同时服务多个用户，还支持客服间的转接)
+
+   ![](https://raw.githubusercontent.com/dogloving/Handsome-Customer-Service/master/frontend/static/img/render5.png)
+
+   ![](https://raw.githubusercontent.com/dogloving/Handsome-Customer-Service/master/frontend/static/img/render6.png)
+
 ### 如何使用此项目
 
 1.在你的Windows下安装

@@ -140,6 +140,7 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_USE_TLS = False
 EMAIL_HOST = 'smtp.163.com'
 EMAIL_PORT = 25
-EMAIL_HOST_USER = 'nkuhjp@163.com'
-EMAIL_HOST_PASSWORD = 'hjp19970215'
-DEFAULT_FROM_EMAIL = 'nkuhjp <nkuhjp@163.com>'
+EMAIL_HOST_USER = 'elingweb@163.com'
+EMAIL_HOST_PASSWORD = 'elingweb2017'	
+# hjp19970215
+DEFAULT_FROM_EMAIL = 'elingweb <elingweb@163.com>'
