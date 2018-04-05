@@ -1,3 +1,4 @@
+## 已将项目部署到服务器上了，测试地址: www.nkuhjp.com/hs.html 目前暂不支持聊天功能。
 ### 项目介绍
 
 该项目是一个暑期实训项目，是一个面向企业的客服系统。
@@ -43,9 +44,9 @@ mysql, python3, npm, pip
 ```
 2.打开`git bash`，执行
 ```bash
-git clone git@se.jisuanke.com:custom-service/Group2.git
+git clone git@github.com:dogloving/Handsome-Customer-Service.git
 or
-git clone https://se.jisuanke.com/custom-service/Group2.git
+git clone https://github.com/dogloving/Handsome-Customer-Service.git
 ```
 3.找到文件所在位置，打开`cmd`，执行
 ```bash
